@@ -109,6 +109,28 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// App screenshot slideshow
+const screenshots = document.querySelectorAll('.app-screenshot');
+let currentScreenshot = 0;
+
+function showNextScreenshot() {
+    if (screenshots.length === 0) return;
+    
+    // Remove active class from current screenshot
+    screenshots[currentScreenshot].classList.remove('active');
+    
+    // Move to next screenshot
+    currentScreenshot = (currentScreenshot + 1) % screenshots.length;
+    
+    // Add active class to next screenshot
+    screenshots[currentScreenshot].classList.add('active');
+}
+
+// Change screenshot every 6 seconds
+if (screenshots.length > 1) {
+    setInterval(showNextScreenshot, 6000);
+}
+
 // Add loading animation
 window.addEventListener('load', () => {
     document.body.style.opacity = '0';
@@ -117,4 +139,5 @@ window.addEventListener('load', () => {
         document.body.style.opacity = '1';
     }, 100);
 });
+
 
