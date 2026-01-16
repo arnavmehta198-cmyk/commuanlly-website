@@ -16,7 +16,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <a href="index.html" class="logo">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="40" height="40" rx="12" fill="url(#logo-gradient)"/>
                 <path d="M20 10C14.48 10 10 14.48 10 20C10 25.52 14.48 30 20 30C25.52 30 30 25.52 30 20C30 14.48 25.52 10 20 10ZM20 14C21.66 14 23 15.34 23 17C23 18.66 21.66 20 20 20C18.34 20 17 18.66 17 17C17 15.34 18.34 14 20 14ZM20 27.2C17.5 27.2 15.29 25.92 14 23.98C14.03 21.99 18 20.9 20 20.9C21.99 20.9 25.97 21.99 26 23.98C24.71 25.92 22.5 27.2 20 27.2Z" fill="#1a1a1a"/>
                 <defs>
@@ -28,92 +28,102 @@
             </svg>
             <span>Communally</span>
         </a>
-        <ul class="nav-menu">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#pricing">Pricing</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="#download" class="nav-cta">Download App</a></li>
-        </ul>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <a href="#download" class="nav-cta">Download App</a>
     </nav>
 
     <!-- Hero Section -->
     <section id="main-content" class="hero">
-        <div class="hero-badge">
-            <span class="badge-dot"></span>
-            New: Community features now available
-        </div>
-        <h1 class="hero-title">Reimagine how you connect with your neighborhood</h1>
-        <p class="hero-subtitle">From odd jobs to community help — explore every opportunity in your neighborhood with ease.</p>
-        
-        <div class="hero-buttons">
-            <a href="#download" class="btn btn-primary">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                Get Started Free
-            </a>
-            <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-new">New</span>
+                Connect with your neighborhood instantly
+            </div>
+            
+            <h1 class="hero-title">Reimagine how you connect with your neighborhood</h1>
+            
+            <p class="hero-subtitle">Find help, offer skills, and explore every opportunity in your neighborhood. Connect with verified neighbors for odd jobs, community help, and more.</p>
+            
+            <div class="hero-buttons">
+                <a href="#download" class="btn btn-primary">
+                    Get Started – it's free
+                    <span class="btn-icon">→</span>
+                </a>
+                <a href="#features" class="btn btn-text">
+                    Get it for FREE
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                </a>
+            </div>
         </div>
 
+        <!-- Hero Visual -->
         <div class="hero-visual">
-            <!-- Main App Preview -->
-            <div class="app-preview">
-                <div class="app-window">
-                    <div class="app-header">
-                        <div class="window-dots">
-                            <span></span><span></span><span></span>
-                        </div>
-                        <span class="app-title">Communally</span>
+            <div class="hero-mockup-left">
+                <div class="browser-window">
+                    <div class="browser-header">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                        <span class="browser-url">communally.app</span>
+                        <span class="browser-badge">Only $35/hr</span>
                     </div>
-                    <div class="app-content">
-                        <div class="app-sidebar">
-                            <div class="sidebar-item active">🏠 Home</div>
-                            <div class="sidebar-item">📍 Nearby</div>
-                            <div class="sidebar-item">💬 Messages</div>
-                            <div class="sidebar-item">👤 Profile</div>
+                    <div class="browser-content">
+                        <div class="mockup-sidebar">
+                            <div class="sidebar-icon active">🏠</div>
+                            <div class="sidebar-icon">📍</div>
+                            <div class="sidebar-icon">💬</div>
+                            <div class="sidebar-icon">👤</div>
                         </div>
-                        <div class="app-main">
-                            <div class="job-card">
-                                <div class="job-avatar">🌱</div>
-                                <div class="job-info">
-                                    <span class="job-title">Garden Help Needed</span>
-                                    <span class="job-meta">0.3 miles away • Sarah M.</span>
+                        <div class="mockup-main">
+                            <div class="mockup-card">
+                                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop" alt="Profile">
+                                <div class="mockup-card-content">
+                                    <span class="mockup-title">Local handyman</span>
+                                    <p>Durable, reliable neighborhood help</p>
                                 </div>
-                                <span class="job-price">$35</span>
-                            </div>
-                            <div class="job-card">
-                                <div class="job-avatar">🐕</div>
-                                <div class="job-info">
-                                    <span class="job-title">Dog Walking</span>
-                                    <span class="job-meta">0.5 miles away • Mike R.</span>
-                                </div>
-                                <span class="job-price">$25</span>
-                            </div>
-                            <div class="job-card">
-                                <div class="job-avatar">📦</div>
-                                <div class="job-info">
-                                    <span class="job-title">Moving Help</span>
-                                    <span class="job-meta">1.2 miles away • James K.</span>
-                                </div>
-                                <span class="job-price">$80</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            
+            <div class="hero-mockup-right">
+                <div class="phone-card">
+                    <div class="phone-header">Draftr.</div>
+                    <div class="abstract-shape">
+                        <div class="shape-ring"></div>
+                        <div class="shape-ring ring-2"></div>
+                        <div class="shape-ring ring-3"></div>
+                    </div>
+                </div>
+                <div class="floating-cards">
+                    <div class="float-card card-1">
+                        <span>🌱</span>
+                        <p>Garden Help</p>
+                        <strong>$35</strong>
+                    </div>
+                    <div class="float-card card-2">
+                        <span>⭐</span>
+                        <p>4.9 Rating</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <!-- Floating Elements -->
-            <div class="floating-element elem-1">
-                <div class="float-icon">✓</div>
-                <span>Verified Neighbor</span>
-            </div>
-            <div class="floating-element elem-2">
-                <div class="float-icon green">$50</div>
-                <span>Job Posted</span>
-            </div>
-            <div class="floating-element elem-3">
-                <div class="rating">⭐ 4.9</div>
-                <span>Trust Score</span>
+    <!-- Logos Bar -->
+    <section class="logos-bar">
+        <div class="container">
+            <div class="logos-scroll">
+                <span class="logo-item">🏘️ Neighborhoods</span>
+                <span class="logo-item">🏠 Homeowners</span>
+                <span class="logo-item">🔧 Handymen</span>
+                <span class="logo-item">🐕 Pet Care</span>
+                <span class="logo-item">🌱 Gardeners</span>
+                <span class="logo-item">📦 Movers</span>
+                <span class="logo-item">🚗 Drivers</span>
             </div>
         </div>
     </section>
@@ -121,84 +131,85 @@
     <!-- Strategy Section -->
     <section class="strategy-section">
         <div class="container">
-            <div class="strategy-grid">
-                <div class="strategy-content">
-                    <span class="section-tag">WHY COMMUNALLY</span>
-                    <h2>The ultimate way to earn & help locally</h2>
-                    <p>Whether you need a hand or want to offer your skills, Communally connects you with real neighbors for real opportunities.</p>
-                    <a href="#features" class="btn btn-dark">Explore Features</a>
+            <div class="section-header center">
+                <h2>The ultimate strategy to make money</h2>
+                <p>From odd jobs to community help — explore every opportunity in your neighborhood with ease.</p>
+            </div>
+            
+            <div class="strategy-cards">
+                <div class="strategy-card">
+                    <div class="strategy-visual pink">
+                        <div class="strategy-icons">
+                            <span>✨</span>
+                            <span>🖼️</span>
+                            <span>⊞</span>
+                            <span>☐</span>
+                        </div>
+                        <div class="strategy-illustration">
+                            <div class="cursor-icon">👆</div>
+                        </div>
+                    </div>
+                    <h3>Intuitive job browsing</h3>
+                    <p>Find local opportunities effortlessly with a user-friendly interface.</p>
                 </div>
-                <div class="strategy-cards">
-                    <div class="strategy-card purple">
-                        <span class="card-icon">💰</span>
-                        <h3>Earn Money</h3>
-                        <p>Pick up local gigs and get paid for helping neighbors</p>
+                
+                <div class="strategy-card">
+                    <div class="strategy-visual orange">
+                        <div class="strategy-shapes">
+                            <div class="shape-blob"></div>
+                            <div class="shape-blob blob-2"></div>
+                        </div>
                     </div>
-                    <div class="strategy-card green">
-                        <span class="card-icon">🤝</span>
-                        <h3>Build Trust</h3>
-                        <p>Verified profiles and ratings build community trust</p>
+                    <h3>Advanced matching</h3>
+                    <p>Get matched with the right neighbors based on skills and proximity.</p>
+                </div>
+                
+                <div class="strategy-card">
+                    <div class="strategy-visual purple">
+                        <div class="strategy-chat">
+                            <div class="chat-bubble">💬</div>
+                        </div>
                     </div>
-                    <div class="strategy-card orange">
-                        <span class="card-icon">📍</span>
-                        <h3>Stay Local</h3>
-                        <p>All opportunities are in your immediate neighborhood</p>
-                    </div>
+                    <h3>Real-time messaging</h3>
+                    <p>Chat seamlessly with neighbors, get instant responses.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Scattered Section -->
-    <section id="features" class="features-scattered-section">
-        <div class="features-scattered">
-            <!-- Top row cards -->
-            <div class="feature-card card-1">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">🔔</span>
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="features-text">
+                    <h2>From finding help to offering skills, <strong>unlock the full potential of your neighborhood,</strong> all in one place.</h2>
                 </div>
-                <span class="card-label">Notifications</span>
-            </div>
-            
-            <div class="feature-card card-2">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">🤝</span>
+                <div class="features-mockup">
+                    <div class="app-window-small">
+                        <div class="app-header-small">
+                            <span>Communally</span>
+                        </div>
+                        <div class="app-content-small">
+                            <div class="content-sidebar">
+                                <div class="user-card">
+                                    <div class="user-avatar green">JD</div>
+                                    <div>
+                                        <strong>Welcome back</strong>
+                                        <p>John</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-main">
+                                <div class="job-list">
+                                    <div class="job-item">🌱 Garden work</div>
+                                    <div class="job-item">🐕 Dog walking</div>
+                                    <div class="job-item">📦 Moving help</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="platform-note">Available on iOS <span>📱</span></p>
                 </div>
-                <span class="card-label">Connections</span>
-            </div>
-            
-            <div class="feature-card card-3">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">📍</span>
-                </div>
-                <span class="card-label">Local</span>
-            </div>
-            
-            <!-- Center text -->
-            <div class="features-center-text">
-                <p>From finding help to offering skills, <strong>unlock the full potential of your neighborhood,</strong> all in one place.</p>
-            </div>
-            
-            <!-- Bottom row cards -->
-            <div class="feature-card card-4">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">💬</span>
-                </div>
-                <span class="card-label">Messaging</span>
-            </div>
-            
-            <div class="feature-card card-5">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">⭐</span>
-                </div>
-                <span class="card-label">Reviews</span>
-            </div>
-            
-            <div class="feature-card card-6">
-                <div class="feature-card-inner">
-                    <span class="card-emoji">📊</span>
-                </div>
-                <span class="card-label">Insights</span>
             </div>
         </div>
     </section>
@@ -207,69 +218,84 @@
     <section class="integrations-section">
         <div class="container">
             <div class="integrations-grid">
-                <div class="integrations-content">
-                    <span class="section-tag">SEAMLESS EXPERIENCE</span>
-                    <h2>One platform, endless possibilities</h2>
-                    <p>Connect with payment services, social platforms, and more to make your community experience seamless.</p>
-                </div>
                 <div class="integrations-visual">
-                    <div class="integration-icons">
-                        <div class="int-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        </div>
-                        <div class="int-icon purple">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-                        </div>
-                        <div class="int-icon blue">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                        </div>
-                        <div class="int-icon orange">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                        </div>
+                    <div class="integration-icons-grid">
+                        <div class="int-icon">📊</div>
+                        <div class="int-icon blue">🔔</div>
+                        <div class="int-icon purple">📍</div>
+                        <div class="int-icon orange">☁️</div>
+                        <div class="int-icon pink">💳</div>
+                        <div class="int-icon green">✓</div>
+                        <div class="int-icon dark">📱</div>
+                        <div class="int-icon cyan">💬</div>
+                    </div>
+                    <div class="integration-center">
+                        <div class="center-icon">🏠</div>
                     </div>
                     <div class="integration-lines"></div>
+                </div>
+                <div class="integrations-content">
+                    <h2>One platform, unlimited connections</h2>
+                    <a href="#" class="btn btn-dark-small">View all features</a>
+                    <blockquote>
+                        "Communally has completely transformed how our neighborhood connects. Finding help is now seamless and effortless."
+                    </blockquote>
+                    <div class="quote-author">
+                        <div class="author-avatar">SM</div>
+                        <div>
+                            <strong>Sarah Mitchell</strong>
+                            <span>Homeowner & Community Leader</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Power Features Section -->
+    <!-- Power Features Section (Dark) -->
     <section class="power-section">
         <div class="container">
-            <div class="power-header">
-                <span class="section-tag light">FEATURES</span>
-                <h2>Power up your neighborhood experience with next-gen features</h2>
-            </div>
+            <h2>Power up your neighborhood experience with next-gen features</h2>
             
-            <div class="power-grid">
-                <div class="power-card large">
-                    <div class="power-visual">
-                        <div class="visual-mockup">
-                            <div class="mockup-map"></div>
-                            <div class="mockup-pins">
-                                <span class="pin">📍</span>
-                                <span class="pin">📍</span>
-                                <span class="pin">📍</span>
-                            </div>
+            <div class="power-cards">
+                <div class="power-card">
+                    <div class="power-visual blue">
+                        <div class="cloud-icon">☁️</div>
+                        <div class="user-badges">
+                            <span class="badge green">Sarah M.</span>
+                            <span class="badge blue">Mike R.</span>
                         </div>
                     </div>
-                    <h3>Real-time Location</h3>
-                    <p>See opportunities around you instantly with live location tracking</p>
+                    <h3>Cloud-based accessibility</h3>
+                    <p>Access your jobs anywhere, anytime—no downloads or installations needed.</p>
                 </div>
                 <div class="power-card">
-                    <div class="power-icon purple">🔒</div>
-                    <h3>Secure Payments</h3>
-                    <p>Safe and instant payments through the app</p>
+                    <div class="power-visual green">
+                        <div class="security-icons">
+                            <span class="bolt">⚡</span>
+                            <span class="shield">🛡️</span>
+                        </div>
+                    </div>
+                    <h3>Fast & secure payments</h3>
+                    <p>Experience lightning-fast transactions with enterprise-level security.</p>
                 </div>
-                <div class="power-card">
-                    <div class="power-icon green">⚡</div>
-                    <h3>Instant Matching</h3>
-                    <p>Get matched with the right person in seconds</p>
+            </div>
+            
+            <div class="power-features-row">
+                <div class="power-feature">
+                    <div class="pf-icon">✨</div>
+                    <h4>Effortless experience</h4>
+                    <p>Intuitive interface and smart tools to speed up your process.</p>
                 </div>
-                <div class="power-card">
-                    <div class="power-icon blue">📱</div>
-                    <h3>Mobile First</h3>
-                    <p>Designed for on-the-go community connection</p>
+                <div class="power-feature">
+                    <div class="pf-icon">⊞</div>
+                    <h4>Hassle-free matching</h4>
+                    <p>Get connected with the right neighbor in just a few clicks.</p>
+                </div>
+                <div class="power-feature">
+                    <div class="pf-icon">📤</div>
+                    <h4>One-click booking</h4>
+                    <p>Book services instantly and connect with helpers effortlessly.</p>
                 </div>
             </div>
         </div>
@@ -278,44 +304,20 @@
     <!-- Social Proof Section -->
     <section class="social-proof">
         <div class="container">
-            <div class="proof-header">
-                <span class="section-tag">TRUSTED BY NEIGHBORS</span>
-                <h2>Loved by communities everywhere</h2>
-            </div>
-            
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p>"Found someone to help with my garden in 10 minutes. This app is a game-changer for our neighborhood!"</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SM</div>
-                        <div>
-                            <strong>Sarah M.</strong>
-                            <span>Homeowner</span>
-                        </div>
+            <div class="social-grid">
+                <h2>Loved by neighbors & communities</h2>
+                <div class="social-content">
+                    <div class="avatar-stack">
+                        <div class="stack-avatar">SM</div>
+                        <div class="stack-avatar">JK</div>
+                        <div class="stack-avatar">MR</div>
+                        <div class="stack-avatar">AL</div>
+                        <div class="stack-avatar">+</div>
                     </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p>"I've earned over $500 this month just helping neighbors with odd jobs. Love the flexibility!"</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">JK</div>
-                        <div>
-                            <strong>James K.</strong>
-                            <span>Handyman</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p>"Finally an app that actually connects me with real people nearby. The verification system makes me feel safe."</p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">MR</div>
-                        <div>
-                            <strong>Mike R.</strong>
-                            <span>Dog Walker</span>
-                        </div>
-                    </div>
+                    <blockquote>
+                        "This app has completely transformed how our neighborhood connects. Finding help and offering skills has never been easier!"
+                    </blockquote>
+                    <cite>Emily Ray, Community Member</cite>
                 </div>
             </div>
         </div>
@@ -324,51 +326,84 @@
     <!-- Pricing Section -->
     <section id="pricing" class="pricing-section">
         <div class="container">
-            <div class="pricing-header">
-                <span class="section-tag">PRICING</span>
-                <h2>Flexible plans for everyone</h2>
-                <p>Start free and upgrade as your community grows</p>
+            <div class="section-header center">
+                <h2>Flexible pricing plans</h2>
+                <p>Choose a plan that grows with you. Start free and upgrade anytime for more features and support</p>
             </div>
             
-            <div class="pricing-grid">
+            <div class="pricing-toggle">
+                <span>Monthly</span>
+                <label class="toggle">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Yearly <span class="save-badge">20% off</span></span>
+            </div>
+            
+            <div class="pricing-cards">
                 <div class="pricing-card">
-                    <div class="pricing-name">Free</div>
-                    <div class="pricing-price">$0<span>/month</span></div>
-                    <p class="pricing-desc">Perfect for getting started</p>
-                    <ul class="pricing-features">
-                        <li>✓ Browse local jobs</li>
-                        <li>✓ Basic profile</li>
-                        <li>✓ In-app messaging</li>
-                        <li>✓ 5 applications/month</li>
-                    </ul>
+                    <div class="pricing-header">
+                        <span class="plan-name">Starter plan</span>
+                        <p>For individuals & new users</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price">$0</span>
+                        <span class="period">/month</span>
+                    </div>
                     <a href="#download" class="btn btn-outline">Get Started</a>
+                    <div class="pricing-features">
+                        <p class="features-title">Included features:</p>
+                        <ul>
+                            <li>5 job applications/month</li>
+                            <li>Basic profile</li>
+                            <li>In-app messaging</li>
+                            <li>Community access</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="pricing-card popular">
-                    <div class="popular-badge">Most Popular</div>
-                    <div class="pricing-name">Pro</div>
-                    <div class="pricing-price">$9<span>/month</span></div>
-                    <p class="pricing-desc">For active community members</p>
-                    <ul class="pricing-features">
-                        <li>✓ Everything in Free</li>
-                        <li>✓ Unlimited applications</li>
-                        <li>✓ Priority in search</li>
-                        <li>✓ Verified badge</li>
-                        <li>✓ Analytics dashboard</li>
-                    </ul>
-                    <a href="#download" class="btn btn-primary">Get Pro</a>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-header">
+                        <span class="plan-name">Pro plan</span>
+                        <p>For active community members</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price">$9</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <a href="#download" class="btn btn-primary">Get Started</a>
+                    <div class="pricing-features">
+                        <p class="features-title">Included features:</p>
+                        <ul>
+                            <li>Unlimited applications</li>
+                            <li>Priority in search</li>
+                            <li>Verified badge</li>
+                            <li>Analytics dashboard</li>
+                            <li>Priority support</li>
+                        </ul>
+                    </div>
                 </div>
+                
                 <div class="pricing-card">
-                    <div class="pricing-name">Business</div>
-                    <div class="pricing-price">$29<span>/month</span></div>
-                    <p class="pricing-desc">For local businesses</p>
-                    <ul class="pricing-features">
-                        <li>✓ Everything in Pro</li>
-                        <li>✓ Business profile</li>
-                        <li>✓ Team accounts</li>
-                        <li>✓ Bulk job posting</li>
-                        <li>✓ Priority support</li>
-                    </ul>
-                    <a href="#download" class="btn btn-outline">Contact Sales</a>
+                    <div class="pricing-header">
+                        <span class="plan-name">Business plan</span>
+                        <p>For local businesses & teams</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price">$29</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <a href="#download" class="btn btn-outline">Get Started</a>
+                    <div class="pricing-features">
+                        <p class="features-title">Included features:</p>
+                        <ul>
+                            <li>Everything in Pro +</li>
+                            <li>Team accounts</li>
+                            <li>Bulk job posting</li>
+                            <li>API access</li>
+                            <li>24/7 priority support</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -378,49 +413,31 @@
     <section class="solution-section">
         <div class="container">
             <div class="solution-grid">
-                <div class="solution-content">
-                    <span class="section-tag">THE SOLUTION</span>
-                    <h2>The perfect community platform for every neighborhood</h2>
-                    <p>Whether you're looking to earn extra income, need help with tasks, or just want to connect with neighbors — Communally brings it all together.</p>
-                    
-                    <div class="solution-features">
-                        <div class="solution-feature">
-                            <div class="sf-icon">🏠</div>
-                            <div>
-                                <strong>Homeowners</strong>
-                                <p>Find trusted help for any task</p>
+                <div class="solution-mockup">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="phone-user">
+                                <div class="user-dot"></div>
+                                <span>Welcome to our community</span>
                             </div>
-                        </div>
-                        <div class="solution-feature">
-                            <div class="sf-icon">💼</div>
-                            <div>
-                                <strong>Gig Workers</strong>
-                                <p>Flexible local opportunities</p>
-                            </div>
-                        </div>
-                        <div class="solution-feature">
-                            <div class="sf-icon">🏪</div>
-                            <div>
-                                <strong>Local Businesses</strong>
-                                <p>Connect with your community</p>
+                            <div class="phone-list">
+                                <div class="phone-item green">Garden work <span>$35</span></div>
+                                <div class="phone-item orange">Pet sitting <span>$25</span></div>
+                                <div class="phone-item blue">Handyman <span>$50</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="solution-visual">
-                    <div class="solution-image">
-                        <div class="sol-card sol-1">
-                            <span>🌟</span>
-                            <p>4.9 Rating</p>
-                        </div>
-                        <div class="sol-card sol-2">
-                            <span>📍</span>
-                            <p>Local Only</p>
-                        </div>
-                        <div class="sol-card sol-3">
-                            <span>✓</span>
-                            <p>Verified</p>
-                        </div>
+                <div class="solution-content">
+                    <h2>The perfect community solution for every neighborhood</h2>
+                    <p>Discover how Communally fits your needs, whether you're a homeowner, freelancer, or local business.</p>
+                    <div class="solution-checklist">
+                        <div class="check-item">✓ Homeowners</div>
+                        <div class="check-item">✓ Gig workers</div>
+                        <div class="check-item">✓ Local businesses</div>
+                        <div class="check-item">✓ Pet owners</div>
+                        <div class="check-item">✓ Students</div>
+                        <div class="check-item">✓ Seniors</div>
                     </div>
                 </div>
             </div>
@@ -430,17 +447,46 @@
     <!-- CTA Section -->
     <section id="download" class="cta-section">
         <div class="container">
-            <div class="cta-card">
-                <div class="cta-glow"></div>
+            <div class="cta-content">
                 <h2>Take your community connection to the next level</h2>
-                <p>Join thousands of neighbors already using Communally</p>
-                <a href="#" class="btn btn-primary btn-large">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                    </svg>
-                    Download for iOS
-                </a>
-                <span class="cta-note">Free to download • No credit card required</span>
+                <p>Supercharge your neighborhood experience with powerful tools and effortless connection—perfect for everyone.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">Get Started</a>
+                    <a href="#" class="btn btn-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="cta-mockup">
+                <div class="cta-browser">
+                    <div class="browser-bar">
+                        <div class="browser-dots"><span></span><span></span><span></span></div>
+                        <span>communally.app</span>
+                    </div>
+                    <div class="browser-body">
+                        <div class="cta-sidebar">
+                            <div class="sidebar-nav">
+                                <span>🏠</span>
+                                <span>📍</span>
+                                <span>💬</span>
+                            </div>
+                        </div>
+                        <div class="cta-main">
+                            <div class="cta-card-display">
+                                <div class="display-label">Communally</div>
+                                <div class="display-image"></div>
+                            </div>
+                            <div class="cta-panel">
+                                <p>Button style</p>
+                                <div class="panel-buttons">
+                                    <span class="pb active">Primary</span>
+                                    <span class="pb">Secondary</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -464,32 +510,30 @@
                         <span>Communally</span>
                     </div>
                     <p>Connecting neighbors, building community.</p>
+                    <div class="social-icons">
+                        <a href="#" aria-label="Facebook">f</a>
+                        <a href="#" aria-label="Twitter">𝕏</a>
+                        <a href="#" aria-label="YouTube">▶</a>
+                        <a href="https://www.instagram.com/communallyapp/" target="_blank" aria-label="Instagram">📷</a>
+                    </div>
                 </div>
                 <div class="footer-links">
-                    <h4>Product</h4>
+                    <h4>Quick Links</h4>
+                    <a href="#">Home</a>
                     <a href="#features">Features</a>
                     <a href="#pricing">Pricing</a>
                     <a href="#download">Download</a>
                 </div>
                 <div class="footer-links">
-                    <h4>Company</h4>
-                    <a href="#">About</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="#">Careers</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Legal</h4>
-                    <a href="#">Privacy</a>
-                    <a href="#">Terms</a>
+                    <h4>All Pages</h4>
+                    <a href="#">About us</a>
+                    <a href="contact.html">Contact us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <span>© 2026 Communally. All rights reserved.</span>
-                <div class="footer-social">
-                    <a href="https://www.instagram.com/communallyapp/" target="_blank" aria-label="Follow us on Instagram">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                    </a>
-                </div>
+                <p>Designed with ❤️ for communities everywhere</p>
             </div>
         </div>
     </footer>
@@ -497,3 +541,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
