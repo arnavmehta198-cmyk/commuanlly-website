@@ -10,6 +10,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader">
+            <svg class="loader-logo" width="80" height="80" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="40" height="40" rx="12" fill="url(#loader-gradient)"/>
+                <path d="M20 10C14.48 10 10 14.48 10 20C10 25.52 14.48 30 20 30C25.52 30 30 25.52 30 20C30 14.48 25.52 10 20 10ZM20 14C21.66 14 23 15.34 23 17C23 18.66 21.66 20 20 20C18.34 20 17 18.66 17 17C17 15.34 18.34 14 20 14ZM20 27.2C17.5 27.2 15.29 25.92 14 23.98C14.03 21.99 18 20.9 20 20.9C21.99 20.9 25.97 21.99 26 23.98C24.71 25.92 22.5 27.2 20 27.2Z" fill="#1a1a1a"/>
+                <defs>
+                    <linearGradient id="loader-gradient" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#a3e635"/>
+                        <stop offset="1" stop-color="#22c55e"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+            <div class="loader-spinner"></div>
+            <span class="loader-text">Loading...</span>
+        </div>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <a href="index.html" class="logo">
@@ -65,7 +83,7 @@
             
             <!-- Phone Mockup -->
             <div class="phone-mockup">
-                <img src="https://placehold.co/280x560/FAF9F6/1a1a1a?text=Communally" alt="Communally App">
+                <img src="https://placehold.co/300x600/FAF9F6/1a1a1a?text=Communally" alt="Communally App">
             </div>
             
             <!-- Floating Cards Right -->
@@ -117,7 +135,7 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <span class="emoji-large">🔔</span>
+                        <span class="emoji-3d">🔔</span>
                     </div>
                     <div class="feature-card-content">
                         <div class="feature-card-icon">🔔</div>
@@ -128,7 +146,7 @@
                 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <span class="emoji-large">🤝</span>
+                        <span class="emoji-3d">🤝</span>
                     </div>
                     <div class="feature-card-content">
                         <div class="feature-card-icon">🤝</div>
@@ -139,7 +157,7 @@
                 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <span class="emoji-large">📍</span>
+                        <span class="emoji-3d">📍</span>
                     </div>
                     <div class="feature-card-content">
                         <div class="feature-card-icon">📍</div>
@@ -150,7 +168,7 @@
                 
                 <div class="feature-card">
                     <div class="feature-card-image">
-                        <span class="emoji-large">📊</span>
+                        <span class="emoji-3d">📊</span>
                     </div>
                     <div class="feature-card-content">
                         <div class="feature-card-icon">📊</div>
@@ -239,16 +257,14 @@
     <section id="download" class="cta">
         <div class="container">
             <div class="cta-card">
-                <div class="stars">
-                    <div class="star" style="top: 10%; left: 20%;"></div>
-                    <div class="star" style="top: 15%; left: 80%;"></div>
-                    <div class="star" style="top: 30%; left: 10%;"></div>
-                    <div class="star" style="top: 25%; left: 90%;"></div>
-                    <div class="star" style="top: 40%; left: 30%;"></div>
-                    <div class="star" style="top: 35%; left: 70%;"></div>
-                    <div class="star" style="top: 20%; left: 50%;"></div>
-                    <div class="star" style="top: 45%; left: 85%;"></div>
-                </div>
+                <!-- Shooting Stars -->
+                <div class="shooting-star"></div>
+                <div class="shooting-star"></div>
+                <div class="shooting-star"></div>
+                
+                <!-- Stars -->
+                <div class="stars" id="stars"></div>
+                
                 <h2>Experience community like never before with Communally</h2>
                 <a href="#" class="btn btn-primary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
