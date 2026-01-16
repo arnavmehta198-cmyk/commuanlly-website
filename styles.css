@@ -264,51 +264,158 @@ body {
 
 .btn-icon { font-size: 1.25rem; }
 
-/* Phone Mockups */
-.hero-phones {
+/* 3D Phone Showcase - Dual Overlapping Phones */
+.hero-phone-showcase {
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    align-items: center;
     margin-top: 3rem;
-    perspective: 1000px;
+    padding: 2rem;
+    perspective: 2000px;
 }
 
-.phone-frame {
+.phone-duo {
     position: relative;
-    background: #1a1a1a;
+    width: 500px;
+    height: 500px;
+    transform-style: preserve-3d;
+}
+
+.showcase-phone {
+    position: absolute;
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+}
+
+.phone-body {
+    position: relative;
+    width: 240px;
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
     border-radius: 45px;
-    padding: 12px;
+    padding: 10px;
     box-shadow: 
-        0 50px 100px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-    transition: transform 0.4s ease;
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.phone-frame:hover {
-    transform: translateY(-10px);
+.phone-screen-area {
+    width: 100%;
+    height: 480px;
+    border-radius: 38px;
+    overflow: hidden;
+    background: #000;
 }
 
-.phone-1 {
-    width: 280px;
-    transform: rotate(-5deg);
+.phone-screen-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.showcase-phone .phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #1a1a1a;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+}
+
+/* Back phone - Map view */
+.phone-back {
+    top: 0;
+    right: 50px;
+    transform: rotateY(-15deg) rotateX(5deg) rotateZ(5deg);
     z-index: 1;
 }
 
-.phone-2 {
-    width: 280px;
-    transform: rotate(5deg);
-    margin-top: 40px;
+.phone-back .phone-body {
+    box-shadow: 
+        0 0 0 1px rgba(255,255,255,0.05) inset,
+        30px 40px 80px rgba(0, 0, 0, 0.4);
 }
 
-.phone-1:hover {
-    transform: rotate(-5deg) translateY(-10px);
+/* Front phone - Profile view */
+.phone-front {
+    bottom: 0;
+    left: 50px;
+    transform: rotateY(10deg) rotateX(-5deg) rotateZ(-3deg);
+    z-index: 2;
 }
 
-.phone-2:hover {
-    transform: rotate(5deg) translateY(-10px);
+.phone-front .phone-body {
+    box-shadow: 
+        0 0 0 1px rgba(255,255,255,0.1) inset,
+        -20px 50px 80px rgba(0, 0, 0, 0.5);
 }
 
-.phone-notch {
+/* Hover effects */
+.phone-duo:hover .phone-back {
+    transform: rotateY(-20deg) rotateX(8deg) rotateZ(8deg) translateX(20px);
+}
+
+.phone-duo:hover .phone-front {
+    transform: rotateY(15deg) rotateX(-8deg) rotateZ(-5deg) translateX(-20px) translateY(-10px);
+}
+
+/* Floating animation */
+@keyframes floatPhones {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.phone-duo {
+    animation: floatPhones 6s ease-in-out infinite;
+}
+
+/* Smaller phone frames for other sections */
+.phone-frame-small {
+    position: relative;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border-radius: 40px;
+    padding: 10px;
+    max-width: 260px;
+    margin: 0 auto;
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.25),
+        -3px -3px 10px rgba(255, 255, 255, 0.05) inset;
+}
+
+.phone-frame-small .phone-notch {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 24px;
+    background: #1a1a1a;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+}
+
+.phone-frame-small .phone-screen-img {
+    width: 100%;
+    border-radius: 30px;
+    display: block;
+}
+
+.phone-frame-large {
+    position: relative;
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border-radius: 45px;
+    padding: 12px;
+    max-width: 280px;
+    box-shadow: 
+        0 40px 80px rgba(0, 0, 0, 0.3),
+        -3px -3px 15px rgba(255, 255, 255, 0.05) inset;
+}
+
+.phone-frame-large .phone-notch {
     position: absolute;
     top: 12px;
     left: 50%;
@@ -316,49 +423,14 @@ body {
     width: 100px;
     height: 28px;
     background: #1a1a1a;
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 18px 18px;
     z-index: 10;
 }
 
-.phone-screen-img {
+.phone-frame-large .phone-screen-img {
     width: 100%;
     border-radius: 35px;
     display: block;
-}
-
-.phone-frame-small {
-    position: relative;
-    background: #1a1a1a;
-    border-radius: 40px;
-    padding: 10px;
-    max-width: 300px;
-    margin: 0 auto;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
-}
-
-.phone-frame-small .phone-notch {
-    width: 80px;
-    height: 24px;
-    top: 10px;
-}
-
-.phone-frame-small .phone-screen-img {
-    border-radius: 30px;
-}
-
-.phone-frame-large {
-    position: relative;
-    background: #1a1a1a;
-    border-radius: 45px;
-    padding: 12px;
-    max-width: 320px;
-    box-shadow: 
-        0 40px 100px rgba(0, 0, 0, 0.25),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.phone-frame-large .phone-screen-img {
-    border-radius: 35px;
 }
 
 /* Old hero styles cleaned up - now using phone mockups */
@@ -418,6 +490,9 @@ body {
 
 .strategy-card {
     text-align: left;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .strategy-visual {
@@ -680,6 +755,9 @@ body {
     background: #232323;
     border-radius: var(--radius-xl);
     padding: 2rem;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .power-visual {
@@ -909,6 +987,9 @@ input:checked + .slider:before {
     background: var(--bg-gray);
     border-radius: var(--radius-xl);
     padding: 2rem;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .pricing-card.featured {
@@ -1093,22 +1174,20 @@ input:checked + .slider:before {
     gap: 1rem;
 }
 
-/* CTA Phone Mockups */
-.cta-phones {
+/* CTA Phone */
+.cta-phone-single {
     display: flex;
     justify-content: center;
-    gap: 2rem;
     margin-top: 2rem;
 }
 
-.cta-phone-1 {
-    width: 240px;
-    transform: rotate(-8deg) translateY(20px);
+.cta-phone-single .phone-frame-large {
+    transform: perspective(1000px) rotateY(-5deg) rotateX(5deg);
+    transition: transform 0.4s ease;
 }
 
-.cta-phone-2 {
-    width: 240px;
-    transform: rotate(8deg);
+.cta-phone-single .phone-frame-large:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-10px);
 }
 }
 
@@ -1195,8 +1274,9 @@ input:checked + .slider:before {
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .hero-phones { gap: 1rem; }
-    .phone-1, .phone-2 { width: 220px; }
+    .phone-duo { width: 400px; height: 420px; }
+    .phone-body { width: 200px; border-radius: 38px; }
+    .phone-screen-area { height: 400px; border-radius: 32px; }
     .strategy-cards { grid-template-columns: 1fr; }
     .features-grid, .integrations-grid, .solution-grid { grid-template-columns: 1fr; }
     .power-cards { grid-template-columns: 1fr; }
@@ -1210,18 +1290,16 @@ input:checked + .slider:before {
     .nav-links { display: none; }
     .hero { padding: 6rem 1.5rem 3rem; }
     .hero-title { font-size: 2.5rem; }
-    .hero-phones { 
-        flex-direction: column; 
-        align-items: center;
-        gap: 2rem;
-    }
-    .phone-1, .phone-2 { 
-        width: 260px; 
-        transform: none !important;
-        margin-top: 0;
-    }
-    .phone-frame-small { max-width: 260px; }
-    .phone-frame-large { max-width: 280px; }
+    .hero-phone-showcase { padding: 1rem; }
+    .phone-duo { width: 320px; height: 380px; }
+    .phone-body { width: 180px; border-radius: 35px; padding: 8px; }
+    .phone-screen-area { height: 360px; border-radius: 28px; }
+    .showcase-phone .phone-notch { width: 80px; height: 22px; }
+    .phone-back { right: 20px; }
+    .phone-front { left: 20px; }
+    .phone-frame-small { max-width: 200px; }
+    .phone-frame-large { max-width: 220px; }
     .section-header h2 { font-size: 2rem; }
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .cta-phone-single .phone-frame-large { max-width: 200px; }
 }
