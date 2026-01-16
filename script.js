@@ -12,61 +12,124 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar scroll effect
-let lastScroll = 0;
+// Navbar background on scroll
 const navbar = document.querySelector('.navbar');
-
 window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    
-    if (currentScroll > 100) {
-        navbar.style.padding = '1rem 0';
-        navbar.style.boxShadow = '0 4px 16px rgba(134, 239, 172, 0.15)';
+    if (window.pageYOffset > 50) {
+        navbar.style.background = 'rgba(35, 35, 35, 0.98)';
+        navbar.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.15)';
     } else {
-        navbar.style.padding = '1.5rem 0';
-        navbar.style.boxShadow = '0 2px 8px rgba(134, 239, 172, 0.1)';
+        navbar.style.background = 'rgba(35, 35, 35, 0.95)';
+        navbar.style.boxShadow = 'none';
     }
-    
-    lastScroll = currentScroll;
 });
 
-// Screenshot slideshow
-const screenshots = document.querySelectorAll('.phone-mockup .screenshot');
-let currentIndex = 0;
-
-function rotateScreenshots() {
-    if (screenshots.length > 1) {
-        screenshots[currentIndex].classList.remove('active');
-        currentIndex = (currentIndex + 1) % screenshots.length;
-        screenshots[currentIndex].classList.add('active');
-    }
-}
-
-// Rotate every 4 seconds
-setInterval(rotateScreenshots, 4000);
-
-// Fade in on scroll with stagger effect
+// Intersection Observer for fade-in animations
 const observerOptions = {
     threshold: 0.1,
-    rootMargin: '0px 0px -80px 0px'
+    rootMargin: '0px 0px -50px 0px'
 };
 
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
+    entries.forEach((entry) => {
         if (entry.isIntersecting) {
-            setTimeout(() => {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }, index * 100);
+            entry.target.classList.add('animate-in');
+            observer.unobserve(entry.target);
         }
     });
 }, observerOptions);
 
-// Observe all sections with initial hidden state
-document.querySelectorAll('.feature-card, .step, .stat').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+// Add animation styles
+const style = document.createElement('style');
+style.textContent = `
+    .animate-target {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    
+    .animate-target.animate-in {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .feature-card.animate-target {
+        transition-delay: calc(var(--delay, 0) * 0.1s);
+    }
+    
+    .step-card.animate-target {
+        transition-delay: calc(var(--delay, 0) * 0.15s);
+    }
+`;
+document.head.appendChild(style);
+
+// Observe elements for animation
+document.querySelectorAll('.feature-card, .step-card, .security-grid, .cta-card').forEach((el, index) => {
+    el.classList.add('animate-target');
+    el.style.setProperty('--delay', index);
     observer.observe(el);
 });
 
+// Floating cards parallax effect
+const floatingCards = document.querySelectorAll('.floating-card');
+let ticking = false;
+
+window.addEventListener('scroll', () => {
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+            floatingCards.forEach((card, index) => {
+                const speed = 0.05 + (index * 0.01);
+                const yPos = scrolled * speed;
+                card.style.transform = `translateY(${-yPos}px)`;
+            });
+            ticking = false;
+        });
+        ticking = true;
+    }
+});
+
+// Add twinkling effect to stars in CTA
+function createStars() {
+    const starsContainer = document.querySelector('.stars');
+    if (!starsContainer) return;
+    
+    // Add more stars dynamically
+    for (let i = 0; i < 30; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.cssText = `
+            top: ${Math.random() * 100}%;
+            left: ${Math.random() * 100}%;
+            width: ${Math.random() * 2 + 1}px;
+            height: ${Math.random() * 2 + 1}px;
+            animation: twinkle ${Math.random() * 3 + 2}s ease-in-out infinite;
+            animation-delay: ${Math.random() * 2}s;
+        `;
+        starsContainer.appendChild(star);
+    }
+}
+
+// Add twinkle animation
+const twinkleStyle = document.createElement('style');
+twinkleStyle.textContent = `
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+`;
+document.head.appendChild(twinkleStyle);
+
+// Initialize stars
+createStars();
+
+// Phone mockup image rotation (if multiple screenshots)
+const screenshots = document.querySelectorAll('.phone-mockup .screenshot');
+if (screenshots.length > 1) {
+    let currentIndex = 0;
+    setInterval(() => {
+        screenshots[currentIndex].classList.remove('active');
+        currentIndex = (currentIndex + 1) % screenshots.length;
+        screenshots[currentIndex].classList.add('active');
+    }, 4000);
+}
