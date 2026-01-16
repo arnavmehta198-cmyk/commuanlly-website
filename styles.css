@@ -1093,110 +1093,26 @@ input:checked + .slider:before {
     gap: 1rem;
 }
 
-.cta-mockup {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.cta-browser {
-    background: white;
-    border-radius: var(--radius-xl);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.15);
-    overflow: hidden;
-}
-
-.browser-bar {
+/* CTA Phone Mockups */
+.cta-phones {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
-    background: #fafafa;
-    border-bottom: 1px solid #eee;
-}
-
-.browser-bar span {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.browser-body {
-    display: flex;
-    min-height: 300px;
-}
-
-.cta-sidebar {
-    width: 60px;
-    background: #1a1a1a;
-    padding: 1rem;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.sidebar-nav span {
-    width: 32px;
-    height: 32px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
-}
-
-.cta-main {
-    flex: 1;
-    padding: 2rem;
-    display: flex;
     gap: 2rem;
+    margin-top: 2rem;
 }
 
-.cta-card-display {
-    flex: 1;
-    background: #f8f8f8;
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
+.cta-phone-1 {
+    width: 240px;
+    transform: rotate(-8deg) translateY(20px);
 }
 
-.display-label {
-    font-weight: 600;
-    margin-bottom: 1rem;
+.cta-phone-2 {
+    width: 240px;
+    transform: rotate(8deg);
+}
 }
 
-.display-image {
-    height: 150px;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b, #ec4899);
-    border-radius: var(--radius);
-}
-
-.cta-panel {
-    width: 150px;
-}
-
-.cta-panel p {
-    font-size: 0.85rem;
-    margin-bottom: 0.5rem;
-}
-
-.panel-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.pb {
-    padding: 0.5rem 1rem;
-    background: #f0f0f0;
-    border-radius: 8px;
-    font-size: 0.8rem;
-}
-
-.pb.active {
-    background: var(--accent);
-}
+/* Old browser mockup styles removed */
 
 /* Footer */
 .footer {
