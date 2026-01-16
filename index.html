@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loader">
@@ -51,7 +54,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section id="main-content" class="hero">
         <h1 class="hero-title">Reimagine How You Connect With Your Neighborhood</h1>
         
         <div class="hero-phone-container">
@@ -118,64 +121,54 @@
 
     <!-- Features Section -->
     <section id="features" class="features">
-        <div class="container">
-            <div class="features-header">
-                <div class="section-header">
-                    <h2>Your ultimate local hub, packed with features to simplify your community journey</h2>
-                    <p>From advanced matching to seamless connections, we've designed everything to elevate your neighborhood experience.</p>
-                    <a href="#download" class="btn btn-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                        </svg>
-                        Download now
-                    </a>
+        <div class="features-scattered">
+            <!-- Top row cards -->
+            <div class="feature-card card-1">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">🔔</span>
                 </div>
+                <span class="card-label">Notifications</span>
             </div>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-card-image">
-                        <span class="emoji-3d">🔔</span>
-                    </div>
-                    <div class="feature-card-content">
-                        <div class="feature-card-icon">🔔</div>
-                        <h3>Instant Notifications</h3>
-                        <p>Stay on top of your activity with instant alerts for all new opportunities nearby.</p>
-                    </div>
+            <div class="feature-card card-2">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">🤝</span>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-card-image">
-                        <span class="emoji-3d">🤝</span>
-                    </div>
-                    <div class="feature-card-content">
-                        <div class="feature-card-icon">🤝</div>
-                        <h3>Effortless Connections</h3>
-                        <p>Connect with neighbors instantly with a user-friendly interface designed for real people.</p>
-                    </div>
+                <span class="card-label">Connections</span>
+            </div>
+            
+            <div class="feature-card card-3">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">📍</span>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-card-image">
-                        <span class="emoji-3d">📍</span>
-                    </div>
-                    <div class="feature-card-content">
-                        <div class="feature-card-icon">📍</div>
-                        <h3>Truly Local</h3>
-                        <p>Everything within walking distance. Real opportunities from real neighbors.</p>
-                    </div>
+                <span class="card-label">Local</span>
+            </div>
+            
+            <!-- Center text -->
+            <div class="features-center-text">
+                <p>From finding help to offering skills, <strong>unlock the full potential of your neighborhood,</strong> all in one place.</p>
+            </div>
+            
+            <!-- Bottom row cards -->
+            <div class="feature-card card-4">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">💬</span>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-card-image">
-                        <span class="emoji-3d">📊</span>
-                    </div>
-                    <div class="feature-card-content">
-                        <div class="feature-card-icon">📊</div>
-                        <h3>Real-Time Insights</h3>
-                        <p>See what's happening in your area with live updates and activity tracking.</p>
-                    </div>
+                <span class="card-label">Messaging</span>
+            </div>
+            
+            <div class="feature-card card-5">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">⭐</span>
                 </div>
+                <span class="card-label">Reviews</span>
+            </div>
+            
+            <div class="feature-card card-6">
+                <div class="feature-card-inner">
+                    <span class="card-emoji">📊</span>
+                </div>
+                <span class="card-label">Insights</span>
             </div>
         </div>
     </section>

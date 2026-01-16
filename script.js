@@ -122,29 +122,123 @@ document.querySelectorAll('.security-grid, .cta-card').forEach((el) => {
     observer.observe(el);
 });
 
-// Parallax effect for floating cards
-const floatingCards = document.querySelectorAll('.floating-card');
-let mouseX = 0;
-let mouseY = 0;
+// ============================================
+// ENHANCED 3D FLOATING CARDS - Full Card Tilt
+// ============================================
 
-document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+const floatingCards = document.querySelectorAll('.floating-card');
+const heroContainer = document.querySelector('.hero-phone-container');
+
+// Store each card's current rotation and position
+const cardStates = new Map();
+
+floatingCards.forEach((card, index) => {
+    cardStates.set(card, {
+        rotateX: 0,
+        rotateY: 0,
+        translateX: 0,
+        translateY: 0,
+        translateZ: 0,
+        targetRotateX: 0,
+        targetRotateY: 0,
+        targetTranslateX: 0,
+        targetTranslateY: 0,
+        depth: (index % 3 + 1) * 8 // Different depth layers
+    });
 });
 
-function animateCards() {
-    floatingCards.forEach((card, index) => {
-        const depth = (index % 3 + 1) * 5;
-        const moveX = mouseX * depth;
-        const moveY = mouseY * depth;
-        
-        card.style.transform = `translate(${moveX}px, ${moveY}px)`;
+// Global mouse position tracking
+let globalMouseX = 0;
+let globalMouseY = 0;
+let isMouseInHero = false;
+
+// Track mouse position globally
+document.addEventListener('mousemove', (e) => {
+    globalMouseX = e.clientX;
+    globalMouseY = e.clientY;
+});// Track if mouse is in hero section
+if (heroContainer) {
+    heroContainer.addEventListener('mouseenter', () => {
+        isMouseInHero = true;
     });
     
-    requestAnimationFrame(animateCards);
+    heroContainer.addEventListener('mouseleave', () => {
+        isMouseInHero = false;
+        // Smoothly reset cards when mouse leaves
+        floatingCards.forEach(card => {
+            const state = cardStates.get(card);
+            state.targetRotateX = 0;
+            state.targetRotateY = 0;
+            state.targetTranslateX = 0;
+            state.targetTranslateY = 0;
+        });
+    });
 }
 
-animateCards();
+// Update card transforms based on mouse position
+function updateFloatingCards() {
+    floatingCards.forEach(card => {
+        const state = cardStates.get(card);
+        const rect = card.getBoundingClientRect();
+        const cardCenterX = rect.left + rect.width / 2;
+        const cardCenterY = rect.top + rect.height / 2;
+        
+        if (isMouseInHero) {
+            // Calculate distance from mouse to card center
+            const deltaX = globalMouseX - cardCenterX;
+            const deltaY = globalMouseY - cardCenterY;
+            
+            // Distance-based intensity (closer = stronger effect)
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const maxDistance = 500;
+            const intensity = Math.max(0, 1 - distance / maxDistance);
+            
+            // Calculate rotation based on mouse position relative to card
+            // The card should tilt TOWARD the mouse
+            const maxRotation = 25;
+            state.targetRotateY = (deltaX / 300) * maxRotation * intensity;
+            state.targetRotateX = -(deltaY / 300) * maxRotation * intensity;
+            
+            // Subtle translation based on depth
+            state.targetTranslateX = (deltaX / 50) * state.depth * intensity;
+            state.targetTranslateY = (deltaY / 50) * state.depth * intensity;
+        }
+        
+        // Smooth interpolation for fluid movement
+        const smoothing = 0.08;
+        state.rotateX += (state.targetRotateX - state.rotateX) * smoothing;
+        state.rotateY += (state.targetRotateY - state.rotateY) * smoothing;
+        state.translateX += (state.targetTranslateX - state.translateX) * smoothing;
+        state.translateY += (state.targetTranslateY - state.translateY) * smoothing;
+        
+        // Calculate translateZ based on rotation for depth effect
+        const rotationMagnitude = Math.sqrt(state.rotateX ** 2 + state.rotateY ** 2);
+        state.translateZ = rotationMagnitude * 0.5;
+        
+        // Apply the combined transform
+        card.style.transform = `
+            perspective(1000px)
+            translate3d(${state.translateX}px, ${state.translateY}px, ${state.translateZ}px)
+            rotateX(${state.rotateX}deg)
+            rotateY(${state.rotateY}deg)
+        `;
+    });
+    
+    requestAnimationFrame(updateFloatingCards);
+}
+
+updateFloatingCards();
+
+// Individual card hover for extra emphasis
+floatingCards.forEach(card => {
+    card.addEventListener('mouseenter', () => {
+        card.style.transition = 'box-shadow 0.3s ease';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transition = 'box-shadow 0.3s ease';
+    });
+});
 
 // 3D tilt effect for feature cards
 document.querySelectorAll('.feature-card').forEach(card => {
@@ -169,9 +263,7 @@ document.querySelectorAll('.feature-card').forEach(card => {
 
 // Phone mockup 3D effect
 const phoneMockup = document.querySelector('.phone-mockup');
-if (phoneMockup) {
-    const heroContainer = document.querySelector('.hero-phone-container');
-    
+if (phoneMockup && heroContainer) {
     heroContainer.addEventListener('mousemove', (e) => {
         const rect = heroContainer.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -180,14 +272,15 @@ if (phoneMockup) {
         const centerX = rect.width / 2;
         const centerY = rect.height / 2;
         
-        const rotateX = (y - centerY) / 50;
-        const rotateY = (centerX - x) / 50;
+        const rotateX = (y - centerY) / 60;
+        const rotateY = (centerX - x) / 60;
         
-        phoneMockup.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        phoneMockup.style.transform = `translateY(${Math.sin(Date.now() / 1000) * 15}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
     });
     
     heroContainer.addEventListener('mouseleave', () => {
-        phoneMockup.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        // Resume floating animation
+        phoneMockup.style.transform = '';
     });
 }
 
@@ -301,3 +394,15 @@ document.querySelectorAll('.emoji-3d').forEach(emoji => {
         emoji.style.animation = 'bounce3d 0.5s ease';
     });
 });
+
+// ============================================
+// Subtle parallax background effect
+// ============================================
+const hero = document.querySelector('.hero');
+if (hero) {
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * 0.3;
+        hero.style.backgroundPosition = `center ${rate}px`;
+    });
+}
