@@ -264,200 +264,104 @@ body {
 
 .btn-icon { font-size: 1.25rem; }
 
-/* Hero Visual */
-.hero-visual {
+/* Phone Mockups */
+.hero-phones {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 2rem;
+    margin-top: 3rem;
+    perspective: 1000px;
 }
 
-.hero-mockup-left {
-    flex: 1;
-    max-width: 500px;
-}
-
-.browser-window {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.browser-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem 1rem;
-    background: #fafafa;
-    border-bottom: 1px solid #eee;
-}
-
-.browser-dots {
-    display: flex;
-    gap: 6px;
-}
-
-.browser-dots span {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ddd;
-}
-
-.browser-dots span:first-child { background: #ff5f57; }
-.browser-dots span:nth-child(2) { background: #ffbd2e; }
-.browser-dots span:nth-child(3) { background: #28ca42; }
-
-.browser-url {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.browser-badge {
-    margin-left: auto;
-    background: var(--accent);
-    padding: 0.25rem 0.75rem;
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.browser-content {
-    display: flex;
-    min-height: 280px;
-}
-
-.mockup-sidebar {
-    width: 50px;
+.phone-frame {
+    position: relative;
     background: #1a1a1a;
-    padding: 1rem 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
+    border-radius: 45px;
+    padding: 12px;
+    box-shadow: 
+        0 50px 100px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    transition: transform 0.4s ease;
 }
 
-.sidebar-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    opacity: 0.5;
+.phone-frame:hover {
+    transform: translateY(-10px);
 }
 
-.sidebar-icon.active {
-    background: rgba(255,255,255,0.1);
-    opacity: 1;
+.phone-1 {
+    width: 280px;
+    transform: rotate(-5deg);
+    z-index: 1;
 }
 
-.mockup-main {
-    flex: 1;
-    padding: 1.5rem;
-    background: #f8f8f8;
+.phone-2 {
+    width: 280px;
+    transform: rotate(5deg);
+    margin-top: 40px;
 }
 
-.mockup-card {
-    display: flex;
-    gap: 1rem;
-    background: white;
-    padding: 1rem;
-    border-radius: var(--radius);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+.phone-1:hover {
+    transform: rotate(-5deg) translateY(-10px);
 }
 
-.mockup-card img {
-    width: 80px;
-    height: 80px;
-    border-radius: var(--radius);
-    object-fit: cover;
+.phone-2:hover {
+    transform: rotate(5deg) translateY(-10px);
 }
 
-.mockup-title {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.mockup-card-content p {
-    font-size: 0.8rem;
-    color: var(--text-light);
-}
-
-.hero-mockup-right {
-    position: relative;
-    width: 250px;
-}
-
-.phone-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-}
-
-.phone-header {
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.abstract-shape {
-    position: relative;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.shape-ring {
+.phone-notch {
     position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100px;
-    height: 100px;
-    border: 15px solid var(--accent);
-    border-radius: 50%;
+    height: 28px;
+    background: #1a1a1a;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
 }
 
-.ring-2 {
-    width: 70px;
-    height: 70px;
-    border-color: #fbbf24;
-    transform: translate(30px, -10px);
+.phone-screen-img {
+    width: 100%;
+    border-radius: 35px;
+    display: block;
 }
 
-.ring-3 {
-    width: 50px;
-    height: 50px;
-    border-color: #f472b6;
-    transform: translate(-20px, 20px);
+.phone-frame-small {
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 40px;
+    padding: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
 }
 
-.floating-cards {
-    position: absolute;
-    top: 100%;
-    left: -20px;
-    right: -20px;
+.phone-frame-small .phone-notch {
+    width: 80px;
+    height: 24px;
+    top: 10px;
 }
 
-.float-card {
-    background: white;
-    padding: 0.75rem 1rem;
-    border-radius: var(--radius);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    margin-bottom: 0.75rem;
+.phone-frame-small .phone-screen-img {
+    border-radius: 30px;
 }
 
-.float-card strong {
-    margin-left: auto;
-    color: var(--accent-dark);
+.phone-frame-large {
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 45px;
+    padding: 12px;
+    max-width: 320px;
+    box-shadow: 
+        0 40px 100px rgba(0, 0, 0, 0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
+
+.phone-frame-large .phone-screen-img {
+    border-radius: 35px;
+}
+
+/* Old hero styles cleaned up - now using phone mockups */
 
 /* Logos Bar */
 .logos-bar {
@@ -635,88 +539,14 @@ body {
 
 .features-mockup {
     text-align: center;
-}
-
-.app-window-small {
-    background: white;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-    overflow: hidden;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.app-header-small {
-    padding: 0.75rem 1rem;
-    background: #4f46e5;
-    color: white;
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-.app-content-small {
-    display: flex;
-    min-height: 200px;
-}
-
-.content-sidebar {
-    width: 150px;
-    padding: 1rem;
-    background: #f8f8f8;
-    border-right: 1px solid #eee;
-}
-
-.user-card {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: white;
-}
-
-.user-avatar.green { background: var(--accent-dark); }
-
-.user-card strong {
-    font-size: 0.75rem;
-    display: block;
-}
-
-.user-card p {
-    font-size: 0.7rem;
-    color: var(--text-light);
-}
-
-.content-main {
-    flex: 1;
-    padding: 1rem;
-}
-
-.job-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-}
-
-.job-item {
-    padding: 0.5rem;
-    background: #f5f5f5;
-    border-radius: 8px;
-    font-size: 0.8rem;
+    align-items: center;
 }
 
 .platform-note {
-    margin-top: 1rem;
-    font-size: 0.85rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
 }
 
@@ -1449,9 +1279,8 @@ input:checked + .slider:before {
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .hero-visual { flex-direction: column; }
-    .hero-mockup-left { max-width: 100%; }
-    .hero-mockup-right { display: none; }
+    .hero-phones { gap: 1rem; }
+    .phone-1, .phone-2 { width: 220px; }
     .strategy-cards { grid-template-columns: 1fr; }
     .features-grid, .integrations-grid, .solution-grid { grid-template-columns: 1fr; }
     .power-cards { grid-template-columns: 1fr; }
@@ -1465,6 +1294,18 @@ input:checked + .slider:before {
     .nav-links { display: none; }
     .hero { padding: 6rem 1.5rem 3rem; }
     .hero-title { font-size: 2.5rem; }
+    .hero-phones { 
+        flex-direction: column; 
+        align-items: center;
+        gap: 2rem;
+    }
+    .phone-1, .phone-2 { 
+        width: 260px; 
+        transform: none !important;
+        margin-top: 0;
+    }
+    .phone-frame-small { max-width: 260px; }
+    .phone-frame-large { max-width: 280px; }
     .section-header h2 { font-size: 2rem; }
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
 }
