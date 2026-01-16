@@ -615,55 +615,138 @@ body {
 /* Features Scattered Section */
 .features-scattered-section {
     padding: 6rem 0;
-    background: var(--bg-cream);
+    background: #FAF9F6;
+    position: relative;
+    min-height: 700px;
 }
 
-.features-layout {
+/* Scattered cards container */
+.features-scattered {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    height: 650px;
+    padding: 2rem;
+}
+
+.feature-card {
+    position: absolute;
+    width: 180px;
+    cursor: pointer;
+    transition: transform 0.4s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.05);
+}
+
+.feature-card-inner {
+    width: 180px;
+    height: 220px;
+    border-radius: 28px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
+    justify-content: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    transition: box-shadow 0.3s ease;
 }
 
-.feature-cards-left,
-.feature-cards-right {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.feature-card:hover .feature-card-inner {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.2);
 }
 
-.mini-card {
-    padding: 1.5rem 2rem;
-    border-radius: var(--radius-lg);
-    text-align: center;
-    transition: transform 0.3s ease;
+.card-emoji {
+    font-size: 5rem;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
 }
 
-.mini-card:hover {
-    transform: rotate(-5deg) scale(1.05);
-}
-
-.mini-card span {
-    font-size: 2.5rem;
+.card-label {
     display: block;
-    margin-bottom: 0.5rem;
-}
-
-.mini-card p {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-dark);
-}
-
-.mini-card.purple { background: linear-gradient(135deg, #c4b5fd, #a78bfa); }
-.mini-card.blue { background: linear-gradient(135deg, #93c5fd, #60a5fa); }
-.mini-card.green { background: linear-gradient(135deg, #86efac, #4ade80); }
-.mini-card.dark { background: linear-gradient(135deg, #525252, #404040); color: white; }
-.mini-card.dark p { color: white; }
-
-.features-center {
-    max-width: 400px;
     text-align: center;
+    margin-top: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-dark);
+    font-style: italic;
+    font-family: 'Instrument Serif', Georgia, serif;
+}
+
+/* Card positions and colors - matching reference exactly */
+.card-1 {
+    left: 8%;
+    top: 5%;
+    transform: rotate(-8deg);
+}
+.card-1 .feature-card-inner {
+    background: linear-gradient(135deg, #c026d3 0%, #a21caf 100%);
+}
+
+.card-2 {
+    left: 50%;
+    top: 0%;
+    transform: translateX(-50%);
+}
+.card-2 .feature-card-inner {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.card-3 {
+    right: 8%;
+    top: 5%;
+    transform: rotate(8deg);
+}
+.card-3 .feature-card-inner {
+    background: linear-gradient(160deg, #22c55e 0%, #16a34a 40%, #dc2626 100%);
+}
+
+.card-4 {
+    left: 8%;
+    bottom: 5%;
+    transform: rotate(8deg);
+}
+.card-4 .feature-card-inner {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.card-5 {
+    left: 50%;
+    bottom: 0%;
+    transform: translateX(-50%);
+}
+.card-5 .feature-card-inner {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.card-6 {
+    right: 8%;
+    bottom: 5%;
+    transform: rotate(-8deg);
+}
+.card-6 .feature-card-inner {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Center text */
+.features-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    max-width: 420px;
+    padding: 2rem;
+}
+
+.features-center-text p {
+    font-size: 1.25rem;
+    line-height: 1.7;
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+}
+
+.features-center-text strong {
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
 .features-center h2 {
@@ -1341,6 +1424,32 @@ body {
         transform: none;
     }
     
+    /* Features scattered responsive */
+    .features-scattered {
+        height: auto;
+        min-height: 800px;
+    }
+    
+    .feature-card {
+        width: 140px;
+    }
+    
+    .feature-card-inner {
+        width: 140px;
+        height: 170px;
+    }
+    
+    .card-emoji {
+        font-size: 3.5rem;
+    }
+    
+    .card-1 { left: 5%; top: 2%; }
+    .card-2 { top: 2%; }
+    .card-3 { right: 5%; top: 2%; }
+    .card-4 { left: 5%; bottom: 2%; }
+    .card-5 { bottom: 2%; }
+    .card-6 { right: 5%; bottom: 2%; }
+    
     .floating-element {
         display: none;
     }
@@ -1386,6 +1495,54 @@ body {
         grid-template-columns: 1fr;
     }
     
+    /* Features scattered mobile */
+    .features-scattered-section {
+        min-height: auto;
+        padding: 4rem 1rem;
+    }
+    
+    .features-scattered {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        height: auto;
+        min-height: auto;
+        position: static;
+    }
+    
+    .feature-card {
+        position: static;
+        width: 100%;
+        transform: none !important;
+    }
+    
+    .feature-card-inner {
+        width: 100%;
+        height: 150px;
+        border-radius: 20px;
+    }
+    
+    .card-emoji {
+        font-size: 3rem;
+    }
+    
+    .card-label {
+        font-size: 0.9rem;
+    }
+    
+    .features-center-text {
+        position: static;
+        transform: none;
+        grid-column: span 2;
+        order: -1;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .features-center-text p {
+        font-size: 1.1rem;
+    }
+    
     .strategy-card.purple {
         grid-column: span 1;
     }
@@ -1423,16 +1580,26 @@ body {
         font-size: 2rem;
     }
     
-    .mini-card {
-        padding: 1rem;
+    .features-scattered {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
     }
     
-    .mini-card span {
-        font-size: 1.75rem;
+    .feature-card-inner {
+        height: 120px;
+        border-radius: 16px;
     }
     
-    .feature-cards-left,
-    .feature-cards-right {
-        flex-direction: column;
+    .card-emoji {
+        font-size: 2.5rem;
+    }
+    
+    .card-label {
+        font-size: 0.8rem;
+        margin-top: 0.5rem;
+    }
+    
+    .features-center-text p {
+        font-size: 1rem;
     }
 }
