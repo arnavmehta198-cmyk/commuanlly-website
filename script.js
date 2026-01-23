@@ -130,9 +130,7 @@ function createParticles() {
         particle.style.cssText = 'position:absolute;width:' + size + 'px;height:' + size + 'px;background:linear-gradient(135deg,rgba(163,230,53,0.3),rgba(34,197,94,0.2));border-radius:50%;left:' + (Math.random()*100) + '%;top:' + (Math.random()*100) + '%;animation:floatParticle ' + (8+Math.random()*12) + 's ease-in-out infinite;animation-delay:' + (Math.random()*5) + 's;filter:blur(1px);';
         container.appendChild(particle);
     }
-}
-
-const particleStyle = document.createElement('style');
+}const particleStyle = document.createElement('style');
 particleStyle.textContent = '@keyframes floatParticle{0%,100%{transform:translate(0,0) scale(1);opacity:0.3}25%{transform:translate(50px,-80px) scale(1.2);opacity:0.6}50%{transform:translate(-30px,-150px) scale(0.8);opacity:0.4}75%{transform:translate(70px,-100px) scale(1.1);opacity:0.5}}';
 document.head.appendChild(particleStyle);
 createParticles();
