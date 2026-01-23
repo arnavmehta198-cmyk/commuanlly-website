@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Communally</title>
+    <meta name="description" content="Contact Communally - Get in touch with our team for support, feedback, or partnership inquiries.">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Contact Us - Communally">
+    <meta property="og:description" content="Get in touch with the Communally team.">
+    
+    <title>Contact Us - Communally | Local Jobs & Neighborhood Help</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='8' fill='%2322c55e'/><text x='20' y='28' text-anchor='middle' fill='white' font-size='20'>C</text></svg>">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Skip to main content -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Navigation -->
-    <nav class="navbar">
-        <a href="index.html" class="logo">
-            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="logo" aria-label="Communally home">
+            <svg width="32" height="32" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="40" height="40" rx="12" fill="url(#logo-gradient)"/>
                 <path d="M20 10C14.48 10 10 14.48 10 20C10 25.52 14.48 30 20 30C25.52 30 30 25.52 30 20C30 14.48 25.52 10 20 10ZM20 14C21.66 14 23 15.34 23 17C23 18.66 21.66 20 20 20C18.34 20 17 18.66 17 17C17 15.34 18.34 14 20 14ZM20 27.2C17.5 27.2 15.29 25.92 14 23.98C14.03 21.99 18 20.9 20 20.9C21.99 20.9 25.97 21.99 26 23.98C24.71 25.92 22.5 27.2 20 27.2Z" fill="#1a1a1a"/>
                 <defs>
@@ -25,76 +39,120 @@
             </svg>
             <span>Communally</span>
         </a>
-        <ul class="nav-menu">
-            <li><a href="index.html#features">Features</a></li>
-            <li><a href="index.html#how-it-works">How It Works</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="index.html#download" class="nav-cta">Download App</a></li>
-        </ul>
+        
+        <!-- Mobile menu button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        
+        <div class="nav-links" id="navLinks">
+            <a href="index.html#features">Features</a>
+            <a href="index.html#how-it-works">How It Works</a>
+            <a href="index.html#faq">FAQ</a>
+            <a href="contact.html" aria-current="page">Contact</a>
+        </div>
+        <a href="https://apps.apple.com/app/communally" class="nav-cta" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            Get the App
+        </a>
     </nav>
 
-    <!-- Hero -->
-    <section class="contact-hero">
-        <div class="container">
-            <h1>Get in Touch</h1>
-            <p>We'd love to hear from you. Reach out anytime!</p>
-        </div>
-    </section>
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero -->
+        <section class="contact-hero" aria-labelledby="contact-title">
+            <div class="container">
+                <h1 id="contact-title">Get in Touch</h1>
+                <p>Have a question, feedback, or just want to say hi? We'd love to hear from you.</p>
+            </div>
+        </section>
 
-    <!-- Contact Content -->
-    <section class="contact-content">
-        <div class="container">
-            <div class="contact-grid">
-                <!-- Form -->
-                <div class="contact-form-section">
-                    <h2>Send us a message</h2>
-                    <form class="contact-form" id="contactForm">
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" placeholder="Your name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" placeholder="your@email.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subject">Subject</label>
-                            <input type="text" id="subject" placeholder="What's this about?" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Message</label>
-                            <textarea id="message" placeholder="Tell us more..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
-                    </form>
-                </div>
-
-                <!-- Info -->
-                <div class="contact-info">
-                    <h2>Contact Information</h2>
-                    <div class="info-card">
-                        <h3>📧 Email</h3>
-                        <p>hello@communally.com</p>
-                        <p>support@communally.com</p>
+        <!-- Contact Content -->
+        <section class="contact-content">
+            <div class="container">
+                <div class="contact-grid">
+                    <!-- Form -->
+                    <div class="contact-form-section">
+                        <h2>Send us a message</h2>
+                        <form class="contact-form" id="contactForm" novalidate>
+                            <div class="form-group">
+                                <label for="name">Name <span aria-hidden="true">*</span></label>
+                                <input type="text" id="name" name="name" placeholder="Your name" required aria-required="true" autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email <span aria-hidden="true">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="your@email.com" required aria-required="true" autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject <span aria-hidden="true">*</span></label>
+                                <input type="text" id="subject" name="subject" placeholder="What's this about?" required aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message <span aria-hidden="true">*</span></label>
+                                <textarea id="message" name="message" placeholder="Tell us more..." required aria-required="true" rows="5"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Message</button>
+                        </form>
                     </div>
-                    <div class="info-card">
-                        <h3>📱 Follow Us</h3>
-                        <p>Stay connected and get the latest updates</p>
-                        <a href="https://www.instagram.com/communallyapp/" target="_blank" class="social-link">
-                            📷 @communallyapp
-                        </a>
+
+                    <!-- Info -->
+                    <div class="contact-info">
+                        <h2>Contact Information</h2>
+                        
+                        <div class="info-card">
+                            <h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                Email
+                            </h3>
+                            <p><a href="mailto:hello@communally.com">hello@communally.com</a></p>
+                            <p><a href="mailto:support@communally.com">support@communally.com</a></p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                Response Time
+                            </h3>
+                            <p>We typically respond within 24 hours on business days.</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h3>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                    <rect x="2" y="9" width="4" height="12"></rect>
+                                    <circle cx="4" cy="4" r="2"></circle>
+                                </svg>
+                                Follow Us
+                            </h3>
+                            <p>Stay connected and get the latest updates</p>
+                            <a href="https://www.instagram.com/communallyapp/" target="_blank" rel="noopener" class="social-link">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                                @communallyapp
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <rect width="40" height="40" rx="12" fill="url(#logo-gradient-footer)"/>
                         <path d="M20 10C14.48 10 10 14.48 10 20C10 25.52 14.48 30 20 30C25.52 30 30 25.52 30 20C30 14.48 25.52 10 20 10ZM20 14C21.66 14 23 15.34 23 17C23 18.66 21.66 20 20 20C18.34 20 17 18.66 17 17C17 15.34 18.34 14 20 14ZM20 27.2C17.5 27.2 15.29 25.92 14 23.98C14.03 21.99 18 20.9 20 20.9C21.99 20.9 25.97 21.99 26 23.98C24.71 25.92 22.5 27.2 20 27.2Z" fill="#1a1a1a"/>
                         <defs>
@@ -106,21 +164,19 @@
                     </svg>
                     <span>Communally</span>
                 </div>
-                <div class="footer-links">
+                <nav class="footer-links" aria-label="Footer navigation">
                     <a href="index.html">Home</a>
-                    <a href="#">Privacy</a>
-                    <a href="#">Terms</a>
-                </div>
+                    <a href="index.html#features">Features</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Communally. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We\'ll get back to you soon.');
-            this.reset();
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
