@@ -379,8 +379,8 @@
         },
 
         /**
-         * Apple Maps–Identical Animated Map
-         * Pixel-perfect Apple design system compliance
+         * Apple Maps Background - SVG Implementation
+         * Indistinguishable from Apple Maps screenshot
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
@@ -388,493 +388,283 @@
             const cityLabel = document.getElementById('cityLabel');
             const userCardsContainer = document.getElementById('mapUserCards');
             
-            if (!mapContainer || !container || typeof L === 'undefined') return;
+            if (!mapContainer || !container) return;
             
-            // Locked city set (US only)
+            // Cities
             const cities = [
-                {
-                    name: 'New York City',
-                    state: 'NY',
-                    coords: [40.7128, -74.0060],
-                    members: [
-                        { name: 'Sarah Mitchell', initial: 'S' },
-                        { name: 'Michael Chen', initial: 'M' },
-                        { name: 'Emma Wilson', initial: 'E' }
-                    ]
-                },
-                {
-                    name: 'Los Angeles',
-                    state: 'CA',
-                    coords: [34.0522, -118.2437],
-                    members: [
-                        { name: 'David Park', initial: 'D' },
-                        { name: 'Sofia Garcia', initial: 'S' }
-                    ]
-                },
-                {
-                    name: 'San Francisco',
-                    state: 'CA',
-                    coords: [37.7749, -122.4194],
-                    members: [
-                        { name: 'Alex Kumar', initial: 'A' },
-                        { name: 'Jordan Lee', initial: 'J' },
-                        { name: 'Sam Rivera', initial: 'S' }
-                    ]
-                },
-                {
-                    name: 'Chicago',
-                    state: 'IL',
-                    coords: [41.8781, -87.6298],
-                    members: [
-                        { name: 'Jamie Walsh', initial: 'J' },
-                        { name: 'Drew Morgan', initial: 'D' }
-                    ]
-                },
-                {
-                    name: 'Austin',
-                    state: 'TX',
-                    coords: [30.2672, -97.7431],
-                    members: [
-                        { name: 'Chris Bennett', initial: 'C' },
-                        { name: 'Taylor Scott', initial: 'T' }
-                    ]
-                },
-                {
-                    name: 'Seattle',
-                    state: 'WA',
-                    coords: [47.6062, -122.3321],
-                    members: [
-                        { name: 'Casey Harper', initial: 'C' },
-                        { name: 'Riley Nguyen', initial: 'R' }
-                    ]
-                },
-                {
-                    name: 'Miami',
-                    state: 'FL',
-                    coords: [25.7617, -80.1918],
-                    members: [
-                        { name: 'Nicolas Vega', initial: 'N' },
-                        { name: 'Luna Rodriguez', initial: 'L' }
-                    ]
-                }
+                { name: 'San Francisco', members: [{ name: 'Alex Kumar', initial: 'A' }, { name: 'Jordan Lee', initial: 'J' }, { name: 'Sam Rivera', initial: 'S' }] },
+                { name: 'New York', members: [{ name: 'Sarah Mitchell', initial: 'S' }, { name: 'Michael Chen', initial: 'M' }, { name: 'Emma Wilson', initial: 'E' }] },
+                { name: 'Los Angeles', members: [{ name: 'David Park', initial: 'D' }, { name: 'Sofia Garcia', initial: 'S' }] },
+                { name: 'Chicago', members: [{ name: 'Jamie Walsh', initial: 'J' }, { name: 'Drew Morgan', initial: 'D' }] },
+                { name: 'Austin', members: [{ name: 'Chris Bennett', initial: 'C' }, { name: 'Taylor Scott', initial: 'T' }] },
+                { name: 'Seattle', members: [{ name: 'Casey Harper', initial: 'C' }, { name: 'Riley Nguyen', initial: 'R' }] },
+                { name: 'Miami', members: [{ name: 'Nicolas Vega', initial: 'N' }, { name: 'Luna Rodriguez', initial: 'L' }] }
             ];
             
             let currentCityIndex = 0;
-            let map = null;
-            let markersLayer = null;
             let isAnimating = false;
-            let cursor = null;
             
-            // Apple system easing
-            const APPLE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
-            const ZOOM_LEVEL = 13;
+            // Apple Maps exact colors
+            const COLORS = {
+                land: '#F5F5F0',
+                water: '#B8D4E3',
+                waterDark: '#A8C4D3',
+                park: '#D4E4D4',
+                road: '#FFFFFF',
+                roadMinor: '#FAFAFA',
+                highway: '#F0E6D3',
+                text: '#8E8E93'
+            };
             
-            // Inject Apple-exact styles
+            // Generate Apple Maps SVG
+            const generateMapSVG = (seed = 0) => {
+                const s = seed * 1000;
+                return `
+                <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Land base -->
+                    <rect width="100%" height="100%" fill="${COLORS.land}"/>
+                    
+                    <!-- Water bodies - soft edges -->
+                    <ellipse cx="${200 + s % 300}" cy="${150}" rx="280" ry="180" fill="${COLORS.water}" opacity="0.85"/>
+                    <ellipse cx="${900 - s % 200}" cy="${650}" rx="350" ry="200" fill="${COLORS.water}" opacity="0.8"/>
+                    <path d="M${-50 + s % 100} 400 Q${200} ${350 + s % 50} ${400} ${420} T${700} ${380} T${1000} ${450} L1200 400 L1200 500 L0 500 Z" fill="${COLORS.waterDark}" opacity="0.5"/>
+                    
+                    <!-- Parks - barely visible -->
+                    <ellipse cx="${350}" cy="${280 + s % 40}" rx="60" ry="45" fill="${COLORS.park}" opacity="0.6"/>
+                    <ellipse cx="${750}" cy="${450}" rx="80" ry="55" fill="${COLORS.park}" opacity="0.55"/>
+                    <ellipse cx="${550}" cy="${180}" rx="45" ry="35" fill="${COLORS.park}" opacity="0.5"/>
+                    <rect x="${850}" y="${250}" width="70" height="50" rx="25" fill="${COLORS.park}" opacity="0.5"/>
+                    
+                    <!-- Major roads - very subtle -->
+                    <line x1="0" y1="400" x2="1200" y2="400" stroke="${COLORS.road}" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+                    <line x1="0" y1="550" x2="1200" y2="550" stroke="${COLORS.road}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+                    <line x1="600" y1="0" x2="600" y2="800" stroke="${COLORS.road}" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+                    <line x1="300" y1="0" x2="300" y2="800" stroke="${COLORS.road}" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+                    <line x1="900" y1="0" x2="900" y2="800" stroke="${COLORS.road}" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+                    
+                    <!-- Minor roads - extremely light -->
+                    <line x1="0" y1="250" x2="500" y2="250" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                    <line x1="700" y1="300" x2="1200" y2="300" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                    <line x1="150" y1="0" x2="150" y2="350" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+                    <line x1="450" y1="200" x2="450" y2="600" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+                    <line x1="750" y1="100" x2="750" y2="500" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                    <line x1="1050" y1="0" x2="1050" y2="400" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+                    <line x1="0" y1="650" x2="400" y2="650" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                    <line x1="800" y1="700" x2="1200" y2="700" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                    
+                    <!-- Highway curves - subtle warm tone -->
+                    <path d="M0 200 Q300 150 500 250 T900 180 T1200 250" fill="none" stroke="${COLORS.highway}" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
+                    <path d="M0 600 Q400 650 700 580 T1200 650" fill="none" stroke="${COLORS.highway}" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+                </svg>`;
+            };
+            
+            // Inject styles
             const injectStyles = () => {
                 const style = document.createElement('style');
                 style.textContent = `
-                    /* Hide all Leaflet chrome */
-                    .leaflet-control-container,
-                    .leaflet-control-attribution,
-                    .leaflet-control-zoom { 
-                        display: none !important; 
-                    }
-                    
-                    /* Apple Maps base */
-                    .leaflet-container {
-                        background: #F5F5F7 !important;
-                        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
-                    }
-                    
-                    /* GPU acceleration */
-                    .leaflet-map-pane,
-                    .leaflet-tile-pane,
-                    .leaflet-marker-pane,
-                    .leaflet-tile {
-                        will-change: transform;
-                        transform: translateZ(0);
-                        backface-visibility: hidden;
-                    }
-                    
-                    /* Apple-style location pin */
-                    .apple-map-pin {
-                        width: 28px;
-                        height: 28px;
-                        background: #007AFF;
-                        border-radius: 50%;
-                        border: 3px solid #FFFFFF;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-                        transition: transform 0.3s ${APPLE_EASE};
-                    }
-                    
-                    .apple-map-pin:hover {
-                        transform: scale(1.05);
-                    }
-                    
-                    /* Subtle pulse ring */
-                    .apple-map-pin::after {
-                        content: '';
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 28px;
-                        height: 28px;
-                        border: 1.5px solid rgba(0, 122, 255, 0.3);
-                        border-radius: 50%;
-                        transform: translate(-50%, -50%);
-                        animation: applePulse 2.5s ${APPLE_EASE} infinite;
-                    }
-                    
-                    @keyframes applePulse {
-                        0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-                        100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
-                    }
-                    
-                    /* Member pin - neutral gray */
-                    .member-pin {
-                        width: 36px;
-                        height: 36px;
-                        background: #F5F5F7;
-                        border-radius: 50%;
-                        border: 2px solid #FFFFFF;
-                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #1D1D1F;
-                        letter-spacing: -0.01em;
-                        transition: transform 0.3s ${APPLE_EASE}, box-shadow 0.3s ${APPLE_EASE};
-                    }
-                    
-                    .member-pin:hover {
-                        transform: scale(1.05);
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                    }
-                    
-                    /* Apple cursor */
-                    .apple-cursor {
-                        position: fixed;
-                        width: 20px;
-                        height: 20px;
-                        border: 1.5px solid rgba(0, 0, 0, 0.4);
-                        border-radius: 50%;
-                        pointer-events: none;
-                        z-index: 100000;
-                        transform: translate(-50%, -50%);
-                        transition: transform 0.15s ${APPLE_EASE}, border-color 0.2s ${APPLE_EASE}, background 0.2s ${APPLE_EASE};
-                        mix-blend-mode: exclusion;
-                        background: transparent;
-                    }
-                    
-                    .apple-cursor::after {
-                        content: '';
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 4px;
-                        height: 4px;
-                        background: rgba(0, 0, 0, 0.5);
-                        border-radius: 50%;
-                        transform: translate(-50%, -50%);
-                    }
-                    
-                    .apple-cursor.hovering {
-                        transform: translate(-50%, -50%) scale(1.4);
-                        border-color: rgba(0, 122, 255, 0.6);
-                        background: rgba(0, 122, 255, 0.08);
-                    }
-                    
                     #mapContainer {
-                        cursor: none !important;
+                        background: ${COLORS.land};
                     }
                     
-                    #mapContainer * {
-                        cursor: none !important;
-                    }
-                    
-                    /* Apple-style member card */
-                    .apple-member-card {
+                    .map-svg-container {
                         position: absolute;
-                        background: rgba(255, 255, 255, 0.72);
-                        backdrop-filter: blur(20px) saturate(180%);
-                        -webkit-backdrop-filter: blur(20px) saturate(180%);
-                        border-radius: 16px;
-                        padding: 16px;
-                        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
-                        border: 0.5px solid rgba(0, 0, 0, 0.06);
+                        top: -10%;
+                        left: -10%;
+                        width: 120%;
+                        height: 120%;
+                        transition: transform 3.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease;
+                    }
+                    
+                    .map-svg-container svg {
+                        width: 100%;
+                        height: 100%;
+                    }
+                    
+                    .map-svg-container.transitioning {
+                        opacity: 0.6;
+                        transform: scale(1.08);
+                    }
+                    
+                    /* City name on map - Apple style */
+                    .map-city-name {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+                        font-size: 14px;
+                        font-weight: 400;
+                        color: ${COLORS.text};
+                        letter-spacing: 0.02em;
+                        opacity: 0;
+                        transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+                        pointer-events: none;
+                        z-index: 5;
+                    }
+                    
+                    .map-city-name.visible {
+                        opacity: 1;
+                    }
+                    
+                    /* Member cards - frosted glass */
+                    .apple-card {
+                        position: absolute;
+                        background: rgba(255, 255, 255, 0.78);
+                        backdrop-filter: blur(24px) saturate(180%);
+                        -webkit-backdrop-filter: blur(24px) saturate(180%);
+                        border-radius: 14px;
+                        padding: 14px 16px;
+                        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+                        border: 0.5px solid rgba(0, 0, 0, 0.04);
                         display: flex;
                         align-items: center;
                         gap: 12px;
                         opacity: 0;
-                        transform: translateY(12px);
-                        transition: opacity 0.5s ${APPLE_EASE}, transform 0.5s ${APPLE_EASE}, box-shadow 0.3s ${APPLE_EASE};
-                        z-index: 100;
-                        min-width: 180px;
+                        transform: translateY(8px);
+                        transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+                        z-index: 10;
                     }
                     
-                    .apple-member-card.visible {
+                    .apple-card.visible {
                         opacity: 1;
                         transform: translateY(0);
                     }
                     
-                    .apple-member-card:hover {
-                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
-                    }
-                    
-                    .apple-member-avatar {
-                        width: 40px;
-                        height: 40px;
-                        background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+                    .apple-card-avatar {
+                        width: 36px;
+                        height: 36px;
+                        background: #007AFF;
                         border-radius: 50%;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        color: #FFFFFF;
-                        font-size: 16px;
+                        color: #fff;
+                        font-family: -apple-system, system-ui, sans-serif;
+                        font-size: 15px;
                         font-weight: 500;
-                        letter-spacing: -0.01em;
                         flex-shrink: 0;
                     }
                     
-                    .apple-member-info {
+                    .apple-card-content {
                         display: flex;
                         flex-direction: column;
-                        gap: 2px;
+                        gap: 1px;
                     }
                     
-                    .apple-member-name {
-                        font-size: 15px;
+                    .apple-card-name {
+                        font-family: -apple-system, system-ui, sans-serif;
+                        font-size: 14px;
                         font-weight: 600;
                         color: #1D1D1F;
                         letter-spacing: -0.01em;
-                        line-height: 1.2;
                     }
                     
-                    .apple-member-role {
-                        font-size: 13px;
+                    .apple-card-role {
+                        font-family: -apple-system, system-ui, sans-serif;
+                        font-size: 12px;
                         font-weight: 400;
                         color: #86868B;
-                        letter-spacing: -0.01em;
-                        line-height: 1.3;
                     }
                     
-                    /* City label - Apple style */
+                    /* Hide default city label */
                     .city-label {
-                        background: rgba(255, 255, 255, 0.72) !important;
-                        backdrop-filter: blur(20px) saturate(180%) !important;
-                        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-                        border-radius: 12px !important;
-                        border: 0.5px solid rgba(0, 0, 0, 0.06) !important;
-                        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-                        padding: 10px 16px !important;
-                    }
-                    
-                    .city-label .city-name {
-                        font-size: 15px !important;
-                        font-weight: 600 !important;
-                        color: #1D1D1F !important;
-                        letter-spacing: -0.01em !important;
-                    }
-                    
-                    .city-label .city-users {
-                        font-size: 13px !important;
-                        font-weight: 400 !important;
-                        color: #86868B !important;
+                        display: none !important;
                     }
                 `;
                 document.head.appendChild(style);
             };
             
-            // Create Apple cursor
-            const createCursor = () => {
-                cursor = document.createElement('div');
-                cursor.className = 'apple-cursor';
-                cursor.style.display = 'none';
-                document.body.appendChild(cursor);
-                
-                let cursorX = 0, cursorY = 0;
-                let currentX = 0, currentY = 0;
-                
-                mapContainer.addEventListener('mouseenter', () => cursor.style.display = 'block');
-                mapContainer.addEventListener('mouseleave', () => cursor.style.display = 'none');
-                
-                document.addEventListener('mousemove', (e) => {
-                    cursorX = e.clientX;
-                    cursorY = e.clientY;
-                });
-                
-                // Smooth trailing animation
-                const animateCursor = () => {
-                    currentX += (cursorX - currentX) * 0.15;
-                    currentY += (cursorY - currentY) * 0.15;
-                    cursor.style.left = currentX + 'px';
-                    cursor.style.top = currentY + 'px';
-                    requestAnimationFrame(animateCursor);
-                };
-                animateCursor();
-            };
-            
-            // Initialize map
-            const initMap = () => {
+            // Create map
+            const createMap = () => {
                 injectStyles();
-                createCursor();
                 
-                map = L.map(mapContainer, {
-                    center: cities[0].coords,
-                    zoom: ZOOM_LEVEL,
-                    zoomControl: false,
-                    attributionControl: false,
-                    scrollWheelZoom: false,
-                    doubleClickZoom: false,
-                    dragging: false,
-                    keyboard: false,
-                    touchZoom: false,
-                    preferCanvas: true,
-                    zoomAnimation: true,
-                    fadeAnimation: true,
-                    markerZoomAnimation: true
-                });
+                mapContainer.innerHTML = `
+                    <div class="map-svg-container">${generateMapSVG(0)}</div>
+                    <div class="map-city-name"></div>
+                `;
                 
-                // CartoDB Positron - closest to Apple Maps light
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 19,
-                    updateWhenIdle: true,
-                    updateWhenZooming: false,
-                    keepBuffer: 6
-                }).addTo(map);
-                
-                markersLayer = L.layerGroup().addTo(map);
                 showCity(cities[0]);
-            };
-            
-            // Display city with members
-            const showCity = (city) => {
-                markersLayer.clearLayers();
-                
-                // Add member pins
-                city.members.forEach((member, i) => {
-                    const angle = (i / city.members.length) * Math.PI * 2 - Math.PI / 2;
-                    const r = 0.006;
-                    const lat = city.coords[0] + Math.sin(angle) * r;
-                    const lng = city.coords[1] + Math.cos(angle) * r * 1.3;
-                    
-                    const icon = L.divIcon({
-                        className: '',
-                        html: `<div class="member-pin">${member.initial}</div>`,
-                        iconSize: [36, 36],
-                        iconAnchor: [18, 18]
-                    });
-                    
-                    const marker = L.marker([lat, lng], { icon }).addTo(markersLayer);
-                    
-                    // Cursor hover effect
-                    marker.on('mouseover', () => cursor?.classList.add('hovering'));
-                    marker.on('mouseout', () => cursor?.classList.remove('hovering'));
-                });
-                
-                // Center pin
-                const pinIcon = L.divIcon({
-                    className: '',
-                    html: '<div class="apple-map-pin"></div>',
-                    iconSize: [28, 28],
-                    iconAnchor: [14, 14]
-                });
-                const centerMarker = L.marker(city.coords, { icon: pinIcon }).addTo(markersLayer);
-                centerMarker.on('mouseover', () => cursor?.classList.add('hovering'));
-                centerMarker.on('mouseout', () => cursor?.classList.remove('hovering'));
-                
-                updateUI(city);
             };
             
             // Card positions
             const positions = [
-                { left: '24px', top: '120px' },
-                { right: '24px', top: '100px' },
-                { left: '24px', bottom: '180px' },
-                { right: '24px', bottom: '160px' }
+                { left: '5%', top: '15%' },
+                { right: '5%', top: '12%' },
+                { left: '4%', bottom: '25%' },
+                { right: '4%', bottom: '22%' }
             ];
             
-            // Update UI
-            const updateUI = (city) => {
-                // City label
-                if (cityLabel) {
-                    cityLabel.querySelector('.city-name').textContent = `${city.name}, ${city.state}`;
-                    cityLabel.querySelector('.city-users').textContent = `${city.members.length + Math.floor(Math.random() * 8) + 12} active nearby`;
-                    cityLabel.classList.add('visible');
+            // Show city
+            const showCity = (city) => {
+                // Update city name on map
+                const cityNameEl = mapContainer.querySelector('.map-city-name');
+                if (cityNameEl) {
+                    cityNameEl.textContent = city.name;
+                    setTimeout(() => cityNameEl.classList.add('visible'), 300);
                 }
                 
-                // Member cards
+                // Clear and create cards
                 if (userCardsContainer) {
                     userCardsContainer.innerHTML = '';
                     
                     city.members.forEach((member, i) => {
                         const pos = positions[i % positions.length];
                         const card = document.createElement('div');
-                        card.className = 'apple-member-card';
+                        card.className = 'apple-card';
                         
-                        let posStyle = '';
-                        if (pos.left) posStyle += `left: ${pos.left};`;
-                        if (pos.right) posStyle += `right: ${pos.right};`;
-                        if (pos.top) posStyle += `top: ${pos.top};`;
-                        if (pos.bottom) posStyle += `bottom: ${pos.bottom};`;
+                        let style = '';
+                        Object.keys(pos).forEach(k => style += `${k}: ${pos[k]};`);
+                        card.style.cssText = style;
                         
-                        card.style.cssText = posStyle;
                         card.innerHTML = `
-                            <div class="apple-member-avatar">${member.initial}</div>
-                            <div class="apple-member-info">
-                                <div class="apple-member-name">${member.name}</div>
-                                <div class="apple-member-role">Community member</div>
+                            <div class="apple-card-avatar">${member.initial}</div>
+                            <div class="apple-card-content">
+                                <div class="apple-card-name">${member.name}</div>
+                                <div class="apple-card-role">Community member</div>
                             </div>
                         `;
                         
                         userCardsContainer.appendChild(card);
-                        
-                        // Staggered fade in
-                        setTimeout(() => card.classList.add('visible'), 200 + i * 150);
+                        setTimeout(() => card.classList.add('visible'), 400 + i * 120);
                     });
                 }
             };
             
             // Hide UI
             const hideUI = () => {
-                cityLabel?.classList.remove('visible');
-                userCardsContainer?.querySelectorAll('.apple-member-card').forEach(c => c.classList.remove('visible'));
+                const cityNameEl = mapContainer.querySelector('.map-city-name');
+                cityNameEl?.classList.remove('visible');
+                userCardsContainer?.querySelectorAll('.apple-card').forEach(c => c.classList.remove('visible'));
             };
             
-            // Cinematic transition
-            const transitionToCity = () => {
+            // Transition
+            const transition = () => {
                 if (isAnimating) return;
                 isAnimating = true;
                 
                 hideUI();
                 
-                setTimeout(() => markersLayer.clearLayers(), 400);
+                const svgContainer = mapContainer.querySelector('.map-svg-container');
+                svgContainer?.classList.add('transitioning');
                 
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
-                const nextCity = cities[currentCityIndex];
                 
                 setTimeout(() => {
-                    map.flyTo(nextCity.coords, ZOOM_LEVEL, {
-                        duration: 2.8,
-                        easeLinearity: 0.1
-                    });
-                }, 500);
-                
-                setTimeout(() => {
-                    showCity(nextCity);
-                    isAnimating = false;
-                }, 3400);
+                    svgContainer.innerHTML = generateMapSVG(currentCityIndex);
+                    svgContainer?.classList.remove('transitioning');
+                    
+                    setTimeout(() => {
+                        showCity(cities[currentCityIndex]);
+                        isAnimating = false;
+                    }, 400);
+                }, 1200);
             };
             
             // Initialize
-            initMap();
+            createMap();
+            setInterval(transition, 6000);
             
-            // Continuous loop - 7 seconds per city
-            setInterval(transitionToCity, 7000);
-            
-            // Scroll handling
+            // Scroll fade
             let ticking = false;
             window.addEventListener('scroll', () => {
                 if (!ticking) {
