@@ -348,6 +348,30 @@ button {
     overflow: hidden;
 }
 
+/* Clean, polished map appearance */
+#mapContainer .map-image {
+    filter: brightness(1.05) contrast(0.95) saturate(0.9);
+}
+
+/* Soft overlay for cleaner look */
+#mapContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.05) 30%,
+        rgba(255, 255, 255, 0.05) 70%,
+        rgba(255, 255, 255, 0.2) 100%
+    );
+    pointer-events: none;
+    z-index: 3;
+}
+
 /* Hide map provider controls and attribution for clean look */
 .mapboxgl-ctrl-attrib,
 .mapboxgl-ctrl-logo,
@@ -367,7 +391,7 @@ button {
 /* Additional map styles */
 
 
-/* Subtle gradient overlay to help text readability */
+/* Clean gradient overlay for polished look */
 .map-background::after {
     content: '';
     position: absolute;
@@ -377,10 +401,10 @@ button {
     bottom: 0;
     background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.45) 0%,
         rgba(255, 255, 255, 0.3) 30%,
-        rgba(255, 255, 255, 0.4) 60%,
-        rgba(255, 255, 255, 0.6) 100%
+        rgba(255, 255, 255, 0.3) 60%,
+        rgba(255, 255, 255, 0.55) 100%
     );
     pointer-events: none;
     z-index: 1;
