@@ -33,7 +33,6 @@
         features: {
             ambientCanvas: true,        // Living particle background
             globalPulse: true,          // Community heartbeat animation
-            diagonalScroll: true,       // Experimental journey section
             livingStats: true,          // Numbers that breathe
             timeAwareGreeting: true,    // Time-of-day messaging
             seasonalTheme: true,        // Season-based colors
@@ -48,14 +47,6 @@
             pulseInterval: 4000,        // Global pulse frequency
             statUpdateInterval: 5000,   // Living stat animation
             enoughMessageDelay: 180000, // 3 minutes before "done enough" message
-        },
-        
-        // Diagonal scroll settings
-        diagonalScroll: {
-            angle: 37,                  // Degrees (arctan(0.75))
-            sensitivity: 1.5,           // Scroll multiplier
-            maxX: 3,                    // Maximum X position (in node units)
-            maxY: 3,                    // Maximum Y position (in node units)
         },
         
         // User state (persisted to localStorage)
@@ -720,24 +711,12 @@
     };
 
     // ==========================================================================
-    // EXPERIMENTAL LAYER: Diagonal Scrolling & Wild UI
+    // EXPERIMENTAL LAYER: Enhanced UI Effects
     // ==========================================================================
     
     const ExperimentalLayer = {
-        journeySection: null,
-        journeyCanvas: null,
-        isActive: false,
-        position: { x: 0, y: 0 },
-        targetPosition: { x: 0, y: 0 },
-        animationId: null,
-        
         init() {
             this.initExperimentalToggle();
-            
-            if (CreativeConfig.features.diagonalScroll && !prefersReducedMotion()) {
-                this.initDiagonalScroll();
-            }
-            
             this.initPhoneShowcase();
         },
 
@@ -767,253 +746,6 @@
                     ReflectiveLayer.showSilenceMoment('Experimental mode activated ✧');
                 }
             });
-        },
-
-        /**
-         * =================================================================
-         * DIAGONAL SCROLLING IMPLEMENTATION
-         * =================================================================
-         * 
-         * CONCEPT:
-         * Instead of vertical scroll, the Journey section moves diagonally.
-         * Content is positioned on a 2D canvas and users traverse it
-         * at approximately 37° angle (arctan(0.75)).
-         * 
-         * MATH:
-         * - angle = 37° means tan(37°) ≈ 0.75
-         * - For scroll delta d: ΔX = d * cos(37°) ≈ d * 0.8
-         *                       ΔY = d * sin(37°) ≈ d * 0.6
-         * 
-         * This creates natural diagonal movement that feels like
-         * exploring a canvas rather than reading a document.
-         * 
-         * ACCESSIBILITY:
-         * - "Return to Normal Scroll" button always visible
-         * - Falls back to vertical layout with reduced-motion
-         * - All content remains keyboard accessible
-         */
-        initDiagonalScroll() {
-            this.journeySection = document.getElementById('journey');
-            this.journeyCanvas = document.getElementById('journeyCanvas');
-            const escapeBtn = document.getElementById('journeyEscape');
-            
-            if (!this.journeySection || !this.journeyCanvas) return;
-            
-            // Configuration
-            const config = CreativeConfig.diagonalScroll;
-            const angleRad = (config.angle * Math.PI) / 180;
-            const cosAngle = Math.cos(angleRad);  // ≈ 0.8
-            const sinAngle = Math.sin(angleRad);  // ≈ 0.6
-            
-            // Escape button: return to normal scroll
-            if (escapeBtn) {
-                escapeBtn.addEventListener('click', () => {
-                    this.journeySection.classList.add('normal-scroll');
-                    this.isActive = false;
-                    if (this.animationId) {
-                        cancelAnimationFrame(this.animationId);
-                    }
-                });
-            }
-            
-            // Set up scroll handling when section is in view
-            const sectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-                        this.activateDiagonalScroll();
-                    } else if (!entry.isIntersecting) {
-                        this.deactivateDiagonalScroll();
-                    }
-                });
-            }, { threshold: [0, 0.3, 1] });
-            
-            sectionObserver.observe(this.journeySection);
-            
-            // Handle scroll/wheel events
-            let accumulatedScroll = 0;
-            
-            const handleScroll = (e) => {
-                if (!this.isActive) return;
-                if (this.journeySection.classList.contains('normal-scroll')) return;
-                
-                e.preventDefault();
-                
-                // Get scroll delta (normalize for different input devices)
-                let delta = e.deltaY;
-                if (e.deltaMode === 1) delta *= 40; // Line mode
-                if (e.deltaMode === 2) delta *= 800; // Page mode
-                
-                // Apply sensitivity
-                delta *= config.sensitivity;
-                
-                // Calculate diagonal movement
-                // Movement along diagonal: ΔX = delta * cos(θ), ΔY = delta * sin(θ)
-                const moveX = delta * cosAngle * 0.15;
-                const moveY = delta * sinAngle * 0.15;
-                
-                // Update target position
-                this.targetPosition.x = Math.max(0, Math.min(
-                    this.targetPosition.x + moveX,
-                    config.maxX * 100 // Convert to viewport units
-                ));
-                
-                this.targetPosition.y = Math.max(0, Math.min(
-                    this.targetPosition.y + moveY,
-                    config.maxY * 100
-                ));
-            };
-            
-            // Use wheel event for diagonal section
-            this.journeySection.addEventListener('wheel', handleScroll, { passive: false });
-            
-            // Touch handling for mobile
-            let touchStartY = 0;
-            this.journeySection.addEventListener('touchstart', (e) => {
-                if (!this.isActive) return;
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-            
-            this.journeySection.addEventListener('touchmove', (e) => {
-                if (!this.isActive) return;
-                if (this.journeySection.classList.contains('normal-scroll')) return;
-                
-                const touchY = e.touches[0].clientY;
-                const delta = (touchStartY - touchY) * 2;
-                touchStartY = touchY;
-                
-                const moveX = delta * cosAngle * 0.15;
-                const moveY = delta * sinAngle * 0.15;
-                
-                this.targetPosition.x = Math.max(0, Math.min(
-                    this.targetPosition.x + moveX,
-                    config.maxX * 100
-                ));
-                
-                this.targetPosition.y = Math.max(0, Math.min(
-                    this.targetPosition.y + moveY,
-                    config.maxY * 100
-                ));
-            }, { passive: true });
-            
-            // Animation loop for smooth movement
-            const animate = () => {
-                // Ease toward target position
-                const easing = 0.08;
-                this.position.x += (this.targetPosition.x - this.position.x) * easing;
-                this.position.y += (this.targetPosition.y - this.position.y) * easing;
-                
-                // Apply transform
-                this.journeyCanvas.style.transform = 
-                    `translate(${-this.position.x}vw, ${-this.position.y}vh)`;
-                
-                // Update node visibility based on position
-                this.updateNodeVisibility();
-                
-                // Update progress indicator
-                this.updateProgress();
-                
-                if (this.isActive) {
-                    this.animationId = requestAnimationFrame(animate);
-                }
-            };
-            
-            this.animate = animate;
-        },
-
-        /**
-         * Activate diagonal scroll mode
-         */
-        activateDiagonalScroll() {
-            if (this.isActive) return;
-            if (this.journeySection.classList.contains('normal-scroll')) return;
-            
-            this.isActive = true;
-            document.body.style.overflow = 'hidden';
-            
-            // Start animation
-            if (this.animate) {
-                this.animationId = requestAnimationFrame(this.animate);
-            }
-        },
-
-        /**
-         * Deactivate diagonal scroll mode
-         */
-        deactivateDiagonalScroll() {
-            if (!this.isActive) return;
-            
-            this.isActive = false;
-            document.body.style.overflow = '';
-            
-            if (this.animationId) {
-                cancelAnimationFrame(this.animationId);
-            }
-        },
-
-        /**
-         * Update which journey nodes are visible/active
-         */
-        updateNodeVisibility() {
-            const nodes = document.querySelectorAll('.journey-node');
-            const reflection = document.querySelector('.journey-reflection');
-            
-            nodes.forEach(node => {
-                const nodeX = parseInt(node.style.getPropertyValue('--node-x')) || 0;
-                const nodeY = parseInt(node.style.getPropertyValue('--node-y')) || 0;
-                
-                // Calculate distance from current position to node
-                const distX = Math.abs(this.position.x - nodeX * 25);
-                const distY = Math.abs(this.position.y - nodeY * 20);
-                const dist = Math.sqrt(distX * distX + distY * distY);
-                
-                // Activate node if close enough
-                if (dist < 30) {
-                    node.classList.add('active');
-                } else {
-                    node.classList.remove('active');
-                }
-            });
-            
-            // Show reflection at the end
-            if (reflection) {
-                const refX = parseInt(reflection.style.getPropertyValue('--node-x')) || 4;
-                const refY = parseInt(reflection.style.getPropertyValue('--node-y')) || 4;
-                const distX = Math.abs(this.position.x - refX * 25);
-                const distY = Math.abs(this.position.y - refY * 20);
-                
-                if (distX < 40 && distY < 40) {
-                    reflection.classList.add('visible');
-                }
-            }
-        },
-
-        /**
-         * Update progress indicator
-         */
-        updateProgress() {
-            const config = CreativeConfig.diagonalScroll;
-            const maxDist = Math.sqrt(
-                Math.pow(config.maxX * 100, 2) + 
-                Math.pow(config.maxY * 100, 2)
-            );
-            const currentDist = Math.sqrt(
-                Math.pow(this.position.x, 2) + 
-                Math.pow(this.position.y, 2)
-            );
-            const progress = currentDist / maxDist;
-            
-            const progressLabel = document.querySelector('.progress-label');
-            if (progressLabel) {
-                if (progress < 0.1) {
-                    progressLabel.textContent = 'Scroll to explore';
-                } else if (progress < 0.5) {
-                    progressLabel.textContent = 'Keep going...';
-                } else if (progress < 0.9) {
-                    progressLabel.textContent = 'Almost there';
-                } else {
-                    progressLabel.textContent = 'You made it';
-                }
-            }
         },
 
         /**

@@ -1114,192 +1114,58 @@ button {
 }
 
 /* ==========================================================================
-   JOURNEY SECTION - EXPERIMENTAL LAYER: DIAGONAL SCROLLING
-   ==========================================================================
-   
-   DESIGN INTENT:
-   This section replaces vertical scrolling with diagonal movement.
-   The experience feels like exploring a canvas, not reading a document.
-   
-   MATH EXPLANATION:
-   - We use a diagonal angle of ~37° (arctan(0.75))
-   - Scroll delta maps to: X movement = delta * cos(37°) ≈ delta * 0.8
-   -                       Y movement = delta * sin(37°) ≈ delta * 0.6
-   - This creates smooth diagonal traversal through content
-   
-   ACCESSIBILITY:
-   - Falls back to vertical scroll with reduced-motion
-   - "Return to Normal Scroll" button always visible
-   - Content remains accessible via keyboard navigation
-   
+   JOURNEY SECTION - HOW IT WORKS
+   Clean, accessible step-by-step layout
    ========================================================================== */
 
 .journey-section {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
+    padding: var(--space-4xl) 0;
     background: var(--color-bg);
-    /* Isolate this section's scroll behavior */
-}
-
-/* Visual guide: diagonal gradient showing the path */
-.journey-guide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    position: relative;
     z-index: 1;
 }
 
-.guide-line {
-    opacity: 0.5;
-    stroke-dasharray: 10, 10;
-    animation: dashMove 20s linear infinite;
-}
-
-@keyframes dashMove {
-    to { stroke-dashoffset: -100; }
-}
-
-/* Escape button for accessibility */
-.journey-escape {
-    position: absolute;
-    top: var(--space-lg);
-    right: var(--space-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-sm) var(--space-md);
-    background: var(--color-bg-alt);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-full);
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-    z-index: 100;
-    transition: all var(--transition-fast);
-}
-
-.journey-escape:hover {
-    background: var(--color-bg);
-    border-color: var(--color-text-muted);
-}
-
-/* Progress indicator */
-.journey-progress {
-    position: absolute;
-    bottom: var(--space-xl);
-    left: 50%;
-    transform: translateX(-50%);
+.journey-steps {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-    z-index: 100;
+    gap: var(--space-lg);
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.progress-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    animation: progressBounce 1.5s ease-in-out infinite;
+@media (min-width: 768px) {
+    .journey-steps {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: flex-start;
+    }
 }
 
-@keyframes progressBounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.progress-label {
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-/* === THE DIAGONAL CANVAS === */
-.journey-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: var(--journey-width);
-    height: var(--journey-height);
-    transform-origin: top left;
-    transition: transform 0.1s ease-out;
-    /* Content is positioned diagonally */
-}
-
-.journey-header {
-    position: absolute;
-    top: 15vh;
-    left: 10vw;
-    max-width: 400px;
-    text-align: left;
-}
-
-.journey-header h2 {
-    font-family: var(--font-serif);
-    font-size: clamp(2rem, 4vw, 3rem);
-    margin-bottom: var(--space-md);
-}
-
-.journey-header p {
-    color: var(--color-text-secondary);
-}
-
-/* === JOURNEY NODES: Positioned diagonally === */
-.journey-node {
-    position: absolute;
-    /* 
-    Positioning math:
-    Each node is offset by --node-x and --node-y multipliers
-    X position = 20vw + (--node-x * 25vw)
-    Y position = 30vh + (--node-y * 20vh)
-    This creates a diagonal layout
-    */
-    left: calc(20vw + (var(--node-x) * 25vw));
-    top: calc(30vh + (var(--node-y) * 20vh));
-    width: 300px;
+.journey-step {
+    flex: 1;
+    min-width: 200px;
+    max-width: 280px;
     padding: var(--space-xl);
     background: var(--color-bg-alt);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
+    text-align: center;
     transition: all var(--transition-base);
-    opacity: 0.3;
-    transform: scale(0.95);
+    margin: 0 auto;
 }
 
-.journey-node.active {
-    opacity: 1;
-    transform: scale(1);
+.journey-step:hover {
     border-color: var(--color-primary);
-    box-shadow: var(--shadow-glow);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
 }
 
-.node-glow {
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    right: -20px;
-    bottom: -20px;
-    background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
-    border-radius: var(--radius-xl);
-    opacity: 0;
-    transition: opacity var(--transition-slow);
-    z-index: -1;
+.step-icon {
+    margin-bottom: var(--space-lg);
 }
 
-.journey-node.active .node-glow {
-    opacity: 1;
-}
-
-.node-content {
-    position: relative;
-}
-
-.node-number {
+.step-number {
     display: block;
     font-size: 0.75rem;
     font-weight: 700;
@@ -1308,55 +1174,47 @@ button {
     letter-spacing: 0.1em;
 }
 
-.journey-node h3 {
+.step-visual {
+    width: 60px;
+    height: 60px;
+    color: var(--color-primary);
+    margin: 0 auto;
+}
+
+.step-content h3 {
     font-family: var(--font-serif);
     font-size: 1.5rem;
     margin-bottom: var(--space-sm);
 }
 
-.journey-node p {
+.step-content p {
     font-size: 0.95rem;
     color: var(--color-text-secondary);
     line-height: 1.6;
 }
 
-.node-visual {
-    margin-top: var(--space-lg);
-    display: flex;
-    justify-content: center;
+.step-connector {
+    display: none;
+    width: 40px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-border), var(--color-primary), var(--color-border));
+    margin: auto;
+    flex-shrink: 0;
 }
 
-.node-icon {
-    width: 60px;
-    height: 60px;
-    color: var(--color-primary);
+@media (min-width: 768px) {
+    .step-connector {
+        display: block;
+        margin-top: 80px;
+    }
 }
 
-/* Constellation animation for final node */
-.node-icon.constellation line {
-    animation: constellationPulse 2s ease-in-out infinite;
-}
-
-@keyframes constellationPulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-}
-
-/* === REFLECTIVE LAYER: Reflection prompt at journey end === */
-.journey-reflection {
-    position: absolute;
-    left: calc(20vw + (var(--node-x) * 25vw));
-    top: calc(30vh + (var(--node-y) * 20vh));
-    max-width: 400px;
+.journey-cta {
     text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all var(--transition-slow);
-}
-
-.journey-reflection.visible {
-    opacity: 1;
-    transform: translateY(0);
+    margin-top: var(--space-3xl);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .reflection-prompt {
@@ -1366,53 +1224,6 @@ button {
     color: var(--color-text);
     margin-bottom: var(--space-xl);
     line-height: 1.4;
-}
-
-/* === FALLBACK: Normal scroll mode === */
-.journey-section.normal-scroll {
-    height: auto;
-    overflow: visible;
-}
-
-.journey-section.normal-scroll .journey-canvas {
-    position: relative;
-    width: 100%;
-    height: auto;
-    transform: none !important;
-    padding: var(--space-4xl) var(--space-lg);
-}
-
-.journey-section.normal-scroll .journey-guide,
-.journey-section.normal-scroll .journey-progress {
-    display: none;
-}
-
-.journey-section.normal-scroll .journey-header {
-    position: relative;
-    top: 0;
-    left: 0;
-    max-width: 600px;
-    margin: 0 auto var(--space-3xl);
-    text-align: center;
-}
-
-.journey-section.normal-scroll .journey-node {
-    position: relative;
-    left: auto;
-    top: auto;
-    max-width: 500px;
-    margin: 0 auto var(--space-xl);
-    opacity: 1;
-    transform: none;
-}
-
-.journey-section.normal-scroll .journey-reflection {
-    position: relative;
-    left: auto;
-    top: auto;
-    margin: var(--space-3xl) auto 0;
-    opacity: 1;
-    transform: none;
 }
 
 /* ==========================================================================
