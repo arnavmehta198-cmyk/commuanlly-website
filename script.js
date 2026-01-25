@@ -314,11 +314,6 @@
     // ==========================================================================
     
     const AmbientLayer = {
-        canvas: null,
-        ctx: null,
-        particles: [],
-        animationId: null,
-        
         init() {
             if (prefersReducedMotion()) return;
             
@@ -331,7 +326,7 @@
             }
             
             if (CreativeConfig.features.ambientCanvas) {
-                this.initAmbientCanvas();
+                this.initMapBackground();
             }
             
             if (CreativeConfig.features.livingStats) {
@@ -384,96 +379,279 @@
         },
 
         /**
-         * Initialize ambient particle canvas
-         * Renders subtle particles that respond to mouse
+         * Initialize animated Apple Maps-style background
+         * Shows different US cities with moving user dots
          */
-        initAmbientCanvas() {
-            this.canvas = document.getElementById('ambientCanvas');
-            if (!this.canvas) return;
+        initMapBackground() {
+            const container = document.getElementById('mapBackground');
+            const canvas = document.getElementById('mapCanvas');
+            const cityLabel = document.getElementById('cityLabel');
             
-            this.ctx = this.canvas.getContext('2d');
-            this.resizeCanvas();
-            this.createParticles();
-            this.animate();
+            if (!canvas || !container) return;
             
-            window.addEventListener('resize', debounce(() => {
-                this.resizeCanvas();
-                this.createParticles();
-            }, 250));
+            const ctx = canvas.getContext('2d');
+            let animationId;
             
-            // Mouse interaction
-            let mouseX = 0, mouseY = 0;
-            document.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-            });
+            // City data with different road patterns
+            const cities = [
+                { name: 'New York, NY', grid: 'manhattan', color: '#e8e4df' },
+                { name: 'San Francisco, CA', grid: 'hills', color: '#e5e8e4' },
+                { name: 'Austin, TX', grid: 'sprawl', color: '#e8e6e2' },
+                { name: 'Seattle, WA', grid: 'waterfront', color: '#e2e6e8' },
+                { name: 'Chicago, IL', grid: 'grid', color: '#e6e4e2' },
+                { name: 'Miami, FL', grid: 'coastal', color: '#e4e8e6' },
+                { name: 'Denver, CO', grid: 'mountain', color: '#e8e6e4' },
+                { name: 'Portland, OR', grid: 'bridges', color: '#e4e6e4' },
+                { name: 'Boston, MA', grid: 'old', color: '#e6e4e0' },
+                { name: 'Los Angeles, CA', grid: 'highways', color: '#e8e8e4' }
+            ];
             
-            this.mouseX = () => mouseX;
-            this.mouseY = () => mouseY;
-        },
-
-        resizeCanvas() {
-            if (!this.canvas) return;
-            this.canvas.width = window.innerWidth;
-            this.canvas.height = window.innerHeight;
-        },
-
-        createParticles() {
-            this.particles = [];
-            const count = Math.min(50, Math.floor((window.innerWidth * window.innerHeight) / 30000));
+            let currentCityIndex = 0;
+            let roads = [];
+            let users = [];
+            let parks = [];
+            let transitionProgress = 1;
             
-            for (let i = 0; i < count; i++) {
-                this.particles.push({
-                    x: Math.random() * this.canvas.width,
-                    y: Math.random() * this.canvas.height,
-                    vx: (Math.random() - 0.5) * 0.3,
-                    vy: (Math.random() - 0.5) * 0.3,
-                    radius: Math.random() * 2 + 1,
-                    opacity: Math.random() * 0.5 + 0.1
-                });
-            }
-        },
-
-        animate() {
-            if (!this.ctx) return;
+            // Resize canvas
+            const resize = () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                generateCity(cities[currentCityIndex]);
+            };
             
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            
-            // Get primary color from CSS
-            const primaryColor = getComputedStyle(document.documentElement)
-                .getPropertyValue('--color-primary').trim() || '#22c55e';
-            
-            this.particles.forEach(p => {
-                // Subtle mouse attraction
-                const dx = this.mouseX() - p.x;
-                const dy = this.mouseY() - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+            // Generate road network for a city
+            const generateCity = (city) => {
+                roads = [];
+                parks = [];
+                const w = canvas.width;
+                const h = canvas.height;
                 
-                if (dist < 200) {
-                    p.vx += dx * 0.00003;
-                    p.vy += dy * 0.00003;
+                // Base grid roads
+                const gridSize = 80 + Math.random() * 40;
+                
+                // Horizontal roads
+                for (let y = gridSize; y < h; y += gridSize + Math.random() * 30) {
+                    const isMain = Math.random() > 0.7;
+                    roads.push({
+                        x1: 0,
+                        y1: y + (Math.random() - 0.5) * 20,
+                        x2: w,
+                        y2: y + (Math.random() - 0.5) * 20,
+                        width: isMain ? 3 : 1.5,
+                        isMain
+                    });
                 }
                 
-                // Update position
-                p.x += p.vx;
-                p.y += p.vy;
+                // Vertical roads
+                for (let x = gridSize; x < w; x += gridSize + Math.random() * 30) {
+                    const isMain = Math.random() > 0.7;
+                    roads.push({
+                        x1: x + (Math.random() - 0.5) * 20,
+                        y1: 0,
+                        x2: x + (Math.random() - 0.5) * 20,
+                        y2: h,
+                        width: isMain ? 3 : 1.5,
+                        isMain
+                    });
+                }
                 
-                // Wrap around edges
-                if (p.x < 0) p.x = this.canvas.width;
-                if (p.x > this.canvas.width) p.x = 0;
-                if (p.y < 0) p.y = this.canvas.height;
-                if (p.y > this.canvas.height) p.y = 0;
+                // Add diagonal roads for some cities
+                if (city.grid === 'old' || city.grid === 'hills') {
+                    for (let i = 0; i < 5; i++) {
+                        const startX = Math.random() * w;
+                        const startY = Math.random() * h;
+                        roads.push({
+                            x1: startX,
+                            y1: startY,
+                            x2: startX + (Math.random() - 0.5) * 400,
+                            y2: startY + (Math.random() - 0.5) * 400,
+                            width: 2,
+                            isMain: true
+                        });
+                    }
+                }
                 
-                // Draw particle
-                this.ctx.beginPath();
-                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                this.ctx.fillStyle = primaryColor;
-                this.ctx.globalAlpha = p.opacity;
-                this.ctx.fill();
-            });
+                // Add parks (green areas)
+                const parkCount = 3 + Math.floor(Math.random() * 4);
+                for (let i = 0; i < parkCount; i++) {
+                    parks.push({
+                        x: Math.random() * w,
+                        y: Math.random() * h,
+                        radius: 30 + Math.random() * 60
+                    });
+                }
+                
+                // Generate users
+                generateUsers();
+            };
             
-            this.ctx.globalAlpha = 1;
-            this.animationId = requestAnimationFrame(() => this.animate());
+            // Generate moving users
+            const generateUsers = () => {
+                users = [];
+                const userCount = 15 + Math.floor(Math.random() * 10);
+                
+                for (let i = 0; i < userCount; i++) {
+                    // Pick a random road to follow
+                    const road = roads[Math.floor(Math.random() * roads.length)];
+                    const progress = Math.random();
+                    
+                    users.push({
+                        x: road.x1 + (road.x2 - road.x1) * progress,
+                        y: road.y1 + (road.y2 - road.y1) * progress,
+                        road: road,
+                        progress: progress,
+                        speed: 0.0005 + Math.random() * 0.001,
+                        direction: Math.random() > 0.5 ? 1 : -1,
+                        size: 4 + Math.random() * 3,
+                        pulsePhase: Math.random() * Math.PI * 2,
+                        isActive: Math.random() > 0.3
+                    });
+                }
+            };
+            
+            // Transition to next city
+            const nextCity = () => {
+                transitionProgress = 0;
+                currentCityIndex = (currentCityIndex + 1) % cities.length;
+                
+                // Show city label
+                if (cityLabel) {
+                    cityLabel.textContent = cities[currentCityIndex].name;
+                    cityLabel.classList.add('visible');
+                    
+                    setTimeout(() => {
+                        cityLabel.classList.remove('visible');
+                    }, 3000);
+                }
+                
+                // Generate new city after brief fade
+                setTimeout(() => {
+                    generateCity(cities[currentCityIndex]);
+                }, 500);
+            };
+            
+            // Animation loop
+            const animate = () => {
+                // Clear with city background color
+                const city = cities[currentCityIndex];
+                ctx.fillStyle = city.color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Handle transition
+                if (transitionProgress < 1) {
+                    transitionProgress += 0.02;
+                }
+                
+                const alpha = Math.min(1, transitionProgress);
+                
+                // Draw parks (green areas)
+                ctx.globalAlpha = alpha * 0.5;
+                parks.forEach(park => {
+                    const gradient = ctx.createRadialGradient(
+                        park.x, park.y, 0,
+                        park.x, park.y, park.radius
+                    );
+                    gradient.addColorStop(0, '#c7dfc7');
+                    gradient.addColorStop(1, 'transparent');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(park.x, park.y, park.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Draw roads
+                ctx.globalAlpha = alpha;
+                roads.forEach(road => {
+                    ctx.beginPath();
+                    ctx.moveTo(road.x1, road.y1);
+                    ctx.lineTo(road.x2, road.y2);
+                    ctx.strokeStyle = road.isMain ? '#d4d0cc' : '#e0dcd8';
+                    ctx.lineWidth = road.width;
+                    ctx.stroke();
+                });
+                
+                // Update and draw users
+                const time = Date.now() * 0.001;
+                users.forEach(user => {
+                    // Move along road
+                    user.progress += user.speed * user.direction;
+                    
+                    // Bounce at ends or switch roads
+                    if (user.progress > 1 || user.progress < 0) {
+                        user.direction *= -1;
+                        user.progress = Math.max(0, Math.min(1, user.progress));
+                        
+                        // Sometimes switch to a different road
+                        if (Math.random() > 0.5) {
+                            user.road = roads[Math.floor(Math.random() * roads.length)];
+                        }
+                    }
+                    
+                    // Calculate position
+                    user.x = user.road.x1 + (user.road.x2 - user.road.x1) * user.progress;
+                    user.y = user.road.y1 + (user.road.y2 - user.road.y1) * user.progress;
+                    
+                    // Add slight wobble
+                    user.x += Math.sin(time * 2 + user.pulsePhase) * 2;
+                    user.y += Math.cos(time * 2 + user.pulsePhase) * 2;
+                    
+                    // Draw user dot
+                    if (user.isActive) {
+                        // Pulse effect
+                        const pulse = 1 + Math.sin(time * 3 + user.pulsePhase) * 0.2;
+                        
+                        // Glow
+                        ctx.globalAlpha = alpha * 0.3;
+                        ctx.beginPath();
+                        ctx.arc(user.x, user.y, user.size * 2 * pulse, 0, Math.PI * 2);
+                        ctx.fillStyle = '#22c55e';
+                        ctx.fill();
+                        
+                        // Core dot
+                        ctx.globalAlpha = alpha * 0.9;
+                        ctx.beginPath();
+                        ctx.arc(user.x, user.y, user.size * pulse, 0, Math.PI * 2);
+                        ctx.fillStyle = '#22c55e';
+                        ctx.fill();
+                        
+                        // White center
+                        ctx.globalAlpha = alpha;
+                        ctx.beginPath();
+                        ctx.arc(user.x, user.y, user.size * 0.4 * pulse, 0, Math.PI * 2);
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fill();
+                    }
+                });
+                
+                ctx.globalAlpha = 1;
+                animationId = requestAnimationFrame(animate);
+            };
+            
+            // Initialize
+            resize();
+            window.addEventListener('resize', debounce(resize, 250));
+            animate();
+            
+            // Change city every 8 seconds
+            setInterval(nextCity, 8000);
+            
+            // Show first city label
+            setTimeout(() => {
+                if (cityLabel) {
+                    cityLabel.textContent = cities[0].name;
+                    cityLabel.classList.add('visible');
+                    setTimeout(() => cityLabel.classList.remove('visible'), 3000);
+                }
+            }, 1000);
+            
+            // Fade map when scrolled
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 400) {
+                    container.classList.add('faded');
+                } else {
+                    container.classList.remove('faded');
+                }
+            }, { passive: true });
         },
 
         /**

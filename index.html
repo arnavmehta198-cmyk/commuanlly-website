@@ -49,12 +49,15 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- 
-    AMBIENT LAYER: Living Background Canvas
-    - Renders subtle particles that respond to mouse movement
-    - Changes color temperature based on time of day
-    - Seasonal variations (spring: green, summer: gold, fall: orange, winter: blue)
+    AMBIENT LAYER: Living Map Background
+    - Animated Apple Maps-style visualization
+    - Shows different US cities with moving user dots
+    - Creates sense of live, active community
     -->
-    <canvas id="ambientCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
+    <div id="mapBackground" class="map-background" aria-hidden="true">
+        <canvas id="mapCanvas"></canvas>
+        <div class="city-label" id="cityLabel"></div>
+    </div>
 
     <!-- 
     AMBIENT LAYER: Global Pulse
