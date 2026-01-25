@@ -379,8 +379,8 @@
         },
 
         /**
-         * Initialize Apple Maps-Style Interactive Map
-         * Optimized for smooth, lag-free animations
+         * Apple Maps–Identical Animated Map
+         * Pixel-perfect Apple design system compliance
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
@@ -390,71 +390,71 @@
             
             if (!mapContainer || !container || typeof L === 'undefined') return;
             
-            // US Cities
+            // Locked city set (US only)
             const cities = [
-                {
-                    name: 'San Francisco',
-                    state: 'CA',
-                    coords: [37.7749, -122.4194],
-                    users: [
-                        { name: 'Alex K.', avatar: '👨', activity: 'Moving furniture in SOMA', badge: '💪 Strong', color: '#3b82f6' },
-                        { name: 'Jordan T.', avatar: '🧑', activity: 'Pet sitting in Mission', badge: '🐕 Pet pro', color: '#22c55e' },
-                        { name: 'Sam R.', avatar: '👩', activity: 'Grocery delivery', badge: '⚡ Quick', color: '#f59e0b' }
-                    ]
-                },
                 {
                     name: 'New York City',
                     state: 'NY',
                     coords: [40.7128, -74.0060],
-                    users: [
-                        { name: 'Sarah M.', avatar: '👩', activity: 'Walking dogs in Brooklyn', badge: '⭐ Top', color: '#3b82f6' },
-                        { name: 'Mike R.', avatar: '👨', activity: 'Helping with groceries', badge: '🏆 5 jobs', color: '#22c55e' },
-                        { name: 'Emma L.', avatar: '👩‍🦰', activity: 'Tutoring in Manhattan', badge: '✨ New', color: '#a855f7' }
+                    members: [
+                        { name: 'Sarah Mitchell', initial: 'S' },
+                        { name: 'Michael Chen', initial: 'M' },
+                        { name: 'Emma Wilson', initial: 'E' }
                     ]
                 },
                 {
                     name: 'Los Angeles',
                     state: 'CA',
                     coords: [34.0522, -118.2437],
-                    users: [
-                        { name: 'Kai M.', avatar: '🧑', activity: 'Car detailing', badge: '🚗 Pro', color: '#f59e0b' },
-                        { name: 'Sage L.', avatar: '👩', activity: 'Meal prep help', badge: '🍳 Chef', color: '#22c55e' }
+                    members: [
+                        { name: 'David Park', initial: 'D' },
+                        { name: 'Sofia Garcia', initial: 'S' }
+                    ]
+                },
+                {
+                    name: 'San Francisco',
+                    state: 'CA',
+                    coords: [37.7749, -122.4194],
+                    members: [
+                        { name: 'Alex Kumar', initial: 'A' },
+                        { name: 'Jordan Lee', initial: 'J' },
+                        { name: 'Sam Rivera', initial: 'S' }
                     ]
                 },
                 {
                     name: 'Chicago',
                     state: 'IL',
                     coords: [41.8781, -87.6298],
-                    users: [
-                        { name: 'Jamie W.', avatar: '👨', activity: 'Helping in Lincoln Park', badge: '❄️ Reliable', color: '#3b82f6' },
-                        { name: 'Drew M.', avatar: '🧑', activity: 'Furniture assembly', badge: '🔧 Handy', color: '#22c55e' }
+                    members: [
+                        { name: 'Jamie Walsh', initial: 'J' },
+                        { name: 'Drew Morgan', initial: 'D' }
                     ]
                 },
                 {
                     name: 'Austin',
                     state: 'TX',
                     coords: [30.2672, -97.7431],
-                    users: [
-                        { name: 'Chris B.', avatar: '👨', activity: 'Yard work downtown', badge: '🌱 Garden', color: '#22c55e' },
-                        { name: 'Taylor S.', avatar: '👩', activity: 'Running errands', badge: '⚡ Fast', color: '#f59e0b' }
+                    members: [
+                        { name: 'Chris Bennett', initial: 'C' },
+                        { name: 'Taylor Scott', initial: 'T' }
                     ]
                 },
                 {
                     name: 'Seattle',
                     state: 'WA',
                     coords: [47.6062, -122.3321],
-                    users: [
-                        { name: 'Casey H.', avatar: '👩', activity: 'Coffee delivery', badge: '☕ Local', color: '#f59e0b' },
-                        { name: 'Riley N.', avatar: '🧑', activity: 'Dog walking', badge: '🐾 Pet lover', color: '#22c55e' }
+                    members: [
+                        { name: 'Casey Harper', initial: 'C' },
+                        { name: 'Riley Nguyen', initial: 'R' }
                     ]
                 },
                 {
                     name: 'Miami',
                     state: 'FL',
                     coords: [25.7617, -80.1918],
-                    users: [
-                        { name: 'Nico V.', avatar: '👨', activity: 'Beach cleanup', badge: '🌴 Hero', color: '#22c55e' },
-                        { name: 'Luna R.', avatar: '👩', activity: 'Spanish tutoring', badge: '📚 Tutor', color: '#3b82f6' }
+                    members: [
+                        { name: 'Nicolas Vega', initial: 'N' },
+                        { name: 'Luna Rodriguez', initial: 'L' }
                     ]
                 }
             ];
@@ -463,83 +463,267 @@
             let map = null;
             let markersLayer = null;
             let isAnimating = false;
+            let cursor = null;
             
-            const ZOOM_CITY = 13;
+            // Apple system easing
+            const APPLE_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+            const ZOOM_LEVEL = 13;
             
-            // Add optimized styles
-            const addMapStyles = () => {
+            // Inject Apple-exact styles
+            const injectStyles = () => {
                 const style = document.createElement('style');
                 style.textContent = `
+                    /* Hide all Leaflet chrome */
                     .leaflet-control-container,
-                    .leaflet-control-attribution { display: none !important; }
-                    
-                    .leaflet-container {
-                        background: #f0f4f8 !important;
+                    .leaflet-control-attribution,
+                    .leaflet-control-zoom { 
+                        display: none !important; 
                     }
                     
-                    /* GPU-accelerated animations */
+                    /* Apple Maps base */
+                    .leaflet-container {
+                        background: #F5F5F7 !important;
+                        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+                    }
+                    
+                    /* GPU acceleration */
                     .leaflet-map-pane,
                     .leaflet-tile-pane,
-                    .leaflet-marker-pane {
+                    .leaflet-marker-pane,
+                    .leaflet-tile {
                         will-change: transform;
                         transform: translateZ(0);
+                        backface-visibility: hidden;
                     }
                     
-                    .leaflet-tile {
-                        will-change: opacity;
-                    }
-                    
-                    /* Simple clean pin */
-                    .city-pin {
-                        width: 32px;
-                        height: 32px;
-                        background: #ff3b30;
-                        border: 3px solid white;
+                    /* Apple-style location pin */
+                    .apple-map-pin {
+                        width: 28px;
+                        height: 28px;
+                        background: #007AFF;
                         border-radius: 50%;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        border: 3px solid #FFFFFF;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+                        transition: transform 0.3s ${APPLE_EASE};
                     }
                     
-                    .city-pin::before {
+                    .apple-map-pin:hover {
+                        transform: scale(1.05);
+                    }
+                    
+                    /* Subtle pulse ring */
+                    .apple-map-pin::after {
                         content: '';
                         position: absolute;
-                        inset: -8px;
-                        border: 2px solid rgba(255, 59, 48, 0.4);
+                        top: 50%;
+                        left: 50%;
+                        width: 28px;
+                        height: 28px;
+                        border: 1.5px solid rgba(0, 122, 255, 0.3);
                         border-radius: 50%;
-                        animation: pinRing 1.5s ease-out infinite;
+                        transform: translate(-50%, -50%);
+                        animation: applePulse 2.5s ${APPLE_EASE} infinite;
                     }
                     
-                    @keyframes pinRing {
-                        0% { transform: scale(1); opacity: 1; }
-                        100% { transform: scale(2); opacity: 0; }
+                    @keyframes applePulse {
+                        0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+                        100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
                     }
                     
-                    /* User markers */
-                    .user-pin {
-                        width: 32px;
-                        height: 32px;
+                    /* Member pin - neutral gray */
+                    .member-pin {
+                        width: 36px;
+                        height: 36px;
+                        background: #F5F5F7;
                         border-radius: 50%;
-                        border: 2px solid white;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+                        border: 2px solid #FFFFFF;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        font-size: 16px;
-                        background: #22c55e;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #1D1D1F;
+                        letter-spacing: -0.01em;
+                        transition: transform 0.3s ${APPLE_EASE}, box-shadow 0.3s ${APPLE_EASE};
                     }
-                    .user-pin.blue { background: #3b82f6; }
-                    .user-pin.purple { background: #a855f7; }
-                    .user-pin.orange { background: #f59e0b; }
+                    
+                    .member-pin:hover {
+                        transform: scale(1.05);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    }
+                    
+                    /* Apple cursor */
+                    .apple-cursor {
+                        position: fixed;
+                        width: 20px;
+                        height: 20px;
+                        border: 1.5px solid rgba(0, 0, 0, 0.4);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 100000;
+                        transform: translate(-50%, -50%);
+                        transition: transform 0.15s ${APPLE_EASE}, border-color 0.2s ${APPLE_EASE}, background 0.2s ${APPLE_EASE};
+                        mix-blend-mode: exclusion;
+                        background: transparent;
+                    }
+                    
+                    .apple-cursor::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 4px;
+                        height: 4px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                    
+                    .apple-cursor.hovering {
+                        transform: translate(-50%, -50%) scale(1.4);
+                        border-color: rgba(0, 122, 255, 0.6);
+                        background: rgba(0, 122, 255, 0.08);
+                    }
+                    
+                    #mapContainer {
+                        cursor: none !important;
+                    }
+                    
+                    #mapContainer * {
+                        cursor: none !important;
+                    }
+                    
+                    /* Apple-style member card */
+                    .apple-member-card {
+                        position: absolute;
+                        background: rgba(255, 255, 255, 0.72);
+                        backdrop-filter: blur(20px) saturate(180%);
+                        -webkit-backdrop-filter: blur(20px) saturate(180%);
+                        border-radius: 16px;
+                        padding: 16px;
+                        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
+                        border: 0.5px solid rgba(0, 0, 0, 0.06);
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        opacity: 0;
+                        transform: translateY(12px);
+                        transition: opacity 0.5s ${APPLE_EASE}, transform 0.5s ${APPLE_EASE}, box-shadow 0.3s ${APPLE_EASE};
+                        z-index: 100;
+                        min-width: 180px;
+                    }
+                    
+                    .apple-member-card.visible {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                    
+                    .apple-member-card:hover {
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+                    }
+                    
+                    .apple-member-avatar {
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #FFFFFF;
+                        font-size: 16px;
+                        font-weight: 500;
+                        letter-spacing: -0.01em;
+                        flex-shrink: 0;
+                    }
+                    
+                    .apple-member-info {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                    }
+                    
+                    .apple-member-name {
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: #1D1D1F;
+                        letter-spacing: -0.01em;
+                        line-height: 1.2;
+                    }
+                    
+                    .apple-member-role {
+                        font-size: 13px;
+                        font-weight: 400;
+                        color: #86868B;
+                        letter-spacing: -0.01em;
+                        line-height: 1.3;
+                    }
+                    
+                    /* City label - Apple style */
+                    .city-label {
+                        background: rgba(255, 255, 255, 0.72) !important;
+                        backdrop-filter: blur(20px) saturate(180%) !important;
+                        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+                        border-radius: 12px !important;
+                        border: 0.5px solid rgba(0, 0, 0, 0.06) !important;
+                        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+                        padding: 10px 16px !important;
+                    }
+                    
+                    .city-label .city-name {
+                        font-size: 15px !important;
+                        font-weight: 600 !important;
+                        color: #1D1D1F !important;
+                        letter-spacing: -0.01em !important;
+                    }
+                    
+                    .city-label .city-users {
+                        font-size: 13px !important;
+                        font-weight: 400 !important;
+                        color: #86868B !important;
+                    }
                 `;
                 document.head.appendChild(style);
             };
             
+            // Create Apple cursor
+            const createCursor = () => {
+                cursor = document.createElement('div');
+                cursor.className = 'apple-cursor';
+                cursor.style.display = 'none';
+                document.body.appendChild(cursor);
+                
+                let cursorX = 0, cursorY = 0;
+                let currentX = 0, currentY = 0;
+                
+                mapContainer.addEventListener('mouseenter', () => cursor.style.display = 'block');
+                mapContainer.addEventListener('mouseleave', () => cursor.style.display = 'none');
+                
+                document.addEventListener('mousemove', (e) => {
+                    cursorX = e.clientX;
+                    cursorY = e.clientY;
+                });
+                
+                // Smooth trailing animation
+                const animateCursor = () => {
+                    currentX += (cursorX - currentX) * 0.15;
+                    currentY += (cursorY - currentY) * 0.15;
+                    cursor.style.left = currentX + 'px';
+                    cursor.style.top = currentY + 'px';
+                    requestAnimationFrame(animateCursor);
+                };
+                animateCursor();
+            };
+            
             // Initialize map
             const initMap = () => {
-                addMapStyles();
+                injectStyles();
+                createCursor();
                 
                 map = L.map(mapContainer, {
                     center: cities[0].coords,
-                    zoom: ZOOM_CITY,
+                    zoom: ZOOM_LEVEL,
                     zoomControl: false,
                     attributionControl: false,
                     scrollWheelZoom: false,
@@ -547,151 +731,150 @@
                     dragging: false,
                     keyboard: false,
                     touchZoom: false,
-                    preferCanvas: true
+                    preferCanvas: true,
+                    zoomAnimation: true,
+                    fadeAnimation: true,
+                    markerZoomAnimation: true
                 });
                 
-                // Simple, fast tile layer
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 18,
+                // CartoDB Positron - closest to Apple Maps light
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19,
                     updateWhenIdle: true,
                     updateWhenZooming: false,
-                    keepBuffer: 4
+                    keepBuffer: 6
                 }).addTo(map);
                 
-                // Create markers layer
                 markersLayer = L.layerGroup().addTo(map);
-                
-                // Show first city immediately
                 showCity(cities[0]);
             };
             
-            // Show city with markers
+            // Display city with members
             const showCity = (city) => {
                 markersLayer.clearLayers();
                 
-                // Add user markers
-                city.users.forEach((user, i) => {
-                    const angle = (i / city.users.length) * Math.PI * 2;
-                    const r = 0.004;
-                    const lat = city.coords[0] + Math.cos(angle) * r;
-                    const lng = city.coords[1] + Math.sin(angle) * r * 1.5;
-                    
-                    const colorClass = user.color === '#3b82f6' ? 'blue' : 
-                                       user.color === '#a855f7' ? 'purple' : 
-                                       user.color === '#f59e0b' ? 'orange' : '';
+                // Add member pins
+                city.members.forEach((member, i) => {
+                    const angle = (i / city.members.length) * Math.PI * 2 - Math.PI / 2;
+                    const r = 0.006;
+                    const lat = city.coords[0] + Math.sin(angle) * r;
+                    const lng = city.coords[1] + Math.cos(angle) * r * 1.3;
                     
                     const icon = L.divIcon({
                         className: '',
-                        html: `<div class="user-pin ${colorClass}">${user.avatar}</div>`,
-                        iconSize: [32, 32],
-                        iconAnchor: [16, 16]
+                        html: `<div class="member-pin">${member.initial}</div>`,
+                        iconSize: [36, 36],
+                        iconAnchor: [18, 18]
                     });
                     
-                    L.marker([lat, lng], { icon }).addTo(markersLayer);
+                    const marker = L.marker([lat, lng], { icon }).addTo(markersLayer);
+                    
+                    // Cursor hover effect
+                    marker.on('mouseover', () => cursor?.classList.add('hovering'));
+                    marker.on('mouseout', () => cursor?.classList.remove('hovering'));
                 });
                 
-                // Add center pin
+                // Center pin
                 const pinIcon = L.divIcon({
                     className: '',
-                    html: '<div class="city-pin"></div>',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 16]
+                    html: '<div class="apple-map-pin"></div>',
+                    iconSize: [28, 28],
+                    iconAnchor: [14, 14]
                 });
-                L.marker(city.coords, { icon: pinIcon }).addTo(markersLayer);
+                const centerMarker = L.marker(city.coords, { icon: pinIcon }).addTo(markersLayer);
+                centerMarker.on('mouseover', () => cursor?.classList.add('hovering'));
+                centerMarker.on('mouseout', () => cursor?.classList.remove('hovering'));
                 
-                // Update UI
                 updateUI(city);
             };
             
             // Card positions
-            const cardPositions = [
-                { left: '4%', top: '18%' },
-                { right: '4%', top: '15%' },
-                { left: '3%', top: '58%' },
-                { right: '3%', top: '52%' },
+            const positions = [
+                { left: '24px', top: '120px' },
+                { right: '24px', top: '100px' },
+                { left: '24px', bottom: '180px' },
+                { right: '24px', bottom: '160px' }
             ];
             
-            // Update UI elements
+            // Update UI
             const updateUI = (city) => {
                 // City label
                 if (cityLabel) {
                     cityLabel.querySelector('.city-name').textContent = `${city.name}, ${city.state}`;
-                    cityLabel.querySelector('.city-users').textContent = `${city.users.length + 15} neighbors active`;
+                    cityLabel.querySelector('.city-users').textContent = `${city.members.length + Math.floor(Math.random() * 8) + 12} active nearby`;
                     cityLabel.classList.add('visible');
                 }
                 
-                // User cards
+                // Member cards
                 if (userCardsContainer) {
-                    userCardsContainer.innerHTML = city.users.map((user, i) => {
-                        const pos = cardPositions[i % cardPositions.length];
-                        const style = pos.left ? `left:${pos.left};top:${pos.top}` : `right:${pos.right};top:${pos.top}`;
-                        return `
-                            <div class="map-user-card" style="${style}">
-                                <div class="user-card-header">
-                                    <div class="user-avatar" style="background:${user.color}">
-                                        <span class="avatar-emoji">${user.avatar}</span>
-                                    </div>
-                                    <div class="user-info">
-                                        <div class="user-name">${user.name}</div>
-                                        <div class="user-badge"><span>${user.badge}</span></div>
-                                    </div>
-                                </div>
-                                <div class="user-activity">${user.activity}</div>
+                    userCardsContainer.innerHTML = '';
+                    
+                    city.members.forEach((member, i) => {
+                        const pos = positions[i % positions.length];
+                        const card = document.createElement('div');
+                        card.className = 'apple-member-card';
+                        
+                        let posStyle = '';
+                        if (pos.left) posStyle += `left: ${pos.left};`;
+                        if (pos.right) posStyle += `right: ${pos.right};`;
+                        if (pos.top) posStyle += `top: ${pos.top};`;
+                        if (pos.bottom) posStyle += `bottom: ${pos.bottom};`;
+                        
+                        card.style.cssText = posStyle;
+                        card.innerHTML = `
+                            <div class="apple-member-avatar">${member.initial}</div>
+                            <div class="apple-member-info">
+                                <div class="apple-member-name">${member.name}</div>
+                                <div class="apple-member-role">Community member</div>
                             </div>
                         `;
-                    }).join('');
-                    
-                    requestAnimationFrame(() => {
-                        userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
-                            setTimeout(() => card.classList.add('visible'), i * 100);
-                        });
+                        
+                        userCardsContainer.appendChild(card);
+                        
+                        // Staggered fade in
+                        setTimeout(() => card.classList.add('visible'), 200 + i * 150);
                     });
                 }
             };
             
             // Hide UI
             const hideUI = () => {
-                if (cityLabel) cityLabel.classList.remove('visible');
-                if (userCardsContainer) {
-                    userCardsContainer.querySelectorAll('.map-user-card').forEach(c => c.classList.remove('visible'));
-                }
+                cityLabel?.classList.remove('visible');
+                userCardsContainer?.querySelectorAll('.apple-member-card').forEach(c => c.classList.remove('visible'));
             };
             
-            // Smooth transition to next city
-            const goToNextCity = () => {
+            // Cinematic transition
+            const transitionToCity = () => {
                 if (isAnimating) return;
                 isAnimating = true;
                 
                 hideUI();
                 
+                setTimeout(() => markersLayer.clearLayers(), 400);
+                
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
                 const nextCity = cities[currentCityIndex];
                 
-                // Clear markers before flying
-                setTimeout(() => markersLayer.clearLayers(), 300);
-                
-                // Smooth fly
                 setTimeout(() => {
-                    map.flyTo(nextCity.coords, ZOOM_CITY, {
-                        duration: 2,
-                        easeLinearity: 0.5
+                    map.flyTo(nextCity.coords, ZOOM_LEVEL, {
+                        duration: 2.8,
+                        easeLinearity: 0.1
                     });
-                }, 400);
+                }, 500);
                 
-                // Show new city
                 setTimeout(() => {
                     showCity(nextCity);
                     isAnimating = false;
-                }, 2500);
+                }, 3400);
             };
             
             // Initialize
             initMap();
             
-            // City rotation every 6 seconds
-            setInterval(goToNextCity, 6000);
+            // Continuous loop - 7 seconds per city
+            setInterval(transitionToCity, 7000);
             
-            // Scroll fade
+            // Scroll handling
             let ticking = false;
             window.addEventListener('scroll', () => {
                 if (!ticking) {

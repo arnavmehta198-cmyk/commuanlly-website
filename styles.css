@@ -367,7 +367,7 @@ button {
 /* Additional map styles */
 
 
-/* Subtle gradient overlay - let map show through */
+/* Apple-style subtle vignette */
 .map-background::after {
     content: '';
     position: absolute;
@@ -375,12 +375,11 @@ button {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0.05) 30%,
-        rgba(255, 255, 255, 0.05) 60%,
-        rgba(255, 255, 255, 0.25) 100%
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.3) 100%
     );
     pointer-events: none;
     z-index: 1;
@@ -533,23 +532,23 @@ button {
 }
 
 .user-avatar {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: #22c55e;
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 500;
+    font-size: 16px;
     color: white;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
-    border: 2px solid white;
-    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    letter-spacing: -0.01em;
 }
 
 .user-avatar .avatar-emoji {
-    font-size: 1.4rem;
+    font-size: 16px;
     line-height: 1;
 }
 
