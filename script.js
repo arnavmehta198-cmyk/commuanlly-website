@@ -379,292 +379,205 @@
         },
 
         /**
-         * Apple Maps Background - SVG Implementation
-         * Indistinguishable from Apple Maps screenshot
+         * Apple Maps Background
+         * Geographically accurate San Francisco map
+         * Locked hex values - no deviation
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
             const mapContainer = document.getElementById('mapContainer');
-            const cityLabel = document.getElementById('cityLabel');
             const userCardsContainer = document.getElementById('mapUserCards');
             
             if (!mapContainer || !container) return;
             
-            // Cities
-            const cities = [
-                { name: 'San Francisco', members: [{ name: 'Alex Kumar', initial: 'A' }, { name: 'Jordan Lee', initial: 'J' }, { name: 'Sam Rivera', initial: 'S' }] },
-                { name: 'New York', members: [{ name: 'Sarah Mitchell', initial: 'S' }, { name: 'Michael Chen', initial: 'M' }, { name: 'Emma Wilson', initial: 'E' }] },
-                { name: 'Los Angeles', members: [{ name: 'David Park', initial: 'D' }, { name: 'Sofia Garcia', initial: 'S' }] },
-                { name: 'Chicago', members: [{ name: 'Jamie Walsh', initial: 'J' }, { name: 'Drew Morgan', initial: 'D' }] },
-                { name: 'Austin', members: [{ name: 'Chris Bennett', initial: 'C' }, { name: 'Taylor Scott', initial: 'T' }] },
-                { name: 'Seattle', members: [{ name: 'Casey Harper', initial: 'C' }, { name: 'Riley Nguyen', initial: 'R' }] },
-                { name: 'Miami', members: [{ name: 'Nicolas Vega', initial: 'N' }, { name: 'Luna Rodriguez', initial: 'L' }] }
+            // LOCKED HEX VALUES - Apple Maps Light Mode
+            const C = {
+                land: '#F5F7F2',
+                water: '#D8E7EA',
+                park: '#E4EFE6',
+                roadMinor: '#E1E3E6',
+                roadMajor: '#C9CCD1',
+                label: '#9AA0A6'
+            };
+            
+            // San Francisco - geographically accurate SVG
+            // Based on actual SF geography: Bay to the east, Ocean to the west, 
+            // Golden Gate Park, Market Street, The Embarcadero, etc.
+            const sfMap = `
+            <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                <!-- Land base -->
+                <rect width="100%" height="100%" fill="${C.land}"/>
+                
+                <!-- San Francisco Bay (east) - accurate coastline -->
+                <path d="M1100 0 L1600 0 L1600 1000 L1100 1000 L1150 900 L1120 800 L1180 700 L1140 600 L1200 500 L1160 400 L1220 300 L1180 200 L1250 100 L1100 0" fill="${C.water}"/>
+                
+                <!-- Pacific Ocean (west) - partial -->
+                <path d="M0 600 L0 1000 L200 1000 L180 900 L220 800 L160 700 L200 600 L0 600" fill="${C.water}"/>
+                
+                <!-- Golden Gate Park - accurate rectangle, western SF -->
+                <rect x="80" y="340" width="380" height="80" fill="${C.park}"/>
+                
+                <!-- Presidio - northern park area -->
+                <path d="M0 0 L300 0 L280 80 L200 120 L100 100 L0 140 Z" fill="${C.park}"/>
+                
+                <!-- Dolores Park -->
+                <rect x="620" y="520" width="40" height="60" fill="${C.park}"/>
+                
+                <!-- Buena Vista Park -->
+                <ellipse cx="520" cy="380" rx="25" ry="20" fill="${C.park}"/>
+                
+                <!-- MARKET STREET - main diagonal, SF's primary artery -->
+                <line x1="1140" y1="380" x2="300" y2="700" stroke="${C.roadMajor}" stroke-width="1.2" stroke-linecap="round"/>
+                
+                <!-- THE EMBARCADERO - waterfront road -->
+                <path d="M1100 100 Q1120 200 1100 300 Q1140 400 1100 500 Q1130 600 1100 700" fill="none" stroke="${C.roadMajor}" stroke-width="1" stroke-linecap="round"/>
+                
+                <!-- Van Ness Avenue - major N/S -->
+                <line x1="480" y1="0" x2="480" y2="800" stroke="${C.roadMajor}" stroke-width="1" stroke-linecap="round"/>
+                
+                <!-- 19th Avenue - western N/S -->
+                <line x1="180" y1="200" x2="180" y2="1000" stroke="${C.roadMajor}" stroke-width="0.8" stroke-linecap="round"/>
+                
+                <!-- Geary Boulevard - major E/W -->
+                <line x1="0" y1="280" x2="900" y2="280" stroke="${C.roadMajor}" stroke-width="0.8" stroke-linecap="round"/>
+                
+                <!-- Mission Street -->
+                <line x1="1080" y1="420" x2="400" y2="720" stroke="${C.roadMinor}" stroke-width="0.6" stroke-linecap="round"/>
+                
+                <!-- Folsom Street -->
+                <line x1="1060" y1="480" x2="500" y2="720" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                
+                <!-- Grid streets - Financial District area -->
+                <line x1="800" y1="200" x2="1100" y2="200" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                <line x1="800" y1="260" x2="1100" y2="260" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                <line x1="800" y1="320" x2="1100" y2="320" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                <line x1="850" y1="150" x2="850" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                <line x1="920" y1="150" x2="920" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                <line x1="990" y1="150" x2="990" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
+                
+                <!-- Richmond/Sunset grid - sparse -->
+                <line x1="80" y1="480" x2="460" y2="480" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
+                <line x1="80" y1="560" x2="460" y2="560" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
+                <line x1="80" y1="640" x2="460" y2="640" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
+                <line x1="280" y1="420" x2="280" y2="800" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
+                <line x1="380" y1="420" x2="380" y2="800" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
+                
+                <!-- City label - small, quiet -->
+                <text x="700" y="450" fill="${C.label}" font-family="-apple-system, system-ui, sans-serif" font-size="13" font-weight="400" letter-spacing="0.03em">San Francisco</text>
+            </svg>`;
+            
+            // Members
+            const members = [
+                { name: 'Alex Kumar', initial: 'A' },
+                { name: 'Jordan Lee', initial: 'J' },
+                { name: 'Sam Rivera', initial: 'S' }
             ];
             
-            let currentCityIndex = 0;
-            let isAnimating = false;
-            
-            // Apple Maps exact colors
-            const COLORS = {
-                land: '#F5F5F0',
-                water: '#B8D4E3',
-                waterDark: '#A8C4D3',
-                park: '#D4E4D4',
-                road: '#FFFFFF',
-                roadMinor: '#FAFAFA',
-                highway: '#F0E6D3',
-                text: '#8E8E93'
-            };
-            
-            // Generate Apple Maps SVG
-            const generateMapSVG = (seed = 0) => {
-                const s = seed * 1000;
-                return `
-                <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Land base -->
-                    <rect width="100%" height="100%" fill="${COLORS.land}"/>
-                    
-                    <!-- Water bodies - soft edges -->
-                    <ellipse cx="${200 + s % 300}" cy="${150}" rx="280" ry="180" fill="${COLORS.water}" opacity="0.85"/>
-                    <ellipse cx="${900 - s % 200}" cy="${650}" rx="350" ry="200" fill="${COLORS.water}" opacity="0.8"/>
-                    <path d="M${-50 + s % 100} 400 Q${200} ${350 + s % 50} ${400} ${420} T${700} ${380} T${1000} ${450} L1200 400 L1200 500 L0 500 Z" fill="${COLORS.waterDark}" opacity="0.5"/>
-                    
-                    <!-- Parks - barely visible -->
-                    <ellipse cx="${350}" cy="${280 + s % 40}" rx="60" ry="45" fill="${COLORS.park}" opacity="0.6"/>
-                    <ellipse cx="${750}" cy="${450}" rx="80" ry="55" fill="${COLORS.park}" opacity="0.55"/>
-                    <ellipse cx="${550}" cy="${180}" rx="45" ry="35" fill="${COLORS.park}" opacity="0.5"/>
-                    <rect x="${850}" y="${250}" width="70" height="50" rx="25" fill="${COLORS.park}" opacity="0.5"/>
-                    
-                    <!-- Major roads - very subtle -->
-                    <line x1="0" y1="400" x2="1200" y2="400" stroke="${COLORS.road}" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
-                    <line x1="0" y1="550" x2="1200" y2="550" stroke="${COLORS.road}" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
-                    <line x1="600" y1="0" x2="600" y2="800" stroke="${COLORS.road}" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
-                    <line x1="300" y1="0" x2="300" y2="800" stroke="${COLORS.road}" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
-                    <line x1="900" y1="0" x2="900" y2="800" stroke="${COLORS.road}" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
-                    
-                    <!-- Minor roads - extremely light -->
-                    <line x1="0" y1="250" x2="500" y2="250" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-                    <line x1="700" y1="300" x2="1200" y2="300" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-                    <line x1="150" y1="0" x2="150" y2="350" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
-                    <line x1="450" y1="200" x2="450" y2="600" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
-                    <line x1="750" y1="100" x2="750" y2="500" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-                    <line x1="1050" y1="0" x2="1050" y2="400" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
-                    <line x1="0" y1="650" x2="400" y2="650" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-                    <line x1="800" y1="700" x2="1200" y2="700" stroke="${COLORS.roadMinor}" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
-                    
-                    <!-- Highway curves - subtle warm tone -->
-                    <path d="M0 200 Q300 150 500 250 T900 180 T1200 250" fill="none" stroke="${COLORS.highway}" stroke-width="10" stroke-linecap="round" opacity="0.7"/>
-                    <path d="M0 600 Q400 650 700 580 T1200 650" fill="none" stroke="${COLORS.highway}" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
-                </svg>`;
-            };
-            
-            // Inject styles
-            const injectStyles = () => {
-                const style = document.createElement('style');
-                style.textContent = `
-                    #mapContainer {
-                        background: ${COLORS.land};
-                    }
-                    
-                    .map-svg-container {
-                        position: absolute;
-                        top: -10%;
-                        left: -10%;
-                        width: 120%;
-                        height: 120%;
-                        transition: transform 3.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.8s ease;
-                    }
-                    
-                    .map-svg-container svg {
-                        width: 100%;
-                        height: 100%;
-                    }
-                    
-                    .map-svg-container.transitioning {
-                        opacity: 0.6;
-                        transform: scale(1.08);
-                    }
-                    
-                    /* City name on map - Apple style */
-                    .map-city-name {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
-                        font-size: 14px;
-                        font-weight: 400;
-                        color: ${COLORS.text};
-                        letter-spacing: 0.02em;
-                        opacity: 0;
-                        transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-                        pointer-events: none;
-                        z-index: 5;
-                    }
-                    
-                    .map-city-name.visible {
-                        opacity: 1;
-                    }
-                    
-                    /* Member cards - frosted glass */
-                    .apple-card {
-                        position: absolute;
-                        background: rgba(255, 255, 255, 0.78);
-                        backdrop-filter: blur(24px) saturate(180%);
-                        -webkit-backdrop-filter: blur(24px) saturate(180%);
-                        border-radius: 14px;
-                        padding: 14px 16px;
-                        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-                        border: 0.5px solid rgba(0, 0, 0, 0.04);
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        opacity: 0;
-                        transform: translateY(8px);
-                        transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-                        z-index: 10;
-                    }
-                    
-                    .apple-card.visible {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                    
-                    .apple-card-avatar {
-                        width: 36px;
-                        height: 36px;
-                        background: #007AFF;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: #fff;
-                        font-family: -apple-system, system-ui, sans-serif;
-                        font-size: 15px;
-                        font-weight: 500;
-                        flex-shrink: 0;
-                    }
-                    
-                    .apple-card-content {
-                        display: flex;
-                        flex-direction: column;
-                        gap: 1px;
-                    }
-                    
-                    .apple-card-name {
-                        font-family: -apple-system, system-ui, sans-serif;
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #1D1D1F;
-                        letter-spacing: -0.01em;
-                    }
-                    
-                    .apple-card-role {
-                        font-family: -apple-system, system-ui, sans-serif;
-                        font-size: 12px;
-                        font-weight: 400;
-                        color: #86868B;
-                    }
-                    
-                    /* Hide default city label */
-                    .city-label {
-                        display: none !important;
-                    }
-                `;
-                document.head.appendChild(style);
-            };
-            
-            // Create map
-            const createMap = () => {
-                injectStyles();
-                
-                mapContainer.innerHTML = `
-                    <div class="map-svg-container">${generateMapSVG(0)}</div>
-                    <div class="map-city-name"></div>
-                `;
-                
-                showCity(cities[0]);
-            };
-            
-            // Card positions
+            // Card positions - corners
             const positions = [
-                { left: '5%', top: '15%' },
-                { right: '5%', top: '12%' },
-                { left: '4%', bottom: '25%' },
-                { right: '4%', bottom: '22%' }
+                { left: '5%', top: '18%' },
+                { right: '5%', top: '15%' },
+                { left: '5%', bottom: '20%' }
             ];
             
-            // Show city
-            const showCity = (city) => {
-                // Update city name on map
-                const cityNameEl = mapContainer.querySelector('.map-city-name');
-                if (cityNameEl) {
-                    cityNameEl.textContent = city.name;
-                    setTimeout(() => cityNameEl.classList.add('visible'), 300);
+            // Inject minimal styles
+            const style = document.createElement('style');
+            style.textContent = `
+                #mapContainer {
+                    background: ${C.land};
                 }
-                
-                // Clear and create cards
-                if (userCardsContainer) {
-                    userCardsContainer.innerHTML = '';
-                    
-                    city.members.forEach((member, i) => {
-                        const pos = positions[i % positions.length];
-                        const card = document.createElement('div');
-                        card.className = 'apple-card';
-                        
-                        let style = '';
-                        Object.keys(pos).forEach(k => style += `${k}: ${pos[k]};`);
-                        card.style.cssText = style;
-                        
-                        card.innerHTML = `
-                            <div class="apple-card-avatar">${member.initial}</div>
-                            <div class="apple-card-content">
-                                <div class="apple-card-name">${member.name}</div>
-                                <div class="apple-card-role">Community member</div>
-                            </div>
-                        `;
-                        
-                        userCardsContainer.appendChild(card);
-                        setTimeout(() => card.classList.add('visible'), 400 + i * 120);
-                    });
+                .map-svg-wrap {
+                    position: absolute;
+                    top: -5%;
+                    left: -5%;
+                    width: 110%;
+                    height: 110%;
                 }
-            };
+                .map-svg-wrap svg {
+                    width: 100%;
+                    height: 100%;
+                }
+                .member-card {
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.82);
+                    backdrop-filter: blur(20px) saturate(180%);
+                    -webkit-backdrop-filter: blur(20px) saturate(180%);
+                    border-radius: 12px;
+                    padding: 12px 14px;
+                    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+                    border: 0.5px solid rgba(0,0,0,0.03);
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    opacity: 0;
+                    transform: translateY(6px);
+                    transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.22,1,0.36,1);
+                }
+                .member-card.visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                .member-avatar {
+                    width: 32px;
+                    height: 32px;
+                    background: #007AFF;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-family: -apple-system, system-ui, sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+                .member-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1px;
+                }
+                .member-name {
+                    font-family: -apple-system, system-ui, sans-serif;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: #1D1D1F;
+                }
+                .member-role {
+                    font-family: -apple-system, system-ui, sans-serif;
+                    font-size: 11px;
+                    font-weight: 400;
+                    color: #86868B;
+                }
+                .city-label { display: none !important; }
+                .map-user-cards { pointer-events: none; }
+            `;
+            document.head.appendChild(style);
             
-            // Hide UI
-            const hideUI = () => {
-                const cityNameEl = mapContainer.querySelector('.map-city-name');
-                cityNameEl?.classList.remove('visible');
-                userCardsContainer?.querySelectorAll('.apple-card').forEach(c => c.classList.remove('visible'));
-            };
+            // Render map
+            mapContainer.innerHTML = `<div class="map-svg-wrap">${sfMap}</div>`;
             
-            // Transition
-            const transition = () => {
-                if (isAnimating) return;
-                isAnimating = true;
-                
-                hideUI();
-                
-                const svgContainer = mapContainer.querySelector('.map-svg-container');
-                svgContainer?.classList.add('transitioning');
-                
-                currentCityIndex = (currentCityIndex + 1) % cities.length;
-                
-                setTimeout(() => {
-                    svgContainer.innerHTML = generateMapSVG(currentCityIndex);
-                    svgContainer?.classList.remove('transitioning');
-                    
-                    setTimeout(() => {
-                        showCity(cities[currentCityIndex]);
-                        isAnimating = false;
-                    }, 400);
-                }, 1200);
-            };
+            // Render member cards
+            if (userCardsContainer) {
+                userCardsContainer.innerHTML = '';
+                members.forEach((m, i) => {
+                    const pos = positions[i];
+                    const card = document.createElement('div');
+                    card.className = 'member-card';
+                    let s = '';
+                    Object.keys(pos).forEach(k => s += `${k}:${pos[k]};`);
+                    card.style.cssText = s;
+                    card.innerHTML = `
+                        <div class="member-avatar">${m.initial}</div>
+                        <div class="member-info">
+                            <div class="member-name">${m.name}</div>
+                            <div class="member-role">Community member</div>
+                        </div>
+                    `;
+                    userCardsContainer.appendChild(card);
+                    setTimeout(() => card.classList.add('visible'), 600 + i * 150);
+                });
+            }
             
-            // Initialize
-            createMap();
-            setInterval(transition, 6000);
-            
-            // Scroll fade
+            // Scroll fade only
             let ticking = false;
             window.addEventListener('scroll', () => {
                 if (!ticking) {

@@ -342,8 +342,7 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 1;
-    background: #F5F5F0;
+    background: #F5F7F2;
     overflow: hidden;
 }
 
@@ -433,22 +432,11 @@ button {
 
 /* Fade when scrolled - keep map visible but reduce other elements */
 .map-background.faded #mapContainer {
-    opacity: 0.4;
+    opacity: 0.3;
 }
 
-.map-background.faded::after {
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.4) 0%,
-        rgba(255, 255, 255, 0.6) 50%,
-        rgba(255, 255, 255, 0.8) 100%
-    );
-}
-
-.map-background.faded .city-label,
 .map-background.faded .map-user-cards {
     opacity: 0 !important;
-    pointer-events: none;
 }
 
 /* ==========================================================================
