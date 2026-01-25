@@ -23,6 +23,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Mapbox GL JS for 3D Map Background -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
 </head>
 <body>
     <!-- 
@@ -49,14 +53,19 @@
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- 
-    AMBIENT LAYER: Living Map Background
-    - Animated Apple Maps-style visualization
-    - Shows different US cities with moving user dots
-    - Creates sense of live, active community
+    AMBIENT LAYER: 3D Map Background (Mapbox)
+    - Real map visualization cycling through US cities
+    - Shows animated Communally users with descriptions
+    - Smooth 3D transitions between locations
     -->
     <div id="mapBackground" class="map-background" aria-hidden="true">
-        <canvas id="mapCanvas"></canvas>
-        <div class="city-label" id="cityLabel"></div>
+        <div id="mapContainer"></div>
+        <div class="city-label" id="cityLabel">
+            <span class="city-name"></span>
+            <span class="city-users"></span>
+        </div>
+        <!-- User cards that appear on map -->
+        <div class="map-user-cards" id="mapUserCards"></div>
     </div>
 
     <!-- 

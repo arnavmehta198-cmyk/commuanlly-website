@@ -322,8 +322,8 @@ button {
    ========================================================================== */
 
 /* ==========================================================================
-   AMBIENT LAYER: Animated Map Background
-   Apple Maps-style visualization with moving users
+   AMBIENT LAYER: 3D Map Background (Mapbox)
+   Real map cycling through US cities with animated users
    ========================================================================== */
 
 .map-background {
@@ -334,45 +334,235 @@ button {
     height: 100%;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.4;
     transition: opacity 1s ease;
 }
 
-.map-background canvas {
+#mapContainer {
     width: 100%;
     height: 100%;
+    opacity: 0.5;
+    transition: opacity 1s ease;
+}
+
+/* Hide Mapbox attribution and logo for cleaner look */
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-logo {
+    display: none !important;
 }
 
 .city-label {
     position: absolute;
     bottom: 30px;
     left: 30px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--color-primary);
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.5s ease;
-    background: var(--color-bg);
-    padding: 6px 12px;
-    border-radius: var(--radius-full);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 12px 20px;
+    border-radius: var(--radius-lg);
     border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
 }
 
 .city-label.visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
-[data-theme="dark"] .map-background {
-    opacity: 0.3;
+.city-label .city-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+}
+
+.city-label .city-users {
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+[data-theme="dark"] .city-label {
+    background: rgba(24, 24, 27, 0.95);
+}
+
+[data-theme="dark"] #mapContainer {
+    opacity: 0.4;
+    filter: brightness(0.8) saturate(0.8);
 }
 
 /* Reduce opacity when scrolled past hero */
-.map-background.faded {
-    opacity: 0.15;
+.map-background.faded #mapContainer {
+    opacity: 0.25;
+}
+
+.map-background.faded .city-label,
+.map-background.faded .map-user-cards {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   Map User Cards - Floating user info that appears on map
+   ========================================================================== */
+
+.map-user-cards {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.map-user-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 14px 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    max-width: 220px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: userCardFloat 4s ease-in-out infinite;
+}
+
+.map-user-card.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+@keyframes userCardFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-8px) scale(1.02); }
+}
+
+.map-user-card::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 16px;
+    height: 16px;
+    background: inherit;
+    border: inherit;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+    color: var(--color-primary);
+}
+
+.user-badge svg {
+    width: 10px;
+    height: 10px;
+}
+
+.user-activity {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
+.user-activity strong {
+    color: var(--color-text);
+}
+
+[data-theme="dark"] .map-user-card {
+    background: rgba(39, 39, 42, 0.98);
+}
+
+/* Pulse marker on map for user location */
+.user-marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+
+.user-marker-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+}
+
+.user-marker-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: markerPulse 2s ease-out infinite;
+}
+
+@keyframes markerPulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+    }
 }
 
 /* ==========================================================================

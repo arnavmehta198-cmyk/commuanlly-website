@@ -379,270 +379,243 @@
         },
 
         /**
-         * Initialize animated Apple Maps-style background
-         * Shows different US cities with moving user dots
+         * Initialize 3D Map Background with Mapbox
+         * Real map cycling through US cities with animated users
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
-            const canvas = document.getElementById('mapCanvas');
+            const mapContainer = document.getElementById('mapContainer');
             const cityLabel = document.getElementById('cityLabel');
+            const userCardsContainer = document.getElementById('mapUserCards');
             
-            if (!canvas || !container) return;
+            if (!mapContainer || !container) return;
             
-            const ctx = canvas.getContext('2d');
-            let animationId;
+            // Check if Mapbox is loaded
+            if (typeof mapboxgl === 'undefined') {
+                console.log('Mapbox not loaded, skipping map background');
+                return;
+            }
             
-            // City data with different road patterns
+            // Mapbox public token (free tier)
+            mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+            
+            // City data with coordinates and sample users
             const cities = [
-                { name: 'New York, NY', grid: 'manhattan', color: '#e8e4df' },
-                { name: 'San Francisco, CA', grid: 'hills', color: '#e5e8e4' },
-                { name: 'Austin, TX', grid: 'sprawl', color: '#e8e6e2' },
-                { name: 'Seattle, WA', grid: 'waterfront', color: '#e2e6e8' },
-                { name: 'Chicago, IL', grid: 'grid', color: '#e6e4e2' },
-                { name: 'Miami, FL', grid: 'coastal', color: '#e4e8e6' },
-                { name: 'Denver, CO', grid: 'mountain', color: '#e8e6e4' },
-                { name: 'Portland, OR', grid: 'bridges', color: '#e4e6e4' },
-                { name: 'Boston, MA', grid: 'old', color: '#e6e4e0' },
-                { name: 'Los Angeles, CA', grid: 'highways', color: '#e8e8e4' }
+                {
+                    name: 'Brooklyn, NY',
+                    center: [-73.9442, 40.6782],
+                    zoom: 14,
+                    pitch: 45,
+                    bearing: -17,
+                    users: [
+                        { name: 'Sarah M.', initial: 'S', activity: 'Walking dogs in Park Slope', badge: '⭐ Top Helper' },
+                        { name: 'Mike R.', initial: 'M', activity: 'Helping with groceries', badge: '🏆 5 jobs today' },
+                        { name: 'Emma L.', initial: 'E', activity: 'Tutoring nearby', badge: '✨ New neighbor' }
+                    ]
+                },
+                {
+                    name: 'San Francisco, CA',
+                    center: [-122.4194, 37.7749],
+                    zoom: 14.5,
+                    pitch: 50,
+                    bearing: 20,
+                    users: [
+                        { name: 'Alex K.', initial: 'A', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper' },
+                        { name: 'Jordan T.', initial: 'J', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert' }
+                    ]
+                },
+                {
+                    name: 'Austin, TX',
+                    center: [-97.7431, 30.2672],
+                    zoom: 14,
+                    pitch: 40,
+                    bearing: -10,
+                    users: [
+                        { name: 'Chris B.', initial: 'C', activity: 'Yard work downtown', badge: '🌱 Garden pro' },
+                        { name: 'Taylor S.', initial: 'T', activity: 'Running errands', badge: '⚡ Quick helper' },
+                        { name: 'Morgan P.', initial: 'M', activity: 'Tech support', badge: '💻 Tech whiz' }
+                    ]
+                },
+                {
+                    name: 'Seattle, WA',
+                    center: [-122.3321, 47.6062],
+                    zoom: 14.5,
+                    pitch: 55,
+                    bearing: 30,
+                    users: [
+                        { name: 'Casey H.', initial: 'C', activity: 'Coffee delivery in Capitol Hill', badge: '☕ Local favorite' },
+                        { name: 'Riley N.', initial: 'R', activity: 'Dog walking near Pike Place', badge: '🐾 Pet lover' }
+                    ]
+                },
+                {
+                    name: 'Chicago, IL',
+                    center: [-87.6298, 41.8781],
+                    zoom: 14,
+                    pitch: 45,
+                    bearing: 0,
+                    users: [
+                        { name: 'Jamie W.', initial: 'J', activity: 'Snow shoveling in Lincoln Park', badge: '❄️ Winter warrior' },
+                        { name: 'Drew M.', initial: 'D', activity: 'Furniture assembly', badge: '🔧 Handy helper' }
+                    ]
+                },
+                {
+                    name: 'Miami, FL',
+                    center: [-80.1918, 25.7617],
+                    zoom: 14,
+                    pitch: 50,
+                    bearing: -20,
+                    users: [
+                        { name: 'Nico V.', initial: 'N', activity: 'Beach cleanup in South Beach', badge: '🌴 Community hero' },
+                        { name: 'Luna R.', initial: 'L', activity: 'Spanish tutoring', badge: '📚 Top tutor' }
+                    ]
+                },
+                {
+                    name: 'Denver, CO',
+                    center: [-104.9903, 39.7392],
+                    zoom: 14,
+                    pitch: 45,
+                    bearing: 15,
+                    users: [
+                        { name: 'Sky P.', initial: 'S', activity: 'Hiking gear organization', badge: '🏔️ Outdoor expert' },
+                        { name: 'River J.', initial: 'R', activity: 'Plant care in LoDo', badge: '🪴 Plant parent' }
+                    ]
+                },
+                {
+                    name: 'Los Angeles, CA',
+                    center: [-118.2437, 34.0522],
+                    zoom: 14,
+                    pitch: 40,
+                    bearing: -25,
+                    users: [
+                        { name: 'Kai M.', initial: 'K', activity: 'Car washing in Silver Lake', badge: '🚗 Detail king' },
+                        { name: 'Sage L.', initial: 'S', activity: 'Meal prep assistance', badge: '🍳 Chef helper' },
+                        { name: 'Quinn B.', initial: 'Q', activity: 'Personal shopping', badge: '🛍️ Style guru' }
+                    ]
+                }
             ];
             
             let currentCityIndex = 0;
-            let roads = [];
-            let users = [];
-            let parks = [];
-            let transitionProgress = 1;
+            let map = null;
+            let userMarkers = [];
             
-            // Resize canvas
-            const resize = () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                generateCity(cities[currentCityIndex]);
+            // Initialize the map
+            try {
+                map = new mapboxgl.Map({
+                    container: 'mapContainer',
+                    style: 'mapbox://styles/mapbox/light-v11', // Clean Apple Maps-like style
+                    center: cities[0].center,
+                    zoom: cities[0].zoom,
+                    pitch: cities[0].pitch,
+                    bearing: cities[0].bearing,
+                    interactive: false, // Disable user interaction
+                    attributionControl: false
+                });
+            } catch (e) {
+                console.log('Error initializing Mapbox:', e);
+                return;
+            }
+            
+            // Create user card HTML
+            const createUserCard = (user, index) => {
+                return `
+                    <div class="map-user-card" style="
+                        left: ${15 + (index % 2) * 55}%;
+                        top: ${20 + Math.floor(index / 2) * 30}%;
+                        animation-delay: ${index * 0.2}s;
+                    ">
+                        <div class="user-card-header">
+                            <div class="user-avatar">${user.initial}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.name}</div>
+                                <div class="user-badge">
+                                    <span>${user.badge}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-activity">${user.activity}</div>
+                    </div>
+                `;
             };
             
-            // Generate road network for a city
-            const generateCity = (city) => {
-                roads = [];
-                parks = [];
-                const w = canvas.width;
-                const h = canvas.height;
-                
-                // Base grid roads
-                const gridSize = 80 + Math.random() * 40;
-                
-                // Horizontal roads
-                for (let y = gridSize; y < h; y += gridSize + Math.random() * 30) {
-                    const isMain = Math.random() > 0.7;
-                    roads.push({
-                        x1: 0,
-                        y1: y + (Math.random() - 0.5) * 20,
-                        x2: w,
-                        y2: y + (Math.random() - 0.5) * 20,
-                        width: isMain ? 3 : 1.5,
-                        isMain
-                    });
-                }
-                
-                // Vertical roads
-                for (let x = gridSize; x < w; x += gridSize + Math.random() * 30) {
-                    const isMain = Math.random() > 0.7;
-                    roads.push({
-                        x1: x + (Math.random() - 0.5) * 20,
-                        y1: 0,
-                        x2: x + (Math.random() - 0.5) * 20,
-                        y2: h,
-                        width: isMain ? 3 : 1.5,
-                        isMain
-                    });
-                }
-                
-                // Add diagonal roads for some cities
-                if (city.grid === 'old' || city.grid === 'hills') {
-                    for (let i = 0; i < 5; i++) {
-                        const startX = Math.random() * w;
-                        const startY = Math.random() * h;
-                        roads.push({
-                            x1: startX,
-                            y1: startY,
-                            x2: startX + (Math.random() - 0.5) * 400,
-                            y2: startY + (Math.random() - 0.5) * 400,
-                            width: 2,
-                            isMain: true
-                        });
-                    }
-                }
-                
-                // Add parks (green areas)
-                const parkCount = 3 + Math.floor(Math.random() * 4);
-                for (let i = 0; i < parkCount; i++) {
-                    parks.push({
-                        x: Math.random() * w,
-                        y: Math.random() * h,
-                        radius: 30 + Math.random() * 60
-                    });
-                }
-                
-                // Generate users
-                generateUsers();
-            };
-            
-            // Generate moving users
-            const generateUsers = () => {
-                users = [];
-                const userCount = 15 + Math.floor(Math.random() * 10);
-                
-                for (let i = 0; i < userCount; i++) {
-                    // Pick a random road to follow
-                    const road = roads[Math.floor(Math.random() * roads.length)];
-                    const progress = Math.random();
-                    
-                    users.push({
-                        x: road.x1 + (road.x2 - road.x1) * progress,
-                        y: road.y1 + (road.y2 - road.y1) * progress,
-                        road: road,
-                        progress: progress,
-                        speed: 0.0005 + Math.random() * 0.001,
-                        direction: Math.random() > 0.5 ? 1 : -1,
-                        size: 4 + Math.random() * 3,
-                        pulsePhase: Math.random() * Math.PI * 2,
-                        isActive: Math.random() > 0.3
-                    });
-                }
-            };
-            
-            // Transition to next city
-            const nextCity = () => {
-                transitionProgress = 0;
-                currentCityIndex = (currentCityIndex + 1) % cities.length;
-                
-                // Show city label
+            // Update city label and user cards
+            const updateCityDisplay = (city) => {
+                // Update city label
                 if (cityLabel) {
-                    cityLabel.textContent = cities[currentCityIndex].name;
-                    cityLabel.classList.add('visible');
+                    const cityNameEl = cityLabel.querySelector('.city-name');
+                    const cityUsersEl = cityLabel.querySelector('.city-users');
                     
+                    if (cityNameEl) cityNameEl.textContent = city.name;
+                    if (cityUsersEl) cityUsersEl.textContent = `${city.users.length + Math.floor(Math.random() * 20) + 10} neighbors active now`;
+                    
+                    cityLabel.classList.add('visible');
+                }
+                
+                // Update user cards
+                if (userCardsContainer) {
+                    // Fade out existing cards
+                    const existingCards = userCardsContainer.querySelectorAll('.map-user-card');
+                    existingCards.forEach(card => card.classList.remove('visible'));
+                    
+                    // After fade out, replace with new cards
                     setTimeout(() => {
-                        cityLabel.classList.remove('visible');
-                    }, 3000);
+                        userCardsContainer.innerHTML = city.users.map((user, i) => createUserCard(user, i)).join('');
+                        
+                        // Fade in new cards
+                        setTimeout(() => {
+                            userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
+                                setTimeout(() => card.classList.add('visible'), i * 200);
+                            });
+                        }, 100);
+                    }, 300);
                 }
-                
-                // Generate new city after brief fade
-                setTimeout(() => {
-                    generateCity(cities[currentCityIndex]);
-                }, 500);
             };
             
-            // Animation loop
-            const animate = () => {
-                // Clear with city background color
+            // Fly to next city
+            const flyToNextCity = () => {
+                // Hide current display
+                if (cityLabel) cityLabel.classList.remove('visible');
+                
+                // Move to next city
+                currentCityIndex = (currentCityIndex + 1) % cities.length;
                 const city = cities[currentCityIndex];
-                ctx.fillStyle = city.color;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
                 
-                // Handle transition
-                if (transitionProgress < 1) {
-                    transitionProgress += 0.02;
+                // Animate map flight
+                if (map) {
+                    map.flyTo({
+                        center: city.center,
+                        zoom: city.zoom,
+                        pitch: city.pitch,
+                        bearing: city.bearing,
+                        duration: 3000,
+                        essential: true
+                    });
                 }
                 
-                const alpha = Math.min(1, transitionProgress);
-                
-                // Draw parks (green areas)
-                ctx.globalAlpha = alpha * 0.5;
-                parks.forEach(park => {
-                    const gradient = ctx.createRadialGradient(
-                        park.x, park.y, 0,
-                        park.x, park.y, park.radius
-                    );
-                    gradient.addColorStop(0, '#c7dfc7');
-                    gradient.addColorStop(1, 'transparent');
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(park.x, park.y, park.radius, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-                
-                // Draw roads
-                ctx.globalAlpha = alpha;
-                roads.forEach(road => {
-                    ctx.beginPath();
-                    ctx.moveTo(road.x1, road.y1);
-                    ctx.lineTo(road.x2, road.y2);
-                    ctx.strokeStyle = road.isMain ? '#d4d0cc' : '#e0dcd8';
-                    ctx.lineWidth = road.width;
-                    ctx.stroke();
-                });
-                
-                // Update and draw users
-                const time = Date.now() * 0.001;
-                users.forEach(user => {
-                    // Move along road
-                    user.progress += user.speed * user.direction;
-                    
-                    // Bounce at ends or switch roads
-                    if (user.progress > 1 || user.progress < 0) {
-                        user.direction *= -1;
-                        user.progress = Math.max(0, Math.min(1, user.progress));
-                        
-                        // Sometimes switch to a different road
-                        if (Math.random() > 0.5) {
-                            user.road = roads[Math.floor(Math.random() * roads.length)];
-                        }
-                    }
-                    
-                    // Calculate position
-                    user.x = user.road.x1 + (user.road.x2 - user.road.x1) * user.progress;
-                    user.y = user.road.y1 + (user.road.y2 - user.road.y1) * user.progress;
-                    
-                    // Add slight wobble
-                    user.x += Math.sin(time * 2 + user.pulsePhase) * 2;
-                    user.y += Math.cos(time * 2 + user.pulsePhase) * 2;
-                    
-                    // Draw user dot
-                    if (user.isActive) {
-                        // Pulse effect
-                        const pulse = 1 + Math.sin(time * 3 + user.pulsePhase) * 0.2;
-                        
-                        // Glow
-                        ctx.globalAlpha = alpha * 0.3;
-                        ctx.beginPath();
-                        ctx.arc(user.x, user.y, user.size * 2 * pulse, 0, Math.PI * 2);
-                        ctx.fillStyle = '#22c55e';
-                        ctx.fill();
-                        
-                        // Core dot
-                        ctx.globalAlpha = alpha * 0.9;
-                        ctx.beginPath();
-                        ctx.arc(user.x, user.y, user.size * pulse, 0, Math.PI * 2);
-                        ctx.fillStyle = '#22c55e';
-                        ctx.fill();
-                        
-                        // White center
-                        ctx.globalAlpha = alpha;
-                        ctx.beginPath();
-                        ctx.arc(user.x, user.y, user.size * 0.4 * pulse, 0, Math.PI * 2);
-                        ctx.fillStyle = '#ffffff';
-                        ctx.fill();
-                    }
-                });
-                
-                ctx.globalAlpha = 1;
-                animationId = requestAnimationFrame(animate);
+                // Update display after flight starts
+                setTimeout(() => {
+                    updateCityDisplay(city);
+                }, 1500);
             };
             
-            // Initialize
-            resize();
-            window.addEventListener('resize', debounce(resize, 250));
-            animate();
-            
-            // Change city every 8 seconds
-            setInterval(nextCity, 8000);
-            
-            // Show first city label
-            setTimeout(() => {
-                if (cityLabel) {
-                    cityLabel.textContent = cities[0].name;
-                    cityLabel.classList.add('visible');
-                    setTimeout(() => cityLabel.classList.remove('visible'), 3000);
-                }
-            }, 1000);
+            // Wait for map to load
+            map.on('load', () => {
+                // Show first city
+                updateCityDisplay(cities[0]);
+                
+                // Start city rotation
+                setInterval(flyToNextCity, 8000);
+                
+                // Add subtle rotation animation
+                let rotationAngle = cities[0].bearing;
+                const rotateMap = () => {
+                    if (map && !map.isMoving()) {
+                        rotationAngle += 0.02;
+                        map.setBearing(rotationAngle);
+                    }
+                    requestAnimationFrame(rotateMap);
+                };
+                // rotateMap(); // Uncomment for continuous rotation
+            });
             
             // Fade map when scrolled
             window.addEventListener('scroll', () => {
