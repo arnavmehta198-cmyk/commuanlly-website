@@ -344,32 +344,8 @@ button {
     height: 100%;
     opacity: 1;
     transition: opacity 0.8s ease;
-    background: #f5f5f0;
+    background: #f8f9fa;
     overflow: hidden;
-}
-
-/* Clean, polished map appearance */
-#mapContainer .map-image {
-    filter: brightness(1.05) contrast(0.95) saturate(0.9);
-}
-
-/* Soft overlay for cleaner look */
-#mapContainer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.15) 0%,
-        rgba(255, 255, 255, 0.05) 30%,
-        rgba(255, 255, 255, 0.05) 70%,
-        rgba(255, 255, 255, 0.2) 100%
-    );
-    pointer-events: none;
-    z-index: 3;
 }
 
 /* Hide map provider controls and attribution for clean look */
@@ -401,10 +377,10 @@ button {
     bottom: 0;
     background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.45) 0%,
-        rgba(255, 255, 255, 0.3) 30%,
-        rgba(255, 255, 255, 0.3) 60%,
-        rgba(255, 255, 255, 0.55) 100%
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0.15) 30%,
+        rgba(255, 255, 255, 0.15) 60%,
+        rgba(255, 255, 255, 0.4) 100%
     );
     pointer-events: none;
     z-index: 1;
@@ -557,8 +533,8 @@ button {
 }
 
 .user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: #22c55e;
     display: flex;
@@ -567,8 +543,14 @@ button {
     font-weight: 700;
     font-size: 1rem;
     color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
     border: 2px solid white;
+    position: relative;
+}
+
+.user-avatar .avatar-emoji {
+    font-size: 1.4rem;
+    line-height: 1;
 }
 
 .user-info {

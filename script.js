@@ -379,9 +379,9 @@
         },
 
         /**
-         * Initialize Apple Maps Background with Real Screenshots
-         * Uses actual Apple Maps images cycling through cities
-         * With floating user cards overlay
+         * Initialize Interactive Leaflet Map
+         * Apple Maps-style animated map of US cities
+         * With smooth pan/zoom and floating user cards
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
@@ -389,156 +389,259 @@
             const cityLabel = document.getElementById('cityLabel');
             const userCardsContainer = document.getElementById('mapUserCards');
             
-            if (!mapContainer || !container) return;
+            if (!mapContainer || !container || typeof L === 'undefined') return;
             
-            // City data with map images and users
+            // US Cities data with coordinates and community members
             const cities = [
                 {
-                    name: 'San Francisco, CA',
-                    image: 'maps/san-francisco.png',
+                    name: 'New York City',
+                    state: 'NY',
+                    coords: [40.7128, -74.0060],
+                    zoom: 12,
                     users: [
-                        { name: 'Alex K.', initial: 'A', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper', color: '#3b82f6' },
-                        { name: 'Jordan T.', initial: 'J', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert', color: '#22c55e' },
-                        { name: 'Sam R.', initial: 'S', activity: 'Grocery delivery', badge: '⚡ Quick helper', color: '#f59e0b' }
+                        { name: 'Sarah M.', avatar: '👩', activity: 'Walking dogs in Park Slope', badge: '⭐ Top Helper', color: '#3b82f6' },
+                        { name: 'Mike R.', avatar: '👨', activity: 'Helping with groceries', badge: '🏆 5 jobs today', color: '#22c55e' },
+                        { name: 'Emma L.', avatar: '👩‍🦰', activity: 'Tutoring nearby', badge: '✨ New neighbor', color: '#a855f7' }
                     ]
                 },
                 {
-                    name: 'New York, NY',
-                    image: 'maps/new-york.png',
+                    name: 'Los Angeles',
+                    state: 'CA',
+                    coords: [34.0522, -118.2437],
+                    zoom: 11,
                     users: [
-                        { name: 'Sarah M.', initial: 'S', activity: 'Walking dogs in Park Slope', badge: '⭐ Top Helper', color: '#3b82f6' },
-                        { name: 'Mike R.', initial: 'M', activity: 'Helping with groceries', badge: '🏆 5 jobs today', color: '#22c55e' },
-                        { name: 'Emma L.', initial: 'E', activity: 'Tutoring nearby', badge: '✨ New neighbor', color: '#a855f7' }
+                        { name: 'Kai M.', avatar: '🧑', activity: 'Car washing in Silver Lake', badge: '🚗 Detail pro', color: '#f59e0b' },
+                        { name: 'Sage L.', avatar: '👩', activity: 'Meal prep assistance', badge: '🍳 Chef helper', color: '#22c55e' }
                     ]
                 },
                 {
-                    name: 'Chicago, IL',
-                    image: 'maps/chicago.png',
+                    name: 'San Francisco',
+                    state: 'CA',
+                    coords: [37.7749, -122.4194],
+                    zoom: 12,
                     users: [
-                        { name: 'Jamie W.', initial: 'J', activity: 'Helping in Lincoln Park', badge: '❄️ Winter warrior', color: '#3b82f6' },
-                        { name: 'Drew M.', initial: 'D', activity: 'Furniture assembly', badge: '🔧 Handy helper', color: '#22c55e' }
+                        { name: 'Alex K.', avatar: '👨', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper', color: '#3b82f6' },
+                        { name: 'Jordan T.', avatar: '🧑', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert', color: '#22c55e' },
+                        { name: 'Sam R.', avatar: '👩', activity: 'Grocery delivery', badge: '⚡ Quick helper', color: '#f59e0b' }
                     ]
                 },
                 {
-                    name: 'Denver, CO',
-                    image: 'maps/denver.png',
+                    name: 'Chicago',
+                    state: 'IL',
+                    coords: [41.8781, -87.6298],
+                    zoom: 11,
                     users: [
-                        { name: 'Sky P.', initial: 'S', activity: 'Hiking gear organization', badge: '🏔️ Outdoor expert', color: '#22c55e' },
-                        { name: 'River J.', initial: 'R', activity: 'Plant care in LoDo', badge: '🪴 Plant parent', color: '#a855f7' },
-                        { name: 'Casey M.', initial: 'C', activity: 'Dog walking downtown', badge: '🐾 Pet lover', color: '#3b82f6' }
+                        { name: 'Jamie W.', avatar: '👨', activity: 'Helping in Lincoln Park', badge: '❄️ Winter warrior', color: '#3b82f6' },
+                        { name: 'Drew M.', avatar: '🧑', activity: 'Furniture assembly', badge: '🔧 Handy helper', color: '#22c55e' }
                     ]
                 },
                 {
-                    name: 'Portland, OR',
-                    image: 'maps/portland.png',
+                    name: 'Austin',
+                    state: 'TX',
+                    coords: [30.2672, -97.7431],
+                    zoom: 12,
                     users: [
-                        { name: 'Taylor B.', initial: 'T', activity: 'Coffee delivery', badge: '☕ Local favorite', color: '#f59e0b' },
-                        { name: 'Morgan S.', initial: 'M', activity: 'Bike repairs', badge: '🚴 Bike pro', color: '#22c55e' }
+                        { name: 'Chris B.', avatar: '👨', activity: 'Yard work downtown', badge: '🌱 Garden pro', color: '#22c55e' },
+                        { name: 'Taylor S.', avatar: '👩', activity: 'Running errands', badge: '⚡ Quick helper', color: '#f59e0b' },
+                        { name: 'Morgan P.', avatar: '🧑', activity: 'Tech support', badge: '💻 Tech whiz', color: '#3b82f6' }
                     ]
                 },
                 {
-                    name: 'Miami, FL',
-                    image: 'maps/miami.png',
+                    name: 'Seattle',
+                    state: 'WA',
+                    coords: [47.6062, -122.3321],
+                    zoom: 12,
                     users: [
-                        { name: 'Nico V.', initial: 'N', activity: 'Beach cleanup in South Beach', badge: '🌴 Community hero', color: '#22c55e' },
-                        { name: 'Luna R.', initial: 'L', activity: 'Spanish tutoring', badge: '📚 Top tutor', color: '#3b82f6' },
-                        { name: 'Carlos D.', initial: 'C', activity: 'Moving help', badge: '💪 Strong helper', color: '#f59e0b' }
+                        { name: 'Casey H.', avatar: '👩', activity: 'Coffee delivery in Capitol Hill', badge: '☕ Local favorite', color: '#f59e0b' },
+                        { name: 'Riley N.', avatar: '🧑', activity: 'Dog walking near Pike Place', badge: '🐾 Pet lover', color: '#22c55e' }
                     ]
                 },
                 {
-                    name: 'Boston, MA',
-                    image: 'maps/boston.png',
+                    name: 'Miami',
+                    state: 'FL',
+                    coords: [25.7617, -80.1918],
+                    zoom: 12,
                     users: [
-                        { name: 'Patrick O.', initial: 'P', activity: 'Snow shoveling', badge: '❄️ Winter ready', color: '#3b82f6' },
-                        { name: 'Molly K.', initial: 'M', activity: 'Pet sitting in Back Bay', badge: '🐕 Pet expert', color: '#22c55e' }
+                        { name: 'Nico V.', avatar: '👨', activity: 'Beach cleanup in South Beach', badge: '🌴 Community hero', color: '#22c55e' },
+                        { name: 'Luna R.', avatar: '👩', activity: 'Spanish tutoring', badge: '📚 Top tutor', color: '#3b82f6' }
                     ]
                 }
             ];
             
             let currentCityIndex = 0;
-            let currentImageEl = null;
-            let nextImageEl = null;
+            let map = null;
+            let markers = [];
             
-            // Create the map background with image slideshow
-            const createMapBackground = () => {
-                mapContainer.innerHTML = `
-                    <div class="map-image-container">
-                        <img class="map-image current" src="${cities[0].image}" alt="Map of ${cities[0].name}">
-                        <img class="map-image next" src="${cities[1].image}" alt="Map of ${cities[1].name}">
-                    </div>
-                `;
-                
-                currentImageEl = mapContainer.querySelector('.map-image.current');
-                nextImageEl = mapContainer.querySelector('.map-image.next');
-                
-                // Add CSS for the map images
+            // Create custom cursor styles
+            const addCustomCursor = () => {
                 const style = document.createElement('style');
                 style.textContent = `
-                    .map-image-container {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        overflow: hidden;
+                    #mapContainer {
+                        cursor: none !important;
                     }
                     
-                    .map-image {
+                    #mapContainer * {
+                        cursor: none !important;
+                    }
+                    
+                    .map-cursor {
+                        position: fixed;
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid rgba(34, 197, 94, 0.8);
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 10000;
+                        transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+                        transform: translate(-50%, -50%);
+                    }
+                    
+                    .map-cursor::after {
+                        content: '';
                         position: absolute;
                         top: 50%;
                         left: 50%;
-                        min-width: 100%;
-                        min-height: 100%;
-                        width: auto;
-                        height: auto;
-                        transform: translate(-50%, -50%) scale(1.1);
-                        object-fit: cover;
-                        transition: opacity 1.5s ease, transform 8s ease-out;
+                        width: 4px;
+                        height: 4px;
+                        background: rgba(34, 197, 94, 0.9);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
                     }
                     
-                    .map-image.current {
-                        opacity: 1;
-                        z-index: 2;
+                    .map-cursor.hovering {
+                        transform: translate(-50%, -50%) scale(1.5);
+                        border-color: #22c55e;
+                        background: rgba(34, 197, 94, 0.1);
                     }
                     
-                    .map-image.next {
-                        opacity: 0;
-                        z-index: 1;
+                    /* Hide Leaflet controls */
+                    .leaflet-control-container {
+                        display: none !important;
                     }
                     
-                    .map-image.zooming {
-                        transform: translate(-50%, -50%) scale(1.15);
+                    .leaflet-container {
+                        background: #f8f9fa !important;
                     }
                     
-                    .map-image.fade-out {
-                        opacity: 0;
+                    /* Map pin styles */
+                    .city-pin {
+                        width: 24px;
+                        height: 24px;
+                        background: #22c55e;
+                        border: 3px solid white;
+                        border-radius: 50%;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        cursor: none !important;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
                     }
                     
-                    .map-image.fade-in {
-                        opacity: 1;
+                    .city-pin::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(34, 197, 94, 0.4);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                        animation: pinPulse 2s ease-in-out infinite;
+                    }
+                    
+                    @keyframes pinPulse {
+                        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                        50% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+                    }
+                    
+                    .city-pin:hover {
+                        transform: scale(1.3);
+                        box-shadow: 0 4px 16px rgba(34, 197, 94, 0.5);
                     }
                 `;
                 document.head.appendChild(style);
                 
-                // Start subtle zoom animation
-                setTimeout(() => {
-                    if (currentImageEl) currentImageEl.classList.add('zooming');
-                }, 100);
+                // Create cursor element
+                const cursor = document.createElement('div');
+                cursor.className = 'map-cursor';
+                cursor.style.display = 'none';
+                document.body.appendChild(cursor);
+                
+                // Track cursor
+                mapContainer.addEventListener('mouseenter', () => {
+                    cursor.style.display = 'block';
+                });
+                
+                mapContainer.addEventListener('mouseleave', () => {
+                    cursor.style.display = 'none';
+                });
+                
+                mapContainer.addEventListener('mousemove', (e) => {
+                    cursor.style.left = e.clientX + 'px';
+                    cursor.style.top = e.clientY + 'px';
+                });
             };
             
-            // Initialize map
-            createMapBackground();
+            // Initialize Leaflet map
+            const initMap = () => {
+                // Create map with smooth animations
+                map = L.map(mapContainer, {
+                    center: cities[0].coords,
+                    zoom: cities[0].zoom,
+                    zoomControl: false,
+                    attributionControl: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    dragging: false,
+                    keyboard: false,
+                    touchZoom: false
+                });
+                
+                // Use CartoDB Positron for Apple Maps-like clean style
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 19
+                }).addTo(map);
+                
+                // Add custom cursor
+                addCustomCursor();
+                
+                // Add pin for first city
+                addCityPin(cities[0]);
+            };
             
-            // Card positions - spread around the map
+            // Add animated pin to map
+            const addCityPin = (city) => {
+                // Clear existing markers
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+                
+                // Create custom pin icon
+                const pinIcon = L.divIcon({
+                    className: 'city-pin-wrapper',
+                    html: '<div class="city-pin"></div>',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 12]
+                });
+                
+                const marker = L.marker(city.coords, { icon: pinIcon }).addTo(map);
+                markers.push(marker);
+                
+                // Add hover effect for cursor
+                const cursor = document.querySelector('.map-cursor');
+                if (cursor) {
+                    marker.on('mouseover', () => cursor.classList.add('hovering'));
+                    marker.on('mouseout', () => cursor.classList.remove('hovering'));
+                }
+            };
+            
+            // Card positions for floating cards
             const cardPositions = [
-                { left: '5%', top: '12%' },
-                { right: '5%', top: '8%' },
-                { left: '3%', top: '50%' },
-                { right: '3%', top: '45%' },
-                { left: '15%', top: '75%' },
+                { left: '5%', top: '15%' },
+                { right: '5%', top: '12%' },
+                { left: '3%', top: '55%' },
+                { right: '3%', top: '50%' },
             ];
             
-            // Create user card HTML with Apple Maps-style design
+            // Create user card HTML
             const createUserCard = (user, index) => {
                 const pos = cardPositions[index % cardPositions.length];
                 const posStyle = pos.left 
@@ -550,7 +653,9 @@
                 return `
                     <div class="map-user-card" style="${posStyle}">
                         <div class="user-card-header">
-                            <div class="user-avatar" style="background: ${avatarColor};">${user.initial}</div>
+                            <div class="user-avatar" style="background: ${avatarColor};">
+                                <span class="avatar-emoji">${user.avatar}</span>
+                            </div>
                             <div class="user-info">
                                 <div class="user-name">${user.name}</div>
                                 <div class="user-badge">
@@ -563,35 +668,30 @@
                 `;
             };
             
-            // Update city label and user cards
+            // Update city display
             const updateCityDisplay = (city) => {
                 if (cityLabel) {
                     const cityNameEl = cityLabel.querySelector('.city-name');
                     const cityUsersEl = cityLabel.querySelector('.city-users');
                     
-                    if (cityNameEl) cityNameEl.textContent = city.name;
-                    if (cityUsersEl) cityUsersEl.textContent = `${city.users.length + Math.floor(Math.random() * 15) + 8} neighbors active now`;
+                    if (cityNameEl) cityNameEl.textContent = `${city.name}, ${city.state}`;
+                    if (cityUsersEl) cityUsersEl.textContent = `${city.users.length + Math.floor(Math.random() * 20) + 10} neighbors active`;
                     
                     cityLabel.classList.add('visible');
                 }
                 
                 if (userCardsContainer) {
-                    const existingCards = userCardsContainer.querySelectorAll('.map-user-card');
-                    existingCards.forEach(card => card.classList.remove('visible'));
+                    userCardsContainer.innerHTML = city.users.map((user, i) => createUserCard(user, i)).join('');
                     
                     setTimeout(() => {
-                        userCardsContainer.innerHTML = city.users.map((user, i) => createUserCard(user, i)).join('');
-                        
-                        setTimeout(() => {
-                            userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
-                                setTimeout(() => card.classList.add('visible'), i * 200);
-                            });
-                        }, 100);
+                        userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
+                            setTimeout(() => card.classList.add('visible'), i * 150);
+                        });
                     }, 300);
                 }
             };
             
-            // Transition to next city
+            // Fly to next city with smooth animation
             const flyToNextCity = () => {
                 // Hide current display
                 if (cityLabel) cityLabel.classList.remove('visible');
@@ -601,51 +701,34 @@
                 
                 // Move to next city
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
-                const nextCityIndex = (currentCityIndex + 1) % cities.length;
                 const city = cities[currentCityIndex];
                 
-                // Preload next image
-                if (nextImageEl) {
-                    nextImageEl.src = city.image;
-                    nextImageEl.alt = `Map of ${city.name}`;
-                }
-                
-                // Crossfade images
+                // Smooth fly animation
                 setTimeout(() => {
-                    if (currentImageEl && nextImageEl) {
-                        // Fade out current, fade in next
-                        currentImageEl.classList.add('fade-out');
-                        currentImageEl.classList.remove('zooming');
-                        nextImageEl.classList.add('fade-in');
-                        
-                        // After transition, swap roles
-                        setTimeout(() => {
-                            currentImageEl.classList.remove('current', 'fade-out');
-                            currentImageEl.classList.add('next');
-                            nextImageEl.classList.remove('next', 'fade-in');
-                            nextImageEl.classList.add('current', 'zooming');
-                            
-                            // Swap references
-                            const temp = currentImageEl;
-                            currentImageEl = nextImageEl;
-                            nextImageEl = temp;
-                            
-                            // Preload the image after next
-                            nextImageEl.src = cities[nextCityIndex].image;
-                        }, 1500);
-                    }
+                    map.flyTo(city.coords, city.zoom, {
+                        duration: 2.5,
+                        easeLinearity: 0.25
+                    });
                     
-                    // Update display after fade starts
+                    // Add pin after flight starts
+                    setTimeout(() => {
+                        addCityPin(city);
+                    }, 1500);
+                    
+                    // Update display after arriving
                     setTimeout(() => {
                         updateCityDisplay(city);
-                    }, 800);
+                    }, 2000);
                 }, 500);
             };
+            
+            // Initialize
+            initMap();
             
             // Show first city
             setTimeout(() => {
                 updateCityDisplay(cities[0]);
-            }, 500);
+            }, 1000);
             
             // Start city rotation every 8 seconds
             setInterval(flyToNextCity, 8000);
