@@ -927,7 +927,7 @@
         },
 
         /**
-         * 3D Phone showcase with mouse parallax
+         * 3D Phone showcase with mouse parallax + floating cards
          */
         initPhoneShowcase() {
             if (prefersReducedMotion()) return;
@@ -935,6 +935,8 @@
             const showcase = document.querySelector('.hero-phone-showcase');
             const phoneFront = document.querySelector('.phone-front');
             const phoneBack = document.querySelector('.phone-back');
+            const floatingCards = document.querySelectorAll('.floating-card');
+            const floatingShapes = document.querySelectorAll('.floating-shape');
             
             if (!showcase || !phoneFront || !phoneBack) return;
             
@@ -947,6 +949,7 @@
                 currentX += (mouseX - currentX) * 0.05;
                 currentY += (mouseY - currentY) * 0.05;
                 
+                // Animate phones
                 const frontRotateY = 8 - currentX * 12;
                 const frontRotateX = -4 + currentY * 8;
                 phoneFront.style.transform = `rotateY(${frontRotateY}deg) rotateX(${frontRotateX}deg) rotateZ(-2deg) translateZ(30px)`;
@@ -954,6 +957,37 @@
                 const backRotateY = -12 + currentX * 10;
                 const backRotateX = 5 - currentY * 6;
                 phoneBack.style.transform = `rotateY(${backRotateY}deg) rotateX(${backRotateX}deg) rotateZ(4deg)`;
+                
+                // Animate floating cards with parallax
+                floatingCards.forEach((card, index) => {
+                    const speed = parseFloat(card.dataset.speed) || 1;
+                    const offsetX = currentX * 30 * speed;
+                    const offsetY = currentY * 20 * speed;
+                    const rotateX = currentY * 5 * speed;
+                    const rotateY = -currentX * 5 * speed;
+                    
+                    // Add unique offset based on index for variety
+                    const phase = (index * 0.5);
+                    card.style.transform = `
+                        translateX(${offsetX}px) 
+                        translateY(${offsetY}px) 
+                        translateZ(${10 + index * 5}px)
+                        rotateX(${rotateX}deg) 
+                        rotateY(${rotateY}deg)
+                    `;
+                });
+                
+                // Animate floating shapes
+                floatingShapes.forEach((shape, index) => {
+                    const speed = parseFloat(shape.dataset.speed) || 1;
+                    const offsetX = currentX * 50 * speed;
+                    const offsetY = currentY * 40 * speed;
+                    shape.style.transform = `
+                        translateX(${offsetX}px) 
+                        translateY(${offsetY}px)
+                        rotate(${currentX * 20}deg)
+                    `;
+                });
                 
                 if (isHovering) {
                     animationId = requestAnimationFrame(animate);
@@ -980,6 +1014,7 @@
                     currentX += (0 - currentX) * 0.1;
                     currentY += (0 - currentY) * 0.1;
                     
+                    // Reset phones
                     const frontRotateY = 8 - currentX * 12;
                     const frontRotateX = -4 + currentY * 8;
                     phoneFront.style.transform = `rotateY(${frontRotateY}deg) rotateX(${frontRotateX}deg) rotateZ(-2deg) translateZ(30px)`;
@@ -987,6 +1022,32 @@
                     const backRotateY = -12 + currentX * 10;
                     const backRotateX = 5 - currentY * 6;
                     phoneBack.style.transform = `rotateY(${backRotateY}deg) rotateX(${backRotateX}deg) rotateZ(4deg)`;
+                    
+                    // Reset floating cards
+                    floatingCards.forEach((card) => {
+                        const speed = parseFloat(card.dataset.speed) || 1;
+                        const offsetX = currentX * 30 * speed;
+                        const offsetY = currentY * 20 * speed;
+                        card.style.transform = `
+                            translateX(${offsetX}px) 
+                            translateY(${offsetY}px) 
+                            translateZ(0px)
+                            rotateX(0deg) 
+                            rotateY(0deg)
+                        `;
+                    });
+                    
+                    // Reset shapes
+                    floatingShapes.forEach((shape) => {
+                        const speed = parseFloat(shape.dataset.speed) || 1;
+                        const offsetX = currentX * 50 * speed;
+                        const offsetY = currentY * 40 * speed;
+                        shape.style.transform = `
+                            translateX(${offsetX}px) 
+                            translateY(${offsetY}px)
+                            rotate(${currentX * 20}deg)
+                        `;
+                    });
                     
                     if (Math.abs(currentX) > 0.01 || Math.abs(currentY) > 0.01) {
                         requestAnimationFrame(returnToOrigin);

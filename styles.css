@@ -898,11 +898,245 @@ button {
 
 /* Phone Showcase */
 .hero-phone-showcase {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: var(--space-xl);
     perspective: 1500px;
+    min-height: 500px;
+}
+
+/* ==========================================================================
+   FLOATING FEATURE CARDS - 3D Animated
+   ========================================================================== */
+
+.floating-cards {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.floating-card {
+    position: absolute;
+    background: var(--color-bg-alt);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+    max-width: 180px;
+    pointer-events: auto;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: floatCard 6s ease-in-out infinite;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.floating-card:hover {
+    transform: translateZ(20px) scale(1.05) !important;
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.floating-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    color: var(--color-text);
+}
+
+.floating-card p {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+}
+
+/* Card Icons with Colors */
+.card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-md);
+    transition: transform 0.3s ease;
+}
+
+.floating-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.card-icon.purple {
+    background: linear-gradient(135deg, #e0c3fc, #d8b4fe);
+    color: #7c3aed;
+}
+
+.card-icon.green {
+    background: linear-gradient(135deg, #bbf7d0, #86efac);
+    color: #16a34a;
+}
+
+.card-icon.orange {
+    background: linear-gradient(135deg, #fed7aa, #fdba74);
+    color: #ea580c;
+}
+
+.card-icon.blue {
+    background: linear-gradient(135deg, #bfdbfe, #93c5fd);
+    color: #2563eb;
+}
+
+/* Card Positions */
+.card-location {
+    top: 5%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.card-verified {
+    top: 10%;
+    right: 5%;
+    animation-delay: -1.5s;
+}
+
+.card-alerts {
+    bottom: 15%;
+    left: 0%;
+    animation-delay: -3s;
+}
+
+.card-secure {
+    bottom: 10%;
+    right: 0%;
+    animation-delay: -4.5s;
+}
+
+/* Float Animation */
+@keyframes floatCard {
+    0%, 100% {
+        transform: translateY(0) translateZ(0) rotateX(0) rotateY(0);
+    }
+    25% {
+        transform: translateY(-15px) translateZ(10px) rotateX(2deg) rotateY(-2deg);
+    }
+    50% {
+        transform: translateY(-8px) translateZ(5px) rotateX(-1deg) rotateY(1deg);
+    }
+    75% {
+        transform: translateY(-20px) translateZ(15px) rotateX(1deg) rotateY(-1deg);
+    }
+}
+
+/* Different animation timing for variety */
+.card-location { animation-duration: 7s; }
+.card-verified { animation-duration: 6s; }
+.card-alerts { animation-duration: 8s; }
+.card-secure { animation-duration: 5.5s; }
+
+/* Floating Shapes for extra depth */
+.floating-shape {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.shape-circle {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: 50%;
+    top: 30%;
+    left: 10%;
+    animation: floatShape 8s ease-in-out infinite;
+    box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+}
+
+.shape-ring {
+    width: 80px;
+    height: 80px;
+    border: 3px solid rgba(168, 85, 247, 0.4);
+    border-radius: 50%;
+    bottom: 30%;
+    right: 8%;
+    animation: floatShape 10s ease-in-out infinite reverse;
+}
+
+.shape-dots {
+    width: 40px;
+    height: 40px;
+    top: 60%;
+    left: 3%;
+    background-image: radial-gradient(circle, #22c55e 3px, transparent 3px);
+    background-size: 12px 12px;
+    animation: floatShape 6s ease-in-out infinite;
+    animation-delay: -2s;
+}
+
+@keyframes floatShape {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(180deg);
+    }
+}
+
+/* Responsive adjustments for floating cards */
+@media (max-width: 768px) {
+    .floating-cards {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .floating-card {
+        max-width: 150px;
+        padding: var(--space-md);
+    }
+    
+    .floating-card h4 {
+        font-size: 0.8rem;
+    }
+    
+    .floating-card p {
+        font-size: 0.7rem;
+    }
+    
+    .card-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .card-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .card-location {
+        left: 10%;
+    }
+    
+    .card-verified {
+        right: 10%;
+    }
+    
+    .card-alerts {
+        left: 5%;
+    }
+    
+    .card-secure {
+        right: 5%;
+    }
 }
 
 .phone-duo {
