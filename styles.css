@@ -323,7 +323,7 @@ button {
 
 /* ==========================================================================
    AMBIENT LAYER: 3D Map Background (Mapbox)
-   Real map cycling through US cities with animated users
+   Full-screen Apple Maps-style background with flying city transitions
    ========================================================================== */
 
 .map-background {
@@ -334,36 +334,61 @@ button {
     height: 100%;
     pointer-events: none;
     z-index: 0;
-    transition: opacity 1s ease;
 }
 
 #mapContainer {
     width: 100%;
     height: 100%;
-    opacity: 0.5;
-    transition: opacity 1s ease;
+    opacity: 0.85;
+    transition: opacity 0.8s ease;
 }
 
-/* Hide Mapbox attribution and logo for cleaner look */
+/* Hide Mapbox controls for clean look */
 .mapboxgl-ctrl-attrib,
-.mapboxgl-ctrl-logo {
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-top-right,
+.mapboxgl-ctrl-bottom-right,
+.mapboxgl-ctrl-bottom-left {
     display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Subtle gradient overlay to help text readability */
+.map-background::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.3) 30%,
+        rgba(255, 255, 255, 0.4) 60%,
+        rgba(255, 255, 255, 0.6) 100%
+    );
+    pointer-events: none;
+    z-index: 1;
 }
 
 .city-label {
     position: absolute;
-    bottom: 30px;
-    left: 30px;
+    bottom: 40px;
+    left: 40px;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 12px 20px;
+    padding: 16px 24px;
     border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.8) inset;
     opacity: 0;
     transform: translateY(20px) scale(0.95);
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -376,30 +401,50 @@ button {
 }
 
 .city-label .city-name {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-text);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
 .city-label .city-users {
-    font-size: 0.75rem;
-    color: var(--color-primary);
-    font-weight: 500;
+    font-size: 0.8rem;
+    color: #007AFF;
+    font-weight: 600;
 }
 
 [data-theme="dark"] .city-label {
-    background: rgba(24, 24, 27, 0.95);
+    background: rgba(30, 30, 32, 0.98);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] #mapContainer {
-    opacity: 0.4;
-    filter: brightness(0.8) saturate(0.8);
+    opacity: 0.7;
+    filter: brightness(0.7) saturate(0.9);
 }
 
-/* Reduce opacity when scrolled past hero */
+[data-theme="dark"] .map-background::after {
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.2) 0%,
+        rgba(0, 0, 0, 0.4) 30%,
+        rgba(0, 0, 0, 0.5) 60%,
+        rgba(0, 0, 0, 0.7) 100%
+    );
+}
+
+/* Fade when scrolled - keep map visible but reduce other elements */
 .map-background.faded #mapContainer {
-    opacity: 0.25;
+    opacity: 0.4;
+}
+
+.map-background.faded::after {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0.8) 100%
+    );
 }
 
 .map-background.faded .city-label,
@@ -409,7 +454,7 @@ button {
 }
 
 /* ==========================================================================
-   Map User Cards - Floating user info that appears on map
+   Map User Cards - Floating user info over the map
    ========================================================================== */
 
 .map-user-cards {
@@ -425,64 +470,67 @@ button {
 .map-user-card {
     position: absolute;
     background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 14px 18px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--color-border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.12),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    max-width: 220px;
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        0 0 0 1px rgba(255, 255, 255, 0.9) inset;
+    max-width: 240px;
     opacity: 0;
-    transform: translateY(20px) scale(0.9);
-    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation: userCardFloat 4s ease-in-out infinite;
+    transform: translateY(30px) scale(0.9);
+    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .map-user-card.visible {
     opacity: 1;
     transform: translateY(0) scale(1);
+    animation: userCardFloat 5s ease-in-out infinite;
 }
 
 @keyframes userCardFloat {
     0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-8px) scale(1.02); }
+    50% { transform: translateY(-12px) scale(1.01); }
 }
 
+/* Card pointer/arrow */
 .map-user-card::before {
     content: '';
     position: absolute;
-    bottom: -8px;
-    left: 20px;
-    width: 16px;
-    height: 16px;
-    background: inherit;
-    border: inherit;
+    bottom: -10px;
+    left: 24px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(0, 0, 0, 0.06);
     border-top: none;
     border-left: none;
     transform: rotate(45deg);
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .user-card-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 10px;
 }
 
 .user-avatar {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary));
+    background: linear-gradient(135deg, #34D399, #10B981);
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--color-text);
+    font-size: 1rem;
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .user-info {
@@ -491,78 +539,42 @@ button {
 
 .user-name {
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--color-text);
+    font-size: 0.95rem;
+    color: #1a1a1a;
+    margin-bottom: 2px;
 }
 
 .user-badge {
     display: flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.7rem;
-    color: var(--color-primary);
-}
-
-.user-badge svg {
-    width: 10px;
-    height: 10px;
+    font-size: 0.75rem;
+    color: #007AFF;
+    font-weight: 500;
 }
 
 .user-activity {
-    font-size: 0.8rem;
-    color: var(--color-text-secondary);
-    line-height: 1.4;
-}
-
-.user-activity strong {
-    color: var(--color-text);
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
 }
 
 [data-theme="dark"] .map-user-card {
-    background: rgba(39, 39, 42, 0.98);
+    background: rgba(40, 40, 44, 0.98);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Pulse marker on map for user location */
-.user-marker {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    pointer-events: none;
+[data-theme="dark"] .map-user-card::before {
+    background: rgba(40, 40, 44, 0.98);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
-.user-marker-dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+[data-theme="dark"] .user-name {
+    color: #fff;
 }
 
-.user-marker-pulse {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background: var(--color-primary);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: markerPulse 2s ease-out infinite;
-}
-
-@keyframes markerPulse {
-    0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.8;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(3);
-        opacity: 0;
-    }
+[data-theme="dark"] .user-activity {
+    color: #aaa;
 }
 
 /* ==========================================================================

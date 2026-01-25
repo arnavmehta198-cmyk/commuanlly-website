@@ -498,31 +498,46 @@
             let map = null;
             let userMarkers = [];
             
-            // Initialize the map
+            // Initialize the map with Apple Maps-like style
             try {
                 map = new mapboxgl.Map({
                     container: 'mapContainer',
-                    style: 'mapbox://styles/mapbox/light-v11', // Clean Apple Maps-like style
+                    // Use streets style for Apple Maps-like appearance with roads and labels
+                    style: 'mapbox://styles/mapbox/streets-v12',
                     center: cities[0].center,
                     zoom: cities[0].zoom,
                     pitch: cities[0].pitch,
                     bearing: cities[0].bearing,
-                    interactive: false, // Disable user interaction
-                    attributionControl: false
+                    interactive: false,
+                    attributionControl: false,
+                    logoPosition: 'bottom-left'
                 });
+                
+                // Remove all controls
+                map.addControl = function() {};
+                
             } catch (e) {
                 console.log('Error initializing Mapbox:', e);
                 return;
             }
             
+            // Card positions for different layouts
+            const cardPositions = [
+                { left: '8%', top: '15%' },
+                { right: '8%', top: '12%' },
+                { left: '5%', top: '55%' },
+                { right: '5%', top: '50%' },
+            ];
+            
             // Create user card HTML
             const createUserCard = (user, index) => {
+                const pos = cardPositions[index % cardPositions.length];
+                const posStyle = pos.left 
+                    ? `left: ${pos.left}; top: ${pos.top};`
+                    : `right: ${pos.right}; top: ${pos.top};`;
+                    
                 return `
-                    <div class="map-user-card" style="
-                        left: ${15 + (index % 2) * 55}%;
-                        top: ${20 + Math.floor(index / 2) * 30}%;
-                        animation-delay: ${index * 0.2}s;
-                    ">
+                    <div class="map-user-card" style="${posStyle} animation-delay: ${index * 0.15}s;">
                         <div class="user-card-header">
                             <div class="user-avatar">${user.initial}</div>
                             <div class="user-info">
@@ -570,51 +585,50 @@
                 }
             };
             
-            // Fly to next city
+            // Fly to next city with smooth scrolling animation
             const flyToNextCity = () => {
-                // Hide current display
+                // Hide current display with fade out
                 if (cityLabel) cityLabel.classList.remove('visible');
+                
+                // Fade out user cards
+                if (userCardsContainer) {
+                    const cards = userCardsContainer.querySelectorAll('.map-user-card');
+                    cards.forEach(card => card.classList.remove('visible'));
+                }
                 
                 // Move to next city
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
                 const city = cities[currentCityIndex];
                 
-                // Animate map flight
+                // Animate map flight - smooth scrolling effect
                 if (map) {
                     map.flyTo({
                         center: city.center,
                         zoom: city.zoom,
                         pitch: city.pitch,
                         bearing: city.bearing,
-                        duration: 3000,
-                        essential: true
+                        duration: 4000, // Slower for smoother scroll feel
+                        essential: true,
+                        curve: 1.2, // Smooth curve
+                        easing: (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2 // Ease in-out
                     });
                 }
                 
-                // Update display after flight starts
+                // Update display after flight is midway
                 setTimeout(() => {
                     updateCityDisplay(city);
-                }, 1500);
+                }, 2000);
             };
             
             // Wait for map to load
             map.on('load', () => {
-                // Show first city
-                updateCityDisplay(cities[0]);
+                // Show first city after a brief delay
+                setTimeout(() => {
+                    updateCityDisplay(cities[0]);
+                }, 500);
                 
-                // Start city rotation
-                setInterval(flyToNextCity, 8000);
-                
-                // Add subtle rotation animation
-                let rotationAngle = cities[0].bearing;
-                const rotateMap = () => {
-                    if (map && !map.isMoving()) {
-                        rotationAngle += 0.02;
-                        map.setBearing(rotationAngle);
-                    }
-                    requestAnimationFrame(rotateMap);
-                };
-                // rotateMap(); // Uncomment for continuous rotation
+                // Start city rotation - fly to new city every 10 seconds
+                setInterval(flyToNextCity, 10000);
             });
             
             // Fade map when scrolled
