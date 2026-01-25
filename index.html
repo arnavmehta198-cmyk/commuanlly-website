@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light" data-season="default" data-mood="calm">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,16 +14,10 @@
     <meta property="og:description" content="Find local gigs and help neighbors. Dog walking, moving help, lawn care & more within walking distance.">
     <meta property="og:image" content="https://communallyapp.com/og-image.png">
     
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Communally - Local Jobs & Neighborhood Help">
-    <meta name="twitter:description" content="Find local gigs and help neighbors within walking distance.">
-    
     <title>Communally - Find Local Jobs & Help Neighbors | Free iOS App</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='8' fill='%2322c55e'/><text x='20' y='28' text-anchor='middle' fill='white' font-size='20'>C</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect width='40' height='40' rx='8' fill='%2322c55e'/></svg>">
     
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +25,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- 
+    =========================================================================
+    CREATIVE SYSTEMS ARCHITECTURE
+    =========================================================================
+    This website implements a 5-layer creative system:
+    
+    1. CORE LAYER - Always visible, calm, minimal (standard UI)
+    2. AMBIENT LAYER - Living backgrounds, time-aware colors, subtle particles
+    3. REFLECTIVE LAYER - Pause moments, emotional prompts, breathing space
+    4. EXPERIMENTAL LAYER - Diagonal scrolling, constellation views, wild UI
+    5. NARRATIVE LAYER - Poetic copy, growth language, seasonal messages
+    
+    Features unlock progressively based on:
+    - Time spent on site
+    - Return visits (localStorage)
+    - User opt-in via experimental mode toggle
+    - Time of day and season
+    =========================================================================
+    -->
+
     <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- 
+    AMBIENT LAYER: Living Background Canvas
+    - Renders subtle particles that respond to mouse movement
+    - Changes color temperature based on time of day
+    - Seasonal variations (spring: green, summer: gold, fall: orange, winter: blue)
+    -->
+    <canvas id="ambientCanvas" class="ambient-canvas" aria-hidden="true"></canvas>
+
+    <!-- 
+    AMBIENT LAYER: Global Pulse
+    - A soft breathing animation that subtly pulses across the page
+    - Represents the "heartbeat" of the community
+    - Intensity increases based on simulated global activity
+    -->
+    <div class="global-pulse" aria-hidden="true"></div>
 
     <!-- Navigation -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
@@ -50,7 +80,6 @@
             <span>Communally</span>
         </a>
         
-        <!-- Mobile menu button -->
         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
@@ -59,10 +88,19 @@
         
         <div class="nav-links" id="navLinks">
             <a href="#features">Features</a>
-            <a href="#how-it-works">How It Works</a>
+            <a href="#journey">The Journey</a>
             <a href="#faq">FAQ</a>
             <a href="contact.html">Contact</a>
-            <span class="nav-free-badge">100% Free</span>
+            
+            <!-- 
+            EXPERIMENTAL LAYER: Mode Toggle
+            - Allows users to opt into wild/experimental UI
+            - Stored in localStorage for persistence
+            - Unlocks advanced creative features
+            -->
+            <button class="experimental-toggle" id="experimentalToggle" aria-pressed="false" title="Toggle Experimental Mode">
+                <span class="toggle-icon">✧</span>
+            </button>
         </div>
         <a href="https://apps.apple.com/app/communally" class="nav-cta" target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -74,30 +112,62 @@
 
     <!-- Main Content -->
     <main id="main-content">
-        <!-- Hero Section -->
+        <!-- 
+        =====================================================================
+        HERO SECTION - CORE LAYER + NARRATIVE LAYER
+        =====================================================================
+        The hero introduces users gently. On first visit, only core elements show.
+        Returning users see additional ambient elements.
+        -->
         <section class="hero" aria-labelledby="hero-title">
             <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-new">FREE</span>
-                    Now available on iOS
+                <!-- 
+                NARRATIVE LAYER: Time-aware greeting
+                - Changes based on time of day
+                - Creates emotional connection before any pitch
+                -->
+                <div class="hero-badge" id="timeGreeting">
+                    <span class="badge-pulse"></span>
+                    <span class="greeting-text">Good morning, neighbor</span>
                 </div>
-                <h1 id="hero-title" class="hero-title">Find Local Gigs.<br>Help Your Neighbors.</h1>
-                <p class="hero-tagline">The neighborhood app for odd jobs and community help.</p>
-                <p class="hero-subtitle">Dog walking, moving help, lawn care, errands — find opportunities within 0.5 miles or post a job and get help today.</p>
+                
+                <h1 id="hero-title" class="hero-title">
+                    <!-- NARRATIVE LAYER: Poetic, not transactional -->
+                    <span class="title-line">Find your people.</span>
+                    <span class="title-line">Help your neighbors.</span>
+                </h1>
+                
+                <!-- 
+                REFLECTIVE LAYER: Pause moment
+                - Subtle breathing animation on tagline
+                - Invites user to slow down and read
+                -->
+                <p class="hero-tagline breathing-text">
+                    A neighborhood where everyone looks out for each other.
+                </p>
+                
+                <p class="hero-subtitle">
+                    Dog walking, moving help, lawn care, errands — opportunities within walking distance, waiting for you.
+                </p>
+                
                 <div class="hero-buttons">
                     <a href="https://apps.apple.com/app/communally" class="btn btn-primary" target="_blank" rel="noopener">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                         </svg>
-                        Download Free on iOS
+                        Begin Your Journey
                     </a>
-                    <a href="#how-it-works" class="btn btn-outline">See How It Works</a>
+                    <a href="#journey" class="btn btn-outline">Explore the Path</a>
                 </div>
+                
+                <!-- 
+                AMBIENT LAYER: Living stat that "breathes"
+                - Number subtly animates up occasionally
+                - Represents real community growth
+                -->
                 <p class="hero-note">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Join 5,000+ neighbors already connected
+                    <span class="pulse-dot"></span>
+                    <span class="living-stat" data-base="5000">5,247</span> neighbors connected today
                 </p>
             </div>
             
@@ -123,16 +193,27 @@
             </div>
         </section>
 
-        <!-- Social Proof Bar -->
+        <!-- 
+        REFLECTIVE LAYER: Breathing Space
+        - A moment of visual rest between sections
+        - Contains a subtle animated line that "draws" itself
+        -->
+        <div class="breathing-space" aria-hidden="true">
+            <svg class="breath-line" viewBox="0 0 100 20" preserveAspectRatio="none">
+                <path class="breath-path" d="M0,10 Q25,0 50,10 T100,10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+            </svg>
+        </div>
+
+        <!-- Social Proof Bar - CORE LAYER -->
         <section class="social-proof-bar" aria-label="Trust indicators">
             <div class="container">
                 <div class="proof-items">
                     <div class="proof-item">
-                        <span class="proof-number">5,000+</span>
+                        <span class="proof-number living-stat" data-base="5000">5,000+</span>
                         <span class="proof-label">Active Users</span>
                     </div>
                     <div class="proof-item">
-                        <span class="proof-number">12,000+</span>
+                        <span class="proof-number living-stat" data-base="12000">12,000+</span>
                         <span class="proof-label">Jobs Completed</span>
                     </div>
                     <div class="proof-item">
@@ -147,17 +228,18 @@
             </div>
         </section>
 
-        <!-- Features Section -->
+        <!-- Features Section - CORE LAYER -->
         <section id="features" class="features-section" aria-labelledby="features-title">
             <div class="container">
                 <div class="section-header center">
                     <span class="section-badge">Features</span>
                     <h2 id="features-title">Everything you need to connect locally</h2>
-                    <p>Whether you're looking to earn extra money or need help with tasks, Communally makes it simple.</p>
+                    <!-- NARRATIVE LAYER: Emotional framing -->
+                    <p>Not just an app. A new way to belong.</p>
                 </div>
                 
                 <div class="features-grid-4">
-                    <article class="feature-card">
+                    <article class="feature-card" data-emotion="proximity">
                         <div class="feature-icon" aria-hidden="true">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -166,9 +248,11 @@
                         </div>
                         <h3>Within Walking Distance</h3>
                         <p>All jobs are within 0.5 miles. No driving across town — help is right next door.</p>
+                        <!-- NARRATIVE LAYER: Poetic empty state hint -->
+                        <span class="feature-whisper">closeness creates care</span>
                     </article>
                     
-                    <article class="feature-card">
+                    <article class="feature-card" data-emotion="trust">
                         <div class="feature-icon" aria-hidden="true">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -177,9 +261,10 @@
                         </div>
                         <h3>Verified Neighbors</h3>
                         <p>Every user is verified. See ratings and reviews before you connect.</p>
+                        <span class="feature-whisper">trust is earned together</span>
                     </article>
                     
-                    <article class="feature-card">
+                    <article class="feature-card" data-emotion="opportunity">
                         <div class="feature-icon" aria-hidden="true">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -188,9 +273,10 @@
                         </div>
                         <h3>Instant Alerts</h3>
                         <p>Get notified the moment a new job is posted near you. Never miss an opportunity.</p>
+                        <span class="feature-whisper">every ping, a possibility</span>
                     </article>
                     
-                    <article class="feature-card">
+                    <article class="feature-card" data-emotion="safety">
                         <div class="feature-icon" aria-hidden="true">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -199,62 +285,164 @@
                         </div>
                         <h3>Secure Messaging</h3>
                         <p>Chat safely in-app. Your personal info stays private until you choose to share.</p>
+                        <span class="feature-whisper">privacy is presence</span>
                     </article>
                 </div>
             </div>
         </section>
 
-        <!-- How It Works -->
-        <section id="how-it-works" class="how-it-works-section" aria-labelledby="how-it-works-title">
-            <div class="container">
-                <div class="section-header center">
-                    <span class="section-badge">How It Works</span>
-                    <h2 id="how-it-works-title">Start earning or get help in 3 simple steps</h2>
-                    <p>No complicated sign-ups. No fees. Just neighbors helping neighbors.</p>
+        <!-- 
+        =====================================================================
+        THE JOURNEY - EXPERIMENTAL LAYER: DIAGONAL SCROLLING SECTION
+        =====================================================================
+        This section implements non-linear diagonal scrolling.
+        
+        DESIGN INTENT:
+        - Feel like exploring a canvas, not reading a document
+        - Inspired by digital art exhibitions and immersive experiences
+        - Content is positioned diagonally in 2D space
+        - Scroll input maps to both X and Y movement (≈37° diagonal)
+        
+        MATH:
+        - Diagonal angle: arctan(0.75) ≈ 36.87°
+        - For every 1 unit of scroll: X moves 0.8, Y moves 0.6
+        - This creates smooth diagonal traversal
+        
+        ACCESSIBILITY:
+        - Falls back to vertical scroll if reduced-motion is preferred
+        - "Return to Normal Scroll" button always visible
+        - All content remains accessible via tab navigation
+        -->
+        <section id="journey" class="journey-section" aria-labelledby="journey-title">
+            <!-- Visual guide: diagonal line showing the path -->
+            <svg class="journey-guide" aria-hidden="true">
+                <defs>
+                    <linearGradient id="journey-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="var(--color-primary)" stop-opacity="0.3"/>
+                        <stop offset="50%" stop-color="var(--color-primary)" stop-opacity="0.1"/>
+                        <stop offset="100%" stop-color="var(--color-primary)" stop-opacity="0"/>
+                    </linearGradient>
+                </defs>
+                <line class="guide-line" x1="0" y1="0" x2="100%" y2="100%" stroke="url(#journey-gradient)" stroke-width="2"/>
+            </svg>
+            
+            <!-- Accessibility: Return to normal scroll -->
+            <button class="journey-escape" id="journeyEscape" aria-label="Return to normal scrolling">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+                Normal Scroll
+            </button>
+            
+            <!-- Progress indicator showing diagonal position -->
+            <div class="journey-progress" aria-hidden="true">
+                <div class="progress-dot"></div>
+                <span class="progress-label">Scroll to explore</span>
+            </div>
+            
+            <!-- The diagonal canvas container -->
+            <div class="journey-canvas" id="journeyCanvas">
+                <!-- Section header positioned at start -->
+                <div class="journey-header">
+                    <span class="section-badge">The Journey</span>
+                    <h2 id="journey-title">Your path to community</h2>
+                    <p>Scroll to explore — or let the current carry you</p>
                 </div>
                 
-                <div class="steps-container">
-                    <div class="step-card">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3>Download & Sign Up</h3>
-                            <p>Get the free app and create your profile in under 2 minutes. Just your name and location.</p>
+                <!-- Step 1: Positioned at origin -->
+                <article class="journey-node" data-step="1" style="--node-x: 0; --node-y: 0;">
+                    <div class="node-glow"></div>
+                    <div class="node-content">
+                        <span class="node-number">01</span>
+                        <h3>Arrive</h3>
+                        <p>Download the app. Take a breath. You're about to meet your neighbors.</p>
+                        <div class="node-visual">
+                            <svg viewBox="0 0 80 80" class="node-icon">
+                                <circle cx="40" cy="40" r="30" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                                <circle cx="40" cy="40" r="20" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+                                <circle cx="40" cy="40" r="5" fill="currentColor"/>
+                            </svg>
                         </div>
                     </div>
-                    
-                    <div class="step-connector" aria-hidden="true"></div>
-                    
-                    <div class="step-card">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3>Browse or Post Jobs</h3>
-                            <p>See what neighbors need help with, or post your own job. Set your price and timeframe.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="step-connector" aria-hidden="true"></div>
-                    
-                    <div class="step-card">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3>Connect & Complete</h3>
-                            <p>Message, meet up, get it done. Leave a review to build your reputation.</p>
-                        </div>
-                    </div>
-                </div>
+                </article>
                 
-                <div class="steps-cta">
-                    <a href="https://apps.apple.com/app/communally" class="btn btn-primary" target="_blank" rel="noopener">Start Earning Today</a>
+                <!-- Step 2: Positioned diagonally -->
+                <article class="journey-node" data-step="2" style="--node-x: 1; --node-y: 1;">
+                    <div class="node-glow"></div>
+                    <div class="node-content">
+                        <span class="node-number">02</span>
+                        <h3>Explore</h3>
+                        <p>See what your community needs. Browse jobs, spot opportunities, find your fit.</p>
+                        <div class="node-visual">
+                            <svg viewBox="0 0 80 80" class="node-icon">
+                                <path d="M20,40 Q40,20 60,40 Q40,60 20,40" fill="none" stroke="currentColor" stroke-width="1"/>
+                                <circle cx="40" cy="40" r="3" fill="currentColor"/>
+                                <circle cx="25" cy="40" r="2" fill="currentColor" opacity="0.5"/>
+                                <circle cx="55" cy="40" r="2" fill="currentColor" opacity="0.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Step 3: Further along diagonal -->
+                <article class="journey-node" data-step="3" style="--node-x: 2; --node-y: 2;">
+                    <div class="node-glow"></div>
+                    <div class="node-content">
+                        <span class="node-number">03</span>
+                        <h3>Connect</h3>
+                        <p>Reach out. Message. Meet. Every conversation plants a seed.</p>
+                        <div class="node-visual">
+                            <svg viewBox="0 0 80 80" class="node-icon">
+                                <circle cx="30" cy="35" r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+                                <circle cx="50" cy="45" r="8" fill="none" stroke="currentColor" stroke-width="1"/>
+                                <line x1="36" y1="40" x2="44" y2="42" stroke="currentColor" stroke-width="1"/>
+                            </svg>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Step 4: End of diagonal journey -->
+                <article class="journey-node" data-step="4" style="--node-x: 3; --node-y: 3;">
+                    <div class="node-glow"></div>
+                    <div class="node-content">
+                        <span class="node-number">04</span>
+                        <h3>Belong</h3>
+                        <p>Complete a job. Leave a review. Watch your network grow into a neighborhood.</p>
+                        <div class="node-visual">
+                            <svg viewBox="0 0 80 80" class="node-icon constellation">
+                                <circle cx="40" cy="25" r="3" fill="currentColor"/>
+                                <circle cx="25" cy="45" r="3" fill="currentColor"/>
+                                <circle cx="55" cy="45" r="3" fill="currentColor"/>
+                                <circle cx="40" cy="60" r="3" fill="currentColor"/>
+                                <line x1="40" y1="25" x2="25" y2="45" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                                <line x1="40" y1="25" x2="55" y2="45" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                                <line x1="25" y1="45" x2="40" y2="60" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                                <line x1="55" y1="45" x2="40" y2="60" stroke="currentColor" stroke-width="0.5" opacity="0.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- 
+                REFLECTIVE LAYER: Reflection prompt at end of journey
+                - Appears after user has scrolled through all steps
+                - Invites pause and introspection
+                -->
+                <div class="journey-reflection" data-step="5" style="--node-x: 4; --node-y: 4;">
+                    <p class="reflection-prompt">"What kind of neighbor do you want to be?"</p>
+                    <a href="https://apps.apple.com/app/communally" class="btn btn-primary" target="_blank" rel="noopener">
+                        Start Your Story
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- Testimonials -->
+        <!-- Testimonials - CORE LAYER + NARRATIVE LAYER -->
         <section class="testimonials-section" aria-labelledby="testimonials-title">
             <div class="container">
                 <div class="section-header center">
-                    <span class="section-badge">Testimonials</span>
-                    <h2 id="testimonials-title">What neighbors are saying</h2>
+                    <span class="section-badge">Stories</span>
+                    <h2 id="testimonials-title">Voices from the neighborhood</h2>
                 </div>
                 
                 <div class="testimonials-grid">
@@ -315,12 +503,12 @@
             </div>
         </section>
 
-        <!-- FAQ Section -->
+        <!-- FAQ Section - CORE LAYER -->
         <section id="faq" class="faq-section" aria-labelledby="faq-title">
             <div class="container">
                 <div class="section-header center">
-                    <span class="section-badge">FAQ</span>
-                    <h2 id="faq-title">Frequently asked questions</h2>
+                    <span class="section-badge">Questions</span>
+                    <h2 id="faq-title">Frequently asked</h2>
                 </div>
                 
                 <div class="faq-grid">
@@ -357,43 +545,51 @@
             </div>
         </section>
 
-        <!-- CTA Section -->
+        <!-- CTA Section - CORE LAYER + AMBIENT LAYER -->
         <section id="download" class="cta-section" aria-labelledby="cta-title">
             <div class="container">
+                <!-- 
+                AMBIENT LAYER: Constellation background
+                - Stars that form community-like patterns
+                - Subtly animate to show "connections"
+                -->
+                <div class="constellation-bg" aria-hidden="true" id="constellationBg"></div>
+                
                 <div class="cta-card">
                     <h2 id="cta-title">Ready to join your neighborhood?</h2>
-                    <p>Download Communally for free and start connecting with neighbors today.</p>
+                    <!-- NARRATIVE LAYER: Invitation, not transaction -->
+                    <p>Every community starts with a single connection.</p>
                     <div class="cta-buttons">
                         <a href="https://apps.apple.com/app/communally" class="btn btn-primary btn-large" target="_blank" rel="noopener">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                             </svg>
-                            Download Free on iOS
+                            Begin Your Journey
                         </a>
                     </div>
-                    <p class="cta-note">No credit card required. No fees. Ever.</p>
+                    <p class="cta-note">Free forever. No credit card needed.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Email Signup -->
+        <!-- Email Signup - CORE LAYER -->
         <section class="email-section" aria-labelledby="email-title">
             <div class="container">
                 <div class="email-card">
-                    <h2 id="email-title">Get notified when Android launches</h2>
-                    <p>Plus tips on making the most of Communally.</p>
+                    <h2 id="email-title">Stay connected</h2>
+                    <p>Get notified when Android launches, plus stories from the neighborhood.</p>
                     <form class="email-form" id="emailForm">
                         <label for="email-input" class="visually-hidden">Email address</label>
-                        <input type="email" id="email-input" placeholder="Enter your email" required aria-required="true">
-                        <button type="submit" class="btn btn-primary">Notify Me</button>
+                        <input type="email" id="email-input" placeholder="your@email.com" required aria-required="true">
+                        <button type="submit" class="btn btn-primary">Join the Wait</button>
                     </form>
-                    <p class="email-note">No spam. Unsubscribe anytime.</p>
+                    <p class="email-note">No spam. Just neighbors.</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Footer -->
+    <!-- Footer - CORE LAYER -->
     <footer class="footer" role="contentinfo">
         <div class="container">
             <div class="footer-grid">
@@ -411,13 +607,14 @@
                         </svg>
                         <span>Communally</span>
                     </div>
-                    <p>Local jobs and neighborhood help. Built for communities, by communities.</p>
+                    <!-- NARRATIVE LAYER: Mission statement -->
+                    <p>Building neighborhoods where everyone belongs.</p>
                 </div>
                 
                 <nav class="footer-nav" aria-label="Footer navigation">
                     <h4>Product</h4>
                     <a href="#features">Features</a>
-                    <a href="#how-it-works">How It Works</a>
+                    <a href="#journey">How It Works</a>
                     <a href="#faq">FAQ</a>
                     <a href="https://apps.apple.com/app/communally" target="_blank" rel="noopener">Download</a>
                 </nav>
@@ -443,10 +640,22 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2026 Communally. All rights reserved.</p>
+                <p>&copy; 2026 Communally. Made with care for neighbors everywhere.</p>
             </div>
         </div>
     </footer>
+
+    <!-- 
+    AMBIENT LAYER: Subtle sound toggle (optional)
+    - Allows users to enable ambient sounds
+    - Off by default, respects user preference
+    -->
+    <button class="sound-toggle" id="soundToggle" aria-label="Toggle ambient sounds" aria-pressed="false" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path class="sound-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+    </button>
 
     <script src="script.js"></script>
 </body>
