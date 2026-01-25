@@ -379,9 +379,8 @@
         },
 
         /**
-         * Initialize Interactive Leaflet Map
-         * Apple Maps-style animated map of US cities
-         * With smooth pan/zoom and floating user cards
+         * Initialize Apple Maps-Style Interactive Map
+         * Dramatic zoom into each US city, show people, then fly to next
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
@@ -391,79 +390,72 @@
             
             if (!mapContainer || !container || typeof L === 'undefined') return;
             
-            // US Cities data with coordinates and community members
+            // US Cities - start with San Francisco
             const cities = [
+                {
+                    name: 'San Francisco',
+                    state: 'CA',
+                    coords: [37.7749, -122.4194],
+                    users: [
+                        { name: 'Alex K.', avatar: '👨', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper', color: '#3b82f6' },
+                        { name: 'Jordan T.', avatar: '🧑', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert', color: '#22c55e' },
+                        { name: 'Sam R.', avatar: '👩', activity: 'Grocery delivery', badge: '⚡ Quick', color: '#f59e0b' }
+                    ]
+                },
                 {
                     name: 'New York City',
                     state: 'NY',
                     coords: [40.7128, -74.0060],
-                    zoom: 12,
                     users: [
-                        { name: 'Sarah M.', avatar: '👩', activity: 'Walking dogs in Park Slope', badge: '⭐ Top Helper', color: '#3b82f6' },
-                        { name: 'Mike R.', avatar: '👨', activity: 'Helping with groceries', badge: '🏆 5 jobs today', color: '#22c55e' },
-                        { name: 'Emma L.', avatar: '👩‍🦰', activity: 'Tutoring nearby', badge: '✨ New neighbor', color: '#a855f7' }
+                        { name: 'Sarah M.', avatar: '👩', activity: 'Walking dogs in Brooklyn', badge: '⭐ Top Helper', color: '#3b82f6' },
+                        { name: 'Mike R.', avatar: '👨', activity: 'Helping with groceries', badge: '🏆 5 jobs', color: '#22c55e' },
+                        { name: 'Emma L.', avatar: '👩‍🦰', activity: 'Tutoring in Manhattan', badge: '✨ New', color: '#a855f7' }
                     ]
                 },
                 {
                     name: 'Los Angeles',
                     state: 'CA',
                     coords: [34.0522, -118.2437],
-                    zoom: 11,
                     users: [
-                        { name: 'Kai M.', avatar: '🧑', activity: 'Car washing in Silver Lake', badge: '🚗 Detail pro', color: '#f59e0b' },
-                        { name: 'Sage L.', avatar: '👩', activity: 'Meal prep assistance', badge: '🍳 Chef helper', color: '#22c55e' }
-                    ]
-                },
-                {
-                    name: 'San Francisco',
-                    state: 'CA',
-                    coords: [37.7749, -122.4194],
-                    zoom: 12,
-                    users: [
-                        { name: 'Alex K.', avatar: '👨', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper', color: '#3b82f6' },
-                        { name: 'Jordan T.', avatar: '🧑', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert', color: '#22c55e' },
-                        { name: 'Sam R.', avatar: '👩', activity: 'Grocery delivery', badge: '⚡ Quick helper', color: '#f59e0b' }
+                        { name: 'Kai M.', avatar: '🧑', activity: 'Car detailing in Silver Lake', badge: '🚗 Pro', color: '#f59e0b' },
+                        { name: 'Sage L.', avatar: '👩', activity: 'Meal prep in WeHo', badge: '🍳 Chef', color: '#22c55e' }
                     ]
                 },
                 {
                     name: 'Chicago',
                     state: 'IL',
                     coords: [41.8781, -87.6298],
-                    zoom: 11,
                     users: [
-                        { name: 'Jamie W.', avatar: '👨', activity: 'Helping in Lincoln Park', badge: '❄️ Winter warrior', color: '#3b82f6' },
-                        { name: 'Drew M.', avatar: '🧑', activity: 'Furniture assembly', badge: '🔧 Handy helper', color: '#22c55e' }
+                        { name: 'Jamie W.', avatar: '👨', activity: 'Helping in Lincoln Park', badge: '❄️ Reliable', color: '#3b82f6' },
+                        { name: 'Drew M.', avatar: '🧑', activity: 'Furniture assembly', badge: '🔧 Handy', color: '#22c55e' }
                     ]
                 },
                 {
                     name: 'Austin',
                     state: 'TX',
                     coords: [30.2672, -97.7431],
-                    zoom: 12,
                     users: [
                         { name: 'Chris B.', avatar: '👨', activity: 'Yard work downtown', badge: '🌱 Garden pro', color: '#22c55e' },
-                        { name: 'Taylor S.', avatar: '👩', activity: 'Running errands', badge: '⚡ Quick helper', color: '#f59e0b' },
-                        { name: 'Morgan P.', avatar: '🧑', activity: 'Tech support', badge: '💻 Tech whiz', color: '#3b82f6' }
+                        { name: 'Taylor S.', avatar: '👩', activity: 'Running errands', badge: '⚡ Fast', color: '#f59e0b' },
+                        { name: 'Morgan P.', avatar: '🧑', activity: 'Tech support', badge: '💻 Tech', color: '#3b82f6' }
                     ]
                 },
                 {
                     name: 'Seattle',
                     state: 'WA',
                     coords: [47.6062, -122.3321],
-                    zoom: 12,
                     users: [
-                        { name: 'Casey H.', avatar: '👩', activity: 'Coffee delivery in Capitol Hill', badge: '☕ Local favorite', color: '#f59e0b' },
-                        { name: 'Riley N.', avatar: '🧑', activity: 'Dog walking near Pike Place', badge: '🐾 Pet lover', color: '#22c55e' }
+                        { name: 'Casey H.', avatar: '👩', activity: 'Coffee runs in Capitol Hill', badge: '☕ Local', color: '#f59e0b' },
+                        { name: 'Riley N.', avatar: '🧑', activity: 'Dog walking downtown', badge: '🐾 Pet lover', color: '#22c55e' }
                     ]
                 },
                 {
                     name: 'Miami',
                     state: 'FL',
                     coords: [25.7617, -80.1918],
-                    zoom: 12,
                     users: [
-                        { name: 'Nico V.', avatar: '👨', activity: 'Beach cleanup in South Beach', badge: '🌴 Community hero', color: '#22c55e' },
-                        { name: 'Luna R.', avatar: '👩', activity: 'Spanish tutoring', badge: '📚 Top tutor', color: '#3b82f6' }
+                        { name: 'Nico V.', avatar: '👨', activity: 'Beach cleanup', badge: '🌴 Hero', color: '#22c55e' },
+                        { name: 'Luna R.', avatar: '👩', activity: 'Spanish tutoring', badge: '📚 Tutor', color: '#3b82f6' }
                     ]
                 }
             ];
@@ -472,195 +464,194 @@
             let map = null;
             let markers = [];
             
-            // Create custom cursor styles
-            const addCustomCursor = () => {
+            // Zoom levels for dramatic effect
+            const ZOOM_OUT = 5;      // US overview
+            const ZOOM_IN = 14;      // Street level detail
+            
+            // Add Apple Maps-like styles
+            const addMapStyles = () => {
                 const style = document.createElement('style');
                 style.textContent = `
-                    #mapContainer {
-                        cursor: none !important;
-                    }
-                    
-                    #mapContainer * {
-                        cursor: none !important;
-                    }
-                    
-                    .map-cursor {
-                        position: fixed;
-                        width: 20px;
-                        height: 20px;
-                        border: 2px solid rgba(34, 197, 94, 0.8);
-                        border-radius: 50%;
-                        pointer-events: none;
-                        z-index: 10000;
-                        transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
-                        transform: translate(-50%, -50%);
-                    }
-                    
-                    .map-cursor::after {
-                        content: '';
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        width: 4px;
-                        height: 4px;
-                        background: rgba(34, 197, 94, 0.9);
-                        border-radius: 50%;
-                        transform: translate(-50%, -50%);
-                    }
-                    
-                    .map-cursor.hovering {
-                        transform: translate(-50%, -50%) scale(1.5);
-                        border-color: #22c55e;
-                        background: rgba(34, 197, 94, 0.1);
-                    }
-                    
-                    /* Hide Leaflet controls */
-                    .leaflet-control-container {
+                    /* Hide all Leaflet controls */
+                    .leaflet-control-container,
+                    .leaflet-control-attribution {
                         display: none !important;
                     }
                     
                     .leaflet-container {
-                        background: #f8f9fa !important;
+                        background: #e8f4f8 !important;
+                        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
                     }
                     
-                    /* Map pin styles */
-                    .city-pin {
-                        width: 24px;
-                        height: 24px;
-                        background: #22c55e;
+                    /* Apple Maps style pin */
+                    .apple-pin {
+                        position: relative;
+                        width: 44px;
+                        height: 44px;
+                    }
+                    
+                    .apple-pin-marker {
+                        width: 44px;
+                        height: 44px;
+                        background: linear-gradient(180deg, #ff3b30 0%, #d63030 100%);
+                        border-radius: 50% 50% 50% 0;
+                        transform: rotate(-45deg);
                         border: 3px solid white;
-                        border-radius: 50%;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                        cursor: none !important;
-                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2);
+                        position: relative;
                     }
                     
-                    .city-pin::after {
+                    .apple-pin-marker::after {
                         content: '';
                         position: absolute;
                         top: 50%;
                         left: 50%;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(34, 197, 94, 0.4);
+                        transform: translate(-50%, -50%) rotate(45deg);
+                        width: 16px;
+                        height: 16px;
+                        background: white;
                         border-radius: 50%;
+                    }
+                    
+                    .apple-pin-pulse {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
                         transform: translate(-50%, -50%);
-                        animation: pinPulse 2s ease-in-out infinite;
+                        width: 44px;
+                        height: 44px;
+                        background: rgba(255, 59, 48, 0.3);
+                        border-radius: 50%;
+                        animation: applePulse 2s ease-out infinite;
                     }
                     
-                    @keyframes pinPulse {
-                        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-                        50% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+                    @keyframes applePulse {
+                        0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                        100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
                     }
                     
-                    .city-pin:hover {
-                        transform: scale(1.3);
-                        box-shadow: 0 4px 16px rgba(34, 197, 94, 0.5);
+                    /* User marker on map */
+                    .user-marker {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        border: 3px solid white;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 18px;
+                        background: #22c55e;
+                        cursor: pointer;
+                        transition: transform 0.2s ease;
                     }
+                    
+                    .user-marker:hover {
+                        transform: scale(1.2);
+                    }
+                    
+                    .user-marker.blue { background: #3b82f6; }
+                    .user-marker.purple { background: #a855f7; }
+                    .user-marker.orange { background: #f59e0b; }
                 `;
                 document.head.appendChild(style);
-                
-                // Create cursor element
-                const cursor = document.createElement('div');
-                cursor.className = 'map-cursor';
-                cursor.style.display = 'none';
-                document.body.appendChild(cursor);
-                
-                // Track cursor
-                mapContainer.addEventListener('mouseenter', () => {
-                    cursor.style.display = 'block';
-                });
-                
-                mapContainer.addEventListener('mouseleave', () => {
-                    cursor.style.display = 'none';
-                });
-                
-                mapContainer.addEventListener('mousemove', (e) => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                });
             };
             
             // Initialize Leaflet map
             const initMap = () => {
-                // Create map with smooth animations
+                addMapStyles();
+                
+                // Start zoomed out on US
                 map = L.map(mapContainer, {
-                    center: cities[0].coords,
-                    zoom: cities[0].zoom,
+                    center: [39.8283, -98.5795], // Center of US
+                    zoom: ZOOM_OUT,
                     zoomControl: false,
                     attributionControl: false,
                     scrollWheelZoom: false,
                     doubleClickZoom: false,
                     dragging: false,
                     keyboard: false,
-                    touchZoom: false
+                    touchZoom: false,
+                    zoomAnimation: true,
+                    fadeAnimation: true
                 });
                 
-                // Use CartoDB Positron for Apple Maps-like clean style
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 19
+                // Use Stadia Alidade Smooth for Apple Maps-like look
+                // Fallback to CartoDB Voyager which looks similar to Apple Maps
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 20
                 }).addTo(map);
                 
-                // Add custom cursor
-                addCustomCursor();
-                
-                // Add pin for first city
-                addCityPin(cities[0]);
+                // Start the animation sequence
+                setTimeout(() => {
+                    zoomIntoCity(cities[0]);
+                }, 1000);
             };
             
-            // Add animated pin to map
-            const addCityPin = (city) => {
+            // Add user markers on the map
+            const addUserMarkers = (city) => {
                 // Clear existing markers
                 markers.forEach(m => map.removeLayer(m));
                 markers = [];
                 
-                // Create custom pin icon
-                const pinIcon = L.divIcon({
-                    className: 'city-pin-wrapper',
-                    html: '<div class="city-pin"></div>',
-                    iconSize: [24, 24],
-                    iconAnchor: [12, 12]
+                // Add markers for each user at slightly offset positions
+                city.users.forEach((user, index) => {
+                    const offset = 0.003; // Slight position offset
+                    const angle = (index / city.users.length) * Math.PI * 2;
+                    const lat = city.coords[0] + Math.cos(angle) * offset * 2;
+                    const lng = city.coords[1] + Math.sin(angle) * offset * 3;
+                    
+                    const colorClass = user.color === '#3b82f6' ? 'blue' : 
+                                       user.color === '#a855f7' ? 'purple' : 
+                                       user.color === '#f59e0b' ? 'orange' : '';
+                    
+                    const userIcon = L.divIcon({
+                        className: 'user-marker-wrapper',
+                        html: `<div class="user-marker ${colorClass}">${user.avatar}</div>`,
+                        iconSize: [36, 36],
+                        iconAnchor: [18, 18]
+                    });
+                    
+                    const marker = L.marker([lat, lng], { icon: userIcon }).addTo(map);
+                    markers.push(marker);
                 });
                 
-                const marker = L.marker(city.coords, { icon: pinIcon }).addTo(map);
-                markers.push(marker);
+                // Add center pin
+                const pinIcon = L.divIcon({
+                    className: 'apple-pin',
+                    html: `<div class="apple-pin-pulse"></div><div class="apple-pin-marker"></div>`,
+                    iconSize: [44, 44],
+                    iconAnchor: [22, 44]
+                });
                 
-                // Add hover effect for cursor
-                const cursor = document.querySelector('.map-cursor');
-                if (cursor) {
-                    marker.on('mouseover', () => cursor.classList.add('hovering'));
-                    marker.on('mouseout', () => cursor.classList.remove('hovering'));
-                }
+                const centerPin = L.marker(city.coords, { icon: pinIcon }).addTo(map);
+                markers.push(centerPin);
             };
             
-            // Card positions for floating cards
+            // Card positions
             const cardPositions = [
-                { left: '5%', top: '15%' },
-                { right: '5%', top: '12%' },
-                { left: '3%', top: '55%' },
-                { right: '3%', top: '50%' },
+                { left: '4%', top: '18%' },
+                { right: '4%', top: '15%' },
+                { left: '3%', top: '58%' },
+                { right: '3%', top: '55%' },
             ];
             
-            // Create user card HTML
+            // Create user card
             const createUserCard = (user, index) => {
                 const pos = cardPositions[index % cardPositions.length];
                 const posStyle = pos.left 
                     ? `left: ${pos.left}; top: ${pos.top};`
                     : `right: ${pos.right}; top: ${pos.top};`;
-                
-                const avatarColor = user.color || '#22c55e';
                     
                 return `
                     <div class="map-user-card" style="${posStyle}">
                         <div class="user-card-header">
-                            <div class="user-avatar" style="background: ${avatarColor};">
+                            <div class="user-avatar" style="background: ${user.color};">
                                 <span class="avatar-emoji">${user.avatar}</span>
                             </div>
                             <div class="user-info">
                                 <div class="user-name">${user.name}</div>
-                                <div class="user-badge">
-                                    <span>${user.badge}</span>
-                                </div>
+                                <div class="user-badge"><span>${user.badge}</span></div>
                             </div>
                         </div>
                         <div class="user-activity">${user.activity}</div>
@@ -668,72 +659,97 @@
                 `;
             };
             
-            // Update city display
+            // Update city label
             const updateCityDisplay = (city) => {
                 if (cityLabel) {
                     const cityNameEl = cityLabel.querySelector('.city-name');
                     const cityUsersEl = cityLabel.querySelector('.city-users');
                     
                     if (cityNameEl) cityNameEl.textContent = `${city.name}, ${city.state}`;
-                    if (cityUsersEl) cityUsersEl.textContent = `${city.users.length + Math.floor(Math.random() * 20) + 10} neighbors active`;
+                    if (cityUsersEl) cityUsersEl.textContent = `${city.users.length + Math.floor(Math.random() * 15) + 12} neighbors active`;
                     
                     cityLabel.classList.add('visible');
                 }
-                
+            };
+            
+            // Show user cards with staggered animation
+            const showUserCards = (city) => {
                 if (userCardsContainer) {
                     userCardsContainer.innerHTML = city.users.map((user, i) => createUserCard(user, i)).join('');
                     
                     setTimeout(() => {
                         userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
-                            setTimeout(() => card.classList.add('visible'), i * 150);
+                            setTimeout(() => card.classList.add('visible'), i * 200);
                         });
-                    }, 300);
+                    }, 200);
                 }
             };
             
-            // Fly to next city with smooth animation
-            const flyToNextCity = () => {
-                // Hide current display
+            // Hide all UI
+            const hideUI = () => {
                 if (cityLabel) cityLabel.classList.remove('visible');
                 if (userCardsContainer) {
-                    userCardsContainer.querySelectorAll('.map-user-card').forEach(card => card.classList.remove('visible'));
+                    userCardsContainer.querySelectorAll('.map-user-card').forEach(card => {
+                        card.classList.remove('visible');
+                    });
                 }
+                // Clear markers
+                markers.forEach(m => map.removeLayer(m));
+                markers = [];
+            };
+            
+            // Zoom into a city dramatically
+            const zoomIntoCity = (city) => {
+                // First zoom out to show context (if not first load)
+                map.flyTo(city.coords, ZOOM_IN, {
+                    duration: 3,
+                    easeLinearity: 0.1
+                });
+                
+                // Add markers after starting to zoom
+                setTimeout(() => {
+                    addUserMarkers(city);
+                }, 1500);
+                
+                // Show city label
+                setTimeout(() => {
+                    updateCityDisplay(city);
+                }, 2000);
+                
+                // Show user cards
+                setTimeout(() => {
+                    showUserCards(city);
+                }, 2500);
+            };
+            
+            // Transition to next city
+            const flyToNextCity = () => {
+                // Hide current UI
+                hideUI();
+                
+                // Zoom out first
+                map.flyTo(map.getCenter(), ZOOM_OUT + 1, {
+                    duration: 1.5,
+                    easeLinearity: 0.5
+                });
                 
                 // Move to next city
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
-                const city = cities[currentCityIndex];
+                const nextCity = cities[currentCityIndex];
                 
-                // Smooth fly animation
+                // After zoom out, fly to next city and zoom in
                 setTimeout(() => {
-                    map.flyTo(city.coords, city.zoom, {
-                        duration: 2.5,
-                        easeLinearity: 0.25
-                    });
-                    
-                    // Add pin after flight starts
-                    setTimeout(() => {
-                        addCityPin(city);
-                    }, 1500);
-                    
-                    // Update display after arriving
-                    setTimeout(() => {
-                        updateCityDisplay(city);
-                    }, 2000);
-                }, 500);
+                    zoomIntoCity(nextCity);
+                }, 1800);
             };
             
             // Initialize
             initMap();
             
-            // Show first city
-            setTimeout(() => {
-                updateCityDisplay(cities[0]);
-            }, 1000);
+            // Start city rotation every 7 seconds
+            setInterval(flyToNextCity, 7000);
             
-            // Start city rotation every 8 seconds
-            setInterval(flyToNextCity, 8000);
-            
-            // Fade map when scrolled
+            // Fade when scrolled
             window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 400) {
                     container.classList.add('faded');
