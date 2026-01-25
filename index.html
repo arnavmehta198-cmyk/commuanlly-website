@@ -24,9 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Mapbox GL JS for 3D Map Background -->
-    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
+    <!-- No external map library needed - using pure CSS/JS animation -->
 </head>
 <body>
     <!-- 
@@ -99,8 +97,7 @@
         </button>
         
         <div class="nav-links" id="navLinks">
-            <a href="#features">Features</a>
-            <a href="#journey">The Journey</a>
+            <a href="#journey">How It Works</a>
             <a href="#faq">FAQ</a>
             <a href="contact.html">Contact</a>
             
@@ -296,68 +293,6 @@
             </div>
         </section>
 
-        <!-- Features Section - CORE LAYER -->
-        <section id="features" class="features-section" aria-labelledby="features-title">
-            <div class="container">
-                <div class="section-header center">
-                    <span class="section-badge">Features</span>
-                    <h2 id="features-title">Everything you need to connect locally</h2>
-                    <!-- NARRATIVE LAYER: Emotional framing -->
-                    <p>Not just an app. A new way to belong.</p>
-                </div>
-                
-                <div class="features-grid-4">
-                    <article class="feature-card" data-emotion="proximity">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                        </div>
-                        <h3>Within Walking Distance</h3>
-                        <p>All jobs are within 0.5 miles. No driving across town — help is right next door.</p>
-                        <!-- NARRATIVE LAYER: Poetic empty state hint -->
-                        <span class="feature-whisper">closeness creates care</span>
-                    </article>
-                    
-                    <article class="feature-card" data-emotion="trust">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                        </div>
-                        <h3>Verified Neighbors</h3>
-                        <p>Every user is verified. See ratings and reviews before you connect.</p>
-                        <span class="feature-whisper">trust is earned together</span>
-                    </article>
-                    
-                    <article class="feature-card" data-emotion="opportunity">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                            </svg>
-                        </div>
-                        <h3>Instant Alerts</h3>
-                        <p>Get notified the moment a new job is posted near you. Never miss an opportunity.</p>
-                        <span class="feature-whisper">every ping, a possibility</span>
-                    </article>
-                    
-                    <article class="feature-card" data-emotion="safety">
-                        <div class="feature-icon" aria-hidden="true">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                        </div>
-                        <h3>Secure Messaging</h3>
-                        <p>Chat safely in-app. Your personal info stays private until you choose to share.</p>
-                        <span class="feature-whisper">privacy is presence</span>
-                    </article>
-                </div>
-            </div>
-        </section>
 
         <!-- 
         =====================================================================
@@ -638,7 +573,6 @@
                 
                 <nav class="footer-nav" aria-label="Footer navigation">
                     <h4>Product</h4>
-                    <a href="#features">Features</a>
                     <a href="#journey">How It Works</a>
                     <a href="#faq">FAQ</a>
                     <a href="https://apps.apple.com/app/communally" target="_blank" rel="noopener">Download</a>

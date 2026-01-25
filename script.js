@@ -379,8 +379,9 @@
         },
 
         /**
-         * Initialize 3D Map Background with Mapbox
-         * Real map cycling through US cities with animated users
+         * Initialize Animated Map Background
+         * Pure CSS/JS animation - looks like Apple Maps flying between cities
+         * No API needed - works everywhere!
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
@@ -390,23 +391,17 @@
             
             if (!mapContainer || !container) return;
             
-            // Check if Mapbox is loaded
-            if (typeof mapboxgl === 'undefined') {
-                console.log('Mapbox not loaded, skipping map background');
-                return;
-            }
-            
-            // Mapbox public token (free tier)
-            mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
-            
-            // City data with coordinates and sample users
+            // City data with colors and sample users
             const cities = [
                 {
                     name: 'Brooklyn, NY',
-                    center: [-73.9442, 40.6782],
-                    zoom: 14,
-                    pitch: 45,
-                    bearing: -17,
+                    // Map-like colors: water, parks, streets
+                    colors: {
+                        water: '#a8d5e5',
+                        parks: '#c8e6c9',
+                        streets: '#ffffff',
+                        buildings: '#e8e0d5'
+                    },
                     users: [
                         { name: 'Sarah M.', initial: 'S', activity: 'Walking dogs in Park Slope', badge: '⭐ Top Helper' },
                         { name: 'Mike R.', initial: 'M', activity: 'Helping with groceries', badge: '🏆 5 jobs today' },
@@ -415,10 +410,12 @@
                 },
                 {
                     name: 'San Francisco, CA',
-                    center: [-122.4194, 37.7749],
-                    zoom: 14.5,
-                    pitch: 50,
-                    bearing: 20,
+                    colors: {
+                        water: '#7eb8da',
+                        parks: '#a5d6a7',
+                        streets: '#f5f5f5',
+                        buildings: '#ede7e0'
+                    },
                     users: [
                         { name: 'Alex K.', initial: 'A', activity: 'Moving furniture in SOMA', badge: '💪 Strong helper' },
                         { name: 'Jordan T.', initial: 'J', activity: 'Pet sitting in Mission', badge: '🐕 Pet expert' }
@@ -426,10 +423,12 @@
                 },
                 {
                     name: 'Austin, TX',
-                    center: [-97.7431, 30.2672],
-                    zoom: 14,
-                    pitch: 40,
-                    bearing: -10,
+                    colors: {
+                        water: '#81d4fa',
+                        parks: '#aed581',
+                        streets: '#fafafa',
+                        buildings: '#f5ebe0'
+                    },
                     users: [
                         { name: 'Chris B.', initial: 'C', activity: 'Yard work downtown', badge: '🌱 Garden pro' },
                         { name: 'Taylor S.', initial: 'T', activity: 'Running errands', badge: '⚡ Quick helper' },
@@ -438,10 +437,12 @@
                 },
                 {
                     name: 'Seattle, WA',
-                    center: [-122.3321, 47.6062],
-                    zoom: 14.5,
-                    pitch: 55,
-                    bearing: 30,
+                    colors: {
+                        water: '#90caf9',
+                        parks: '#81c784',
+                        streets: '#f0f0f0',
+                        buildings: '#e0e0e0'
+                    },
                     users: [
                         { name: 'Casey H.', initial: 'C', activity: 'Coffee delivery in Capitol Hill', badge: '☕ Local favorite' },
                         { name: 'Riley N.', initial: 'R', activity: 'Dog walking near Pike Place', badge: '🐾 Pet lover' }
@@ -449,21 +450,25 @@
                 },
                 {
                     name: 'Chicago, IL',
-                    center: [-87.6298, 41.8781],
-                    zoom: 14,
-                    pitch: 45,
-                    bearing: 0,
+                    colors: {
+                        water: '#4fc3f7',
+                        parks: '#66bb6a',
+                        streets: '#ffffff',
+                        buildings: '#d7ccc8'
+                    },
                     users: [
-                        { name: 'Jamie W.', initial: 'J', activity: 'Snow shoveling in Lincoln Park', badge: '❄️ Winter warrior' },
+                        { name: 'Jamie W.', initial: 'J', activity: 'Helping in Lincoln Park', badge: '❄️ Winter warrior' },
                         { name: 'Drew M.', initial: 'D', activity: 'Furniture assembly', badge: '🔧 Handy helper' }
                     ]
                 },
                 {
                     name: 'Miami, FL',
-                    center: [-80.1918, 25.7617],
-                    zoom: 14,
-                    pitch: 50,
-                    bearing: -20,
+                    colors: {
+                        water: '#4dd0e1',
+                        parks: '#9ccc65',
+                        streets: '#fff8e1',
+                        buildings: '#ffe0b2'
+                    },
                     users: [
                         { name: 'Nico V.', initial: 'N', activity: 'Beach cleanup in South Beach', badge: '🌴 Community hero' },
                         { name: 'Luna R.', initial: 'L', activity: 'Spanish tutoring', badge: '📚 Top tutor' }
@@ -471,10 +476,12 @@
                 },
                 {
                     name: 'Denver, CO',
-                    center: [-104.9903, 39.7392],
-                    zoom: 14,
-                    pitch: 45,
-                    bearing: 15,
+                    colors: {
+                        water: '#80deea',
+                        parks: '#a5d6a7',
+                        streets: '#fafafa',
+                        buildings: '#d7ccc8'
+                    },
                     users: [
                         { name: 'Sky P.', initial: 'S', activity: 'Hiking gear organization', badge: '🏔️ Outdoor expert' },
                         { name: 'River J.', initial: 'R', activity: 'Plant care in LoDo', badge: '🪴 Plant parent' }
@@ -482,10 +489,12 @@
                 },
                 {
                     name: 'Los Angeles, CA',
-                    center: [-118.2437, 34.0522],
-                    zoom: 14,
-                    pitch: 40,
-                    bearing: -25,
+                    colors: {
+                        water: '#81d4fa',
+                        parks: '#c5e1a5',
+                        streets: '#fff8e1',
+                        buildings: '#ffe0b2'
+                    },
                     users: [
                         { name: 'Kai M.', initial: 'K', activity: 'Car washing in Silver Lake', badge: '🚗 Detail king' },
                         { name: 'Sage L.', initial: 'S', activity: 'Meal prep assistance', badge: '🍳 Chef helper' },
@@ -495,31 +504,136 @@
             ];
             
             let currentCityIndex = 0;
-            let map = null;
-            let userMarkers = [];
             
-            // Initialize the map with Apple Maps-like style
-            try {
-                map = new mapboxgl.Map({
-                    container: 'mapContainer',
-                    // Use streets style for Apple Maps-like appearance with roads and labels
-                    style: 'mapbox://styles/mapbox/streets-v12',
-                    center: cities[0].center,
-                    zoom: cities[0].zoom,
-                    pitch: cities[0].pitch,
-                    bearing: cities[0].bearing,
-                    interactive: false,
-                    attributionControl: false,
-                    logoPosition: 'bottom-left'
-                });
+            // Create the animated map canvas
+            const createMapVisualization = () => {
+                // Create SVG-based map visualization
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('width', '100%');
+                svg.setAttribute('height', '100%');
+                svg.setAttribute('viewBox', '0 0 1000 800');
+                svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
+                svg.id = 'mapSvg';
+                svg.innerHTML = `
+                    <defs>
+                        <!-- Gradient for water -->
+                        <linearGradient id="waterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#a8d5e5"/>
+                            <stop offset="100%" style="stop-color:#7eb8da"/>
+                        </linearGradient>
+                        <!-- Pattern for streets -->
+                        <pattern id="streetPattern" width="50" height="50" patternUnits="userSpaceOnUse">
+                            <rect width="50" height="50" fill="#f5f5f0"/>
+                            <line x1="25" y1="0" x2="25" y2="50" stroke="#fff" stroke-width="3"/>
+                            <line x1="0" y1="25" x2="50" y2="25" stroke="#fff" stroke-width="3"/>
+                            <line x1="0" y1="0" x2="50" y2="0" stroke="#e0e0e0" stroke-width="1"/>
+                            <line x1="0" y1="0" x2="0" y2="50" stroke="#e0e0e0" stroke-width="1"/>
+                        </pattern>
+                        <!-- Pattern for buildings -->
+                        <pattern id="buildingPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <rect width="40" height="40" fill="#ede7e0"/>
+                            <rect x="5" y="5" width="12" height="12" fill="#e0d5c8" rx="1"/>
+                            <rect x="23" y="5" width="12" height="12" fill="#d5ccc0" rx="1"/>
+                            <rect x="5" y="23" width="12" height="12" fill="#d8d0c5" rx="1"/>
+                            <rect x="23" y="23" width="12" height="12" fill="#e5ddd2" rx="1"/>
+                        </pattern>
+                    </defs>
+                    
+                    <!-- Base layer - streets/land -->
+                    <rect class="map-base" width="100%" height="100%" fill="url(#streetPattern)"/>
+                    
+                    <!-- Water bodies -->
+                    <ellipse class="map-water water-1" cx="850" cy="200" rx="200" ry="150" fill="url(#waterGradient)" opacity="0.9"/>
+                    <ellipse class="map-water water-2" cx="100" cy="600" rx="180" ry="120" fill="url(#waterGradient)" opacity="0.85"/>
+                    <path class="map-water water-river" d="M 0 300 Q 200 350, 400 300 T 800 350 T 1000 300" fill="none" stroke="#a8d5e5" stroke-width="40" opacity="0.7"/>
+                    
+                    <!-- Parks -->
+                    <ellipse class="map-park park-1" cx="300" cy="200" rx="100" ry="80" fill="#c8e6c9" opacity="0.9"/>
+                    <ellipse class="map-park park-2" cx="700" cy="500" rx="120" ry="90" fill="#a5d6a7" opacity="0.85"/>
+                    <rect class="map-park park-3" x="450" y="100" width="80" height="100" rx="10" fill="#b9deb5" opacity="0.8"/>
+                    <ellipse class="map-park park-4" cx="150" cy="400" rx="70" ry="50" fill="#c5e1a5" opacity="0.75"/>
+                    
+                    <!-- Building clusters -->
+                    <rect class="map-buildings buildings-1" x="350" y="250" width="150" height="180" fill="url(#buildingPattern)" rx="5"/>
+                    <rect class="map-buildings buildings-2" x="550" y="300" width="120" height="150" fill="url(#buildingPattern)" rx="5"/>
+                    <rect class="map-buildings buildings-3" x="200" y="450" width="100" height="120" fill="url(#buildingPattern)" rx="5"/>
+                    <rect class="map-buildings buildings-4" x="650" y="150" width="90" height="100" fill="url(#buildingPattern)" rx="5"/>
+                    
+                    <!-- Major roads -->
+                    <line class="map-road road-h1" x1="0" y1="400" x2="1000" y2="400" stroke="#ffffff" stroke-width="8"/>
+                    <line class="map-road road-h2" x1="0" y1="250" x2="1000" y2="250" stroke="#ffffff" stroke-width="6"/>
+                    <line class="map-road road-v1" x1="500" y1="0" x2="500" y2="800" stroke="#ffffff" stroke-width="8"/>
+                    <line class="map-road road-v2" x1="300" y1="0" x2="300" y2="800" stroke="#ffffff" stroke-width="5"/>
+                    <line class="map-road road-v3" x1="700" y1="0" x2="700" y2="800" stroke="#ffffff" stroke-width="5"/>
+                    
+                    <!-- Road outlines -->
+                    <line x1="0" y1="400" x2="1000" y2="400" stroke="#e8e8e8" stroke-width="10" opacity="0.5"/>
+                    <line x1="500" y1="0" x2="500" y2="800" stroke="#e8e8e8" stroke-width="10" opacity="0.5"/>
+                    
+                    <!-- Highway/freeway style -->
+                    <path class="map-highway" d="M 0 550 Q 250 500, 500 550 T 1000 500" fill="none" stroke="#ffd54f" stroke-width="12" opacity="0.8"/>
+                    <path d="M 0 550 Q 250 500, 500 550 T 1000 500" fill="none" stroke="#ffecb3" stroke-width="8" opacity="0.9"/>
+                    
+                    <!-- Location pins for users -->
+                    <g class="map-pins">
+                        <circle class="pin pin-1" cx="420" cy="320" r="12" fill="#22c55e" stroke="#fff" stroke-width="3"/>
+                        <circle class="pin pin-2" cx="580" cy="380" r="12" fill="#22c55e" stroke="#fff" stroke-width="3"/>
+                        <circle class="pin pin-3" cx="350" cy="480" r="12" fill="#22c55e" stroke="#fff" stroke-width="3"/>
+                        <circle class="pin pin-4" cx="650" cy="220" r="12" fill="#3b82f6" stroke="#fff" stroke-width="3"/>
+                    </g>
+                `;
                 
-                // Remove all controls
-                map.addControl = function() {};
+                mapContainer.innerHTML = '';
+                mapContainer.appendChild(svg);
                 
-            } catch (e) {
-                console.log('Error initializing Mapbox:', e);
-                return;
-            }
+                // Add CSS for animations
+                const style = document.createElement('style');
+                style.textContent = `
+                    #mapSvg {
+                        transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    
+                    #mapSvg.transitioning {
+                        transform: scale(1.5);
+                        opacity: 0.3;
+                    }
+                    
+                    .map-water, .map-park, .map-buildings, .map-road, .map-highway {
+                        transition: all 1.2s ease;
+                    }
+                    
+                    .pin {
+                        animation: pinPulse 2s ease-in-out infinite;
+                    }
+                    
+                    .pin-1 { animation-delay: 0s; }
+                    .pin-2 { animation-delay: 0.5s; }
+                    .pin-3 { animation-delay: 1s; }
+                    .pin-4 { animation-delay: 1.5s; }
+                    
+                    @keyframes pinPulse {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.2); opacity: 0.8; }
+                    }
+                    
+                    /* Slow drift animation for map elements */
+                    @keyframes mapDrift {
+                        0% { transform: translate(0, 0) scale(1); }
+                        25% { transform: translate(-20px, -10px) scale(1.02); }
+                        50% { transform: translate(-10px, -20px) scale(1.03); }
+                        75% { transform: translate(10px, -15px) scale(1.02); }
+                        100% { transform: translate(0, 0) scale(1); }
+                    }
+                    
+                    #mapSvg {
+                        animation: mapDrift 30s ease-in-out infinite;
+                    }
+                `;
+                document.head.appendChild(style);
+            };
+            
+            // Initialize the map
+            createMapVisualization();
             
             // Card positions for different layouts
             const cardPositions = [
@@ -554,7 +668,6 @@
             
             // Update city label and user cards
             const updateCityDisplay = (city) => {
-                // Update city label
                 if (cityLabel) {
                     const cityNameEl = cityLabel.querySelector('.city-name');
                     const cityUsersEl = cityLabel.querySelector('.city-users');
@@ -565,17 +678,13 @@
                     cityLabel.classList.add('visible');
                 }
                 
-                // Update user cards
                 if (userCardsContainer) {
-                    // Fade out existing cards
                     const existingCards = userCardsContainer.querySelectorAll('.map-user-card');
                     existingCards.forEach(card => card.classList.remove('visible'));
                     
-                    // After fade out, replace with new cards
                     setTimeout(() => {
                         userCardsContainer.innerHTML = city.users.map((user, i) => createUserCard(user, i)).join('');
                         
-                        // Fade in new cards
                         setTimeout(() => {
                             userCardsContainer.querySelectorAll('.map-user-card').forEach((card, i) => {
                                 setTimeout(() => card.classList.add('visible'), i * 200);
@@ -583,53 +692,62 @@
                         }, 100);
                     }, 300);
                 }
+                
+                // Update map colors based on city
+                const svg = document.getElementById('mapSvg');
+                if (svg && city.colors) {
+                    const waters = svg.querySelectorAll('.map-water');
+                    const parks = svg.querySelectorAll('.map-park');
+                    
+                    waters.forEach(w => w.style.fill = city.colors.water);
+                    parks.forEach(p => p.style.fill = city.colors.parks);
+                }
             };
             
-            // Fly to next city with smooth scrolling animation
+            // Fly to next city with smooth animation
             const flyToNextCity = () => {
-                // Hide current display with fade out
-                if (cityLabel) cityLabel.classList.remove('visible');
+                const svg = document.getElementById('mapSvg');
                 
-                // Fade out user cards
+                // Hide current display
+                if (cityLabel) cityLabel.classList.remove('visible');
                 if (userCardsContainer) {
-                    const cards = userCardsContainer.querySelectorAll('.map-user-card');
-                    cards.forEach(card => card.classList.remove('visible'));
+                    userCardsContainer.querySelectorAll('.map-user-card').forEach(card => card.classList.remove('visible'));
+                }
+                
+                // Animate map transition (zoom out then in)
+                if (svg) {
+                    svg.classList.add('transitioning');
                 }
                 
                 // Move to next city
                 currentCityIndex = (currentCityIndex + 1) % cities.length;
                 const city = cities[currentCityIndex];
                 
-                // Animate map flight - smooth scrolling effect
-                if (map) {
-                    map.flyTo({
-                        center: city.center,
-                        zoom: city.zoom,
-                        pitch: city.pitch,
-                        bearing: city.bearing,
-                        duration: 4000, // Slower for smoother scroll feel
-                        essential: true,
-                        curve: 1.2, // Smooth curve
-                        easing: (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2 // Ease in-out
-                    });
-                }
-                
-                // Update display after flight is midway
+                // After zoom out, update and zoom back in
                 setTimeout(() => {
-                    updateCityDisplay(city);
-                }, 2000);
+                    if (svg) {
+                        // Shift viewBox slightly to simulate moving to new location
+                        const offsetX = (Math.random() - 0.5) * 100;
+                        const offsetY = (Math.random() - 0.5) * 80;
+                        svg.setAttribute('viewBox', `${offsetX} ${offsetY} 1000 800`);
+                        
+                        svg.classList.remove('transitioning');
+                    }
+                    
+                    // Update display
+                    setTimeout(() => {
+                        updateCityDisplay(city);
+                    }, 500);
+                }, 1500);
             };
             
-            // Wait for map to load
-            map.on('load', () => {
-                // Show first city after a brief delay
-                setTimeout(() => {
-                    updateCityDisplay(cities[0]);
-                }, 500);
-                
-                // Start city rotation - fly to new city every 10 seconds
-                setInterval(flyToNextCity, 10000);
-            });
+            // Show first city
+            setTimeout(() => {
+                updateCityDisplay(cities[0]);
+            }, 500);
+            
+            // Start city rotation every 8 seconds
+            setInterval(flyToNextCity, 8000);
             
             // Fade map when scrolled
             window.addEventListener('scroll', () => {
