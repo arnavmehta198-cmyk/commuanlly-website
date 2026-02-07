@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en" data-season="default" data-mood="calm">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Communally connects you with people within 2 miles for local jobs and help. Find dog walking, moving help, lawn care, and more in cities across the US. Free on iOS.">
+    <meta name="keywords" content="local jobs, neighborhood help, community app, gig economy, odd jobs, neighbors">
+    <meta name="author" content="Communally">
+    
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://communallyapp.com/">
+    <meta property="og:title" content="Communally - Local Jobs & Neighborhood Help">
+    <meta property="og:description" content="Find local gigs and help neighbors. Dog walking, moving help, lawn care & more within walking distance.">
+    <meta property="og:image" content="https://communallyapp.com/og-image.png">
+    
+    <title>Communally - Find Local Jobs & Help Neighbors | Free iOS App</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet for maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- 
+    =========================================================================
+    CREATIVE SYSTEMS ARCHITECTURE
+    =========================================================================
+    This website implements a 5-layer creative system:
+    
+    1. CORE LAYER - Always visible, calm, minimal (standard UI)
+    2. AMBIENT LAYER - Living backgrounds, time-aware colors, subtle particles
+    3. REFLECTIVE LAYER - Pause moments, emotional prompts, breathing space
+    4. EXPERIMENTAL LAYER - Diagonal scrolling, constellation views, wild UI
+    5. NARRATIVE LAYER - Poetic copy, growth language, seasonal messages
+    
+    Features unlock progressively based on:
+    - Time spent on site
+    - Return visits (localStorage)
+    - User opt-in via experimental mode toggle
+    - Time of day and season
+    =========================================================================
+    -->
+
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- 
+    AMBIENT LAYER: 3D Map Background (Mapbox)
+    - Real map visualization cycling through US cities
+    - Shows animated Communally users with descriptions
+    - Smooth 3D transitions between locations
+    -->
+    <div id="mapBackground" class="map-background" aria-hidden="true">
+        <div class="map-3d-wrapper">
+            <div id="mapContainer"></div>
+        </div>
+        <div class="city-label" id="cityLabel">
+            <span class="city-name"></span>
+            <span class="city-users"></span>
+        </div>
+        <!-- User cards that appear on map -->
+        <div class="map-user-cards" id="mapUserCards"></div>
+    </div>
+
+    <!-- 
+    AMBIENT LAYER: Global Pulse
+    - A soft breathing animation that subtly pulses across the page
+    - Represents the "heartbeat" of the community
+    - Intensity increases based on simulated global activity
+    -->
+    <div class="global-pulse" aria-hidden="true"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <a href="index.html" class="logo" aria-label="Communally home">
+            <img src="logo.png" alt="Communally" width="36" height="36" style="border-radius: 8px;">
+            <span>Communally</span>
+        </a>
+        
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+        
+        <div class="nav-links" id="navLinks">
+            <a href="#journey">How It Works</a>
+            <a href="#faq">FAQ</a>
+            <a href="contact.html">Contact</a>
+            
+            <!-- 
+            EXPERIMENTAL LAYER: Mode Toggle
+            - Allows users to opt into wild/experimental UI
+            - Stored in localStorage for persistence
+            - Unlocks advanced creative features
+            -->
+            <button class="experimental-toggle" id="experimentalToggle" aria-pressed="false" title="Toggle Experimental Mode">
+                <span class="toggle-icon">✧</span>
+            </button>
+        </div>
+        <a href="https://apps.apple.com/app/communally" class="nav-cta" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+            Get the App
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- 
+        =====================================================================
+        HERO SECTION - CORE LAYER + NARRATIVE LAYER
+        =====================================================================
+        The hero introduces users gently. On first visit, only core elements show.
+        Returning users see additional ambient elements.
+        -->
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-content">
+                <!-- 
+                NARRATIVE LAYER: Time-aware greeting
+                - Changes based on time of day
+                - Creates emotional connection before any pitch
+                -->
+                <div class="hero-badge" id="timeGreeting">
+                    <span class="badge-pulse"></span>
+                    <span class="greeting-text">Good morning, neighbor</span>
+                </div>
+                
+                <h1 id="hero-title" class="hero-title">
+                    <!-- NARRATIVE LAYER: Poetic, not transactional -->
+                    <span class="title-line">Where local opportunities Begin.</span>
+                </h1>
+                
+                <!-- 
+                REFLECTIVE LAYER: Pause moment
+                - Subtle breathing animation on tagline
+                - Invites user to slow down and read
+                -->
+                <p class="hero-tagline breathing-text">
+                    Discover people and opportunities within 2 miles of you.
+                </p>
+                
+                <p class="hero-subtitle">
+                    Dog walking, moving help, lawn care, errands — connect with locals in your city ready to help.
+                </p>
+                
+                <div class="hero-buttons">
+                    <a href="https://apps.apple.com/app/communally" class="btn btn-primary" target="_blank" rel="noopener">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        Download on iOS
+                    </a>
+                    <a href="index.html" class="btn btn-outline btn-web">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Continue on Web
+                    </a>
+                </div>
+                
+                <!-- 
+                AMBIENT LAYER: Living stat that "breathes"
+                - Number subtly animates up occasionally
+                - Represents real community growth
+                -->
+                <p class="hero-note">
+                    <span class="pulse-dot"></span>
+                    <span class="living-stat" data-base="5000">5,247</span> people connected today
+                </p>
+            </div>
+        </section>
+
+        <!-- 3D Features Showcase - Full Screen Scroll Animation -->
+        <section class="features-3d-section" id="features3d">
+            <div class="features-3d-container">
+                <div class="feature-3d-slide" data-feature="1">
+                    <div class="feature-3d-card">
+                        <div class="feature-3d-icon purple">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <h2 class="feature-3d-title">Within Walking Distance</h2>
+                        <p class="feature-3d-description">Find opportunities within 0.5 miles of your location. No long commutes — just local connections.</p>
+                        <div class="feature-3d-stats">
+                            <div class="stat-item"><span class="stat-number">0.5</span><span class="stat-label">Mile Radius</span></div>
+                            <div class="stat-item"><span class="stat-number">5min</span><span class="stat-label">Average Walk</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-3d-slide" data-feature="2">
+                    <div class="feature-3d-card">
+                        <div class="feature-3d-icon green">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <h2 class="feature-3d-title">Verified Neighbors</h2>
+                        <p class="feature-3d-description">Every member is verified. Real reviews, real ratings, real people in your community.</p>
+                        <div class="feature-3d-stats">
+                            <div class="stat-item"><span class="stat-number">100%</span><span class="stat-label">Verified</span></div>
+                            <div class="stat-item"><span class="stat-number">4.9★</span><span class="stat-label">Avg Rating</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-3d-slide" data-feature="3">
+                    <div class="feature-3d-card">
+                        <div class="feature-3d-icon orange">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                        </div>
+                        <h2 class="feature-3d-title">Instant Alerts</h2>
+                        <p class="feature-3d-description">Get notified the moment an opportunity matches your skills. Be the first to respond.</p>
+                        <div class="feature-3d-stats">
+                            <div class="stat-item"><span class="stat-number">&lt;30s</span><span class="stat-label">Alert Speed</span></div>
+                            <div class="stat-item"><span class="stat-number">24/7</span><span class="stat-label">Monitoring</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-3d-slide" data-feature="4">
+                    <div class="feature-3d-card">
+                        <div class="feature-3d-icon blue">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <h2 class="feature-3d-title">Secure Messaging</h2>
+                        <p class="feature-3d-description">Your privacy is protected. Chat safely without sharing personal contact info.</p>
+                        <div class="feature-3d-stats">
+                            <div class="stat-item"><span class="stat-number">E2E</span><span class="stat-label">Encrypted</span></div>
+                            <div class="stat-item"><span class="stat-number">100%</span><span class="stat-label">Private</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-progress-dots">
+                <span class="progress-dot active" data-slide="0"></span>
+                <span class="progress-dot" data-slide="1"></span>
+                <span class="progress-dot" data-slide="2"></span>
+                <span class="progress-dot" data-slide="3"></span>
+            </div>
+        </section>
+        <style>
+            .features-3d-section { position: relative; height: auto; background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdf4 100%); }
+            .features-3d-container { position: relative; height: 100vh; overflow: hidden; perspective: 1500px; }
+            .feature-3d-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0; transform: translateZ(-800px) rotateX(40deg) scale(0.6); pointer-events: none; }
+            .feature-3d-slide.active { opacity: 1; transform: translateZ(0) rotateX(0) scale(1); pointer-events: auto; }
+            .feature-3d-card { background: rgba(255,255,255,0.97); backdrop-filter: blur(30px); border-radius: 40px; padding: 50px 70px; max-width: 550px; text-align: center; box-shadow: 0 50px 100px rgba(0,0,0,0.15), 0 20px 50px rgba(0,0,0,0.1); transform-style: preserve-3d; }
+            .feature-3d-icon { width: 110px; height: 110px; border-radius: 30px; display: flex; align-items: center; justify-content: center; margin: 0 auto 25px; transform: translateZ(60px); }
+            .feature-3d-icon.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); box-shadow: 0 20px 50px rgba(168,85,247,0.5); }
+            .feature-3d-icon.green { background: linear-gradient(135deg, #34d399, #10b981); box-shadow: 0 20px 50px rgba(52,211,153,0.5); }
+            .feature-3d-icon.orange { background: linear-gradient(135deg, #fb923c, #ea580c); box-shadow: 0 20px 50px rgba(251,146,60,0.5); }
+            .feature-3d-icon.blue { background: linear-gradient(135deg, #60a5fa, #2563eb); box-shadow: 0 20px 50px rgba(96,165,250,0.5); }
+            .feature-3d-icon svg { color: white; }
+            .feature-3d-title { font-family: 'Instrument Serif', Georgia, serif; font-size: 40px; font-weight: 400; color: #111; margin-bottom: 16px; transform: translateZ(40px); }
+            .feature-3d-description { font-size: 18px; line-height: 1.6; color: #444; margin-bottom: 30px; transform: translateZ(30px); }
+            .feature-3d-stats { display: flex; justify-content: center; gap: 50px; transform: translateZ(35px); }
+            .stat-item { text-align: center; }
+            .stat-number { display: block; font-size: 36px; font-weight: 700; color: #34C759; }
+            .stat-label { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; display: block; }
+            .scroll-progress-dots { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 12px; z-index: 100; opacity: 0; transition: opacity 0.3s; }
+            .scroll-progress-dots.show { opacity: 1; }
+            .progress-dot { width: 12px; height: 12px; border-radius: 50%; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.3s; }
+            .progress-dot.active { background: #34C759; transform: scale(1.3); }
+            @media (max-width: 768px) {
+                .feature-3d-card { padding: 35px 25px; margin: 0 20px; border-radius: 28px; }
+                .feature-3d-icon { width: 80px; height: 80px; }
+                .feature-3d-icon svg { width: 40px; height: 40px; }
+                .feature-3d-title { font-size: 28px; }
+                .feature-3d-description { font-size: 16px; }
+                .stat-number { font-size: 28px; }
+            }
+        </style>
+        <script>
+        (function() {
+            const slides = document.querySelectorAll('.feature-3d-slide');
+            const dots = document.querySelectorAll('.progress-dot');
+            const dotsContainer = document.querySelector('.scroll-progress-dots');
+            if (!slides.length) return;
+            const numSlides = slides.length;
+            let currentSlide = 0;
+            let progress = 0;
+            const transitionSpeed = 0.015; // Speed of transition between slides
+            const holdTime = 120; // Frames to hold on each slide (about 2 seconds at 60fps)
+            let holdCounter = 0;
+            let isTransitioning = false;
+            
+            dotsContainer.classList.add('show');
+            
+            function updateSlides() {
+                slides.forEach((slide, i) => {
+                    slide.classList.remove('active');
+                    if (i === currentSlide) {
+                        slide.classList.add('active');
+                        if (isTransitioning) {
+                            slide.style.transform = `translateZ(${progress * 300}px) rotateX(${progress * -20}deg) scale(${1 - progress * 0.15})`;
+                            slide.style.opacity = Math.max(0.4, 1 - progress * 0.6);
+                        } else {
+                            slide.style.transform = 'translateZ(0) rotateX(0) scale(1)';
+                            slide.style.opacity = 1;
+                        }
+                    } else if (i === (currentSlide + 1) % numSlides && isTransitioning) {
+                        slide.style.transform = `translateZ(${-800 + progress * 800}px) rotateX(${40 - progress * 40}deg) scale(${0.6 + progress * 0.4})`;
+                        slide.style.opacity = progress;
+                    } else {
+                        slide.style.transform = 'translateZ(-800px) rotateX(40deg) scale(0.6)';
+                        slide.style.opacity = 0;
+                    }
+                });
+                dots.forEach((dot, i) => { dot.classList.toggle('active', i === currentSlide); });
+            }
+            
+            function animate() {
+                if (!isTransitioning) {
+                    holdCounter++;
+                    if (holdCounter >= holdTime) {
+                        isTransitioning = true;
+                        holdCounter = 0;
+                    }
+                } else {
+                    progress += transitionSpeed;
+                    if (progress >= 1) {
+                        progress = 0;
+                        currentSlide = (currentSlide + 1) % numSlides;
+                        isTransitioning = false;
+                    }
+                }
+                updateSlides();
+                requestAnimationFrame(animate);
+            }
+            
+            updateSlides();
+            animate();
+        })();
+        </script>
+
+        <!-- 
+        REFLECTIVE LAYER: Breathing Space
+        - A moment of visual rest between sections
+        - Contains a subtle animated line that "draws" itself
+        -->
+        <div class="breathing-space" aria-hidden="true">
+            <svg class="breath-line" viewBox="0 0 100 20" preserveAspectRatio="none">
+                <path class="breath-path" d="M0,10 Q25,0 50,10 T100,10" fill="none" stroke="currentColor" stroke-width="0.5"/>
+            </svg>
+        </div>
+
+        <!-- Social Proof Bar - Enhanced -->
+        <section class="social-proof-bar" aria-label="Trust indicators">
+            <div class="container">
+                <div class="proof-items">
+                    <div class="proof-item">
+                        <span class="proof-number living-stat" data-base="50000">50,000+</span>
+                        <span class="proof-label">Active Users</span>
+                    </div>
+                    <div class="proof-item">
+                        <span class="proof-number living-stat" data-base="120000">120,000+</span>
+                        <span class="proof-label">Jobs Completed</span>
+                    </div>
+                    <div class="proof-item">
+                        <div class="proof-stars">★★★★★</div>
+                        <span class="proof-number">4.9/5</span>
+                        <span class="proof-label">App Store Rating</span>
+                    </div>
+                    <div class="proof-item">
+                        <span class="proof-number">25+</span>
+                        <span class="proof-label">US Cities</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust Badges & Security Section -->
+        <section class="trust-badges-section">
+            <div class="container">
+                <div class="trust-content">
+                    <div class="trust-badges">
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                            <span>SSL Encrypted</span>
+                        </div>
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <span>Data Protected</span>
+                        </div>
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <span>Verified Users</span>
+                        </div>
+                        <div class="trust-badge">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+                    <p class="trust-text">Your privacy matters. <a href="#">Read our Privacy Policy</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured In / Media Logos -->
+        <section class="media-logos-section">
+            <div class="container">
+                <p class="media-label">As featured in</p>
+                <div class="media-logos">
+                    <div class="media-logo">TechCrunch</div>
+                    <div class="media-logo">Forbes</div>
+                    <div class="media-logo">The Verge</div>
+                    <div class="media-logo">Wired</div>
+                    <div class="media-logo">Fast Company</div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 
+        =====================================================================
+        THE JOURNEY - HOW IT WORKS SECTION
+        =====================================================================
+        Clean, accessible step-by-step flow.
+        Diagonal scrolling is available as opt-in experimental feature.
+        -->
+        <section id="journey" class="sphere-section" aria-labelledby="journey-title">
+            <div class="sphere-header">
+                <span class="section-badge">How It Works</span>
+                <h2 id="journey-title">Your path to community</h2>
+            </div>
+            <div class="sphere-container" id="sphereContainer">
+                <div class="sphere-stage">
+                    <div class="sphere-card sc-purple" data-index="0">
+                        <div class="sc-num">01</div>
+                        <div class="sc-icon"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="18" stroke="white" stroke-width="2" opacity="0.4"/><circle cx="24" cy="24" r="6" fill="white"/></svg></div>
+                        <h3>Arrive</h3>
+                        <p>Download the app and start exploring.</p>
+                    </div>
+                    <div class="sphere-card sc-green" data-index="1">
+                        <div class="sc-num">02</div>
+                        <div class="sc-icon"><svg viewBox="0 0 48 48" fill="none"><path d="M8 24c8-12 24-12 32 0c-8 12-24 12-32 0z" stroke="white" stroke-width="2"/><circle cx="24" cy="24" r="5" fill="white"/></svg></div>
+                        <h3>Explore</h3>
+                        <p>Browse local jobs and opportunities.</p>
+                    </div>
+                    <div class="sphere-card sc-orange" data-index="2">
+                        <div class="sc-num">03</div>
+                        <div class="sc-icon"><svg viewBox="0 0 48 48" fill="none"><circle cx="18" cy="20" r="8" stroke="white" stroke-width="2"/><circle cx="30" cy="28" r="8" stroke="white" stroke-width="2"/></svg></div>
+                        <h3>Connect</h3>
+                        <p>Message and meet verified people.</p>
+                    </div>
+                    <div class="sphere-card sc-blue" data-index="3">
+                        <div class="sc-num">04</div>
+                        <div class="sc-icon"><svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="10" r="4" fill="white"/><circle cx="10" cy="28" r="4" fill="white"/><circle cx="38" cy="28" r="4" fill="white"/><circle cx="24" cy="40" r="4" fill="white"/></svg></div>
+                        <h3>Belong</h3>
+                        <p>Build your local network.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <style>
+            .sphere-section { padding: 80px 20px 100px; background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 30%, #e9d5ff 50%, #cffafe 70%, #d1fae5 100%); overflow: hidden; }
+            .sphere-header { text-align: center; margin-bottom: 40px; }
+            .sphere-header h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 48px; margin-top: 14px; color: #1a1a1a; }
+            .sphere-container { position: relative; height: 480px; user-select: none; perspective: 1200px; }
+            .sphere-stage { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transform-style: preserve-3d; }
+            .sphere-card { position: absolute; width: 270px; height: 360px; padding: 36px 28px; border-radius: 28px; color: white; display: flex; flex-direction: column; justify-content: flex-end; box-shadow: 0 25px 60px rgba(0,0,0,0.25); backface-visibility: visible; transition: none; will-change: transform, opacity; }
+            .sphere-card.sc-purple { background: linear-gradient(145deg, #c084fc, #7c3aed); }
+            .sphere-card.sc-green { background: linear-gradient(145deg, #6ee7b7, #059669); }
+            .sphere-card.sc-orange { background: linear-gradient(145deg, #fdba74, #ea580c); }
+            .sphere-card.sc-blue { background: linear-gradient(145deg, #93c5fd, #2563eb); }
+            .sc-num { position: absolute; top: 18px; right: 22px; font-size: 14px; font-weight: 800; opacity: 0.4; }
+            .sc-icon { width: 60px; height: 60px; margin-bottom: 20px; }
+            .sc-icon svg { width: 100%; height: 100%; }
+            .sphere-card h3 { font-family: 'Instrument Serif', Georgia, serif; font-size: 30px; margin-bottom: 12px; }
+            .sphere-card p { font-size: 16px; opacity: 0.95; line-height: 1.5; }
+            @media (max-width: 768px) {
+                .sphere-header h2 { font-size: 36px; }
+                .sphere-container { height: 420px; }
+                .sphere-card { width: 230px; height: 310px; padding: 28px 22px; }
+                .sphere-card h3 { font-size: 26px; }
+            }
+        </style>
+        <script>
+        (function() {
+            const container = document.getElementById('sphereContainer');
+            const cards = document.querySelectorAll('.sphere-card');
+            const numCards = cards.length;
+            let rotation = 0;
+            
+            const radius = 350;
+            const angleStep = 360 / numCards;
+            const autoSpeed = -0.3; // Continuous rotation speed (negative = 1→2→3→4)
+            
+            function positionCards() {
+                cards.forEach((card, i) => {
+                    const cardAngle = rotation + (i * angleStep);
+                    const radians = cardAngle * (Math.PI / 180);
+                    
+                    const x = Math.sin(radians) * radius;
+                    const z = Math.cos(radians) * radius;
+                    const rotateY = -cardAngle;
+                    
+                    const normalizedZ = (z + radius) / (2 * radius);
+                    const scale = 0.65 + normalizedZ * 0.35;
+                    const opacity = 0.4 + normalizedZ * 0.6;
+                    const zIndex = Math.round(normalizedZ * 100);
+                    
+                    card.style.transform = `translateX(${x}px) translateZ(${z}px) rotateY(${rotateY}deg) scale(${scale})`;
+                    card.style.opacity = opacity;
+                    card.style.zIndex = zIndex;
+                });
+            }
+            
+            function animate() {
+                // Continuous auto-rotation always
+                rotation += autoSpeed;
+                positionCards();
+                requestAnimationFrame(animate);
+            }
+            
+            positionCards();
+            animate();
+        })();
+        </script>
+
+        <!-- Video Demo Section -->
+        <section class="video-demo-section" id="demo">
+            <div class="container">
+                <div class="video-content">
+                    <div class="video-text">
+                        <span class="section-badge">See It In Action</span>
+                        <h2>Watch how Communally works</h2>
+                        <p>See how easy it is to find local jobs and connect with your neighbors in under 2 minutes.</p>
+                        <ul class="video-features">
+                            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Post a job in 30 seconds</li>
+                            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Find help within 2 miles</li>
+                            <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Secure in-app messaging</li>
+                        </ul>
+                    </div>
+                    <div class="video-player">
+                        <div class="video-placeholder" id="videoPlaceholder">
+                            <img src="app-map.png" alt="Communally app preview" class="video-thumbnail">
+                            <button class="play-button" id="playButton" aria-label="Play demo video">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            </button>
+                            <span class="video-duration">1:45</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <style>
+            .video-demo-section { padding: 100px 20px; background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%); }
+            .video-content { display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center; max-width: 1200px; margin: 0 auto; }
+            .video-text h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 42px; margin: 16px 0 20px; color: #1a1a1a; }
+            .video-text p { font-size: 18px; color: #555; line-height: 1.7; margin-bottom: 30px; }
+            .video-features { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+            .video-features li { display: flex; align-items: center; gap: 12px; font-size: 16px; color: #333; }
+            .video-player { position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.15); }
+            .video-placeholder { position: relative; aspect-ratio: 16/10; background: #1a1a1a; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+            .video-thumbnail { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
+            .play-button { position: absolute; width: 80px; height: 80px; border-radius: 50%; background: rgba(52, 199, 89, 0.95); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 10px 40px rgba(52, 199, 89, 0.4); }
+            .play-button:hover { transform: scale(1.1); box-shadow: 0 15px 50px rgba(52, 199, 89, 0.5); }
+            .play-button svg { margin-left: 4px; }
+            .video-duration { position: absolute; bottom: 16px; right: 16px; background: rgba(0,0,0,0.7); color: white; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; }
+            @media (max-width: 900px) {
+                .video-content { grid-template-columns: 1fr; gap: 40px; }
+                .video-text h2 { font-size: 32px; }
+                .video-text { text-align: center; }
+                .video-features { align-items: center; }
+            }
+        </style>
+
+        <!-- Testimonials - Infinite Scroll Carousel -->
+        <section class="testimonials-section" aria-labelledby="testimonials-title">
+            <div class="testimonials-header">
+                <span class="section-badge">Stories</span>
+                <h2 id="testimonials-title">Voices from the community</h2>
+            </div>
+            <div class="infinite-scroll-wrapper">
+                <div class="infinite-scroll-track">
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"I made $180 last week just walking dogs in my neighborhood. The app makes it so easy to find jobs nearby."</p><footer><div class="review-avatar" style="background:#a855f7">S</div><div><strong>Sarah M.</strong><span>Brooklyn, NY</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Needed help moving a couch and found someone in 10 minutes. Way better than asking random friends."</p><footer><div class="review-avatar" style="background:#34d399">M</div><div><strong>Mike T.</strong><span>Austin, TX</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"As a college student, this is perfect for making money between classes. I help with yard work and groceries."</p><footer><div class="review-avatar" style="background:#60a5fa">J</div><div><strong>Jamie L.</strong><span>Seattle, WA</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Found a neighbor to help assemble furniture. Done in 2 hours, saved me a whole day of frustration!"</p><footer><div class="review-avatar" style="background:#fb923c">R</div><div><strong>Rachel K.</strong><span>Denver, CO</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"I love helping seniors in my building with tech stuff. It's rewarding and I've made great friends."</p><footer><div class="review-avatar" style="background:#ec4899">D</div><div><strong>David P.</strong><span>Chicago, IL</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Got my car jumped in 15 minutes at 11pm. The person who helped lived just 2 blocks away. Lifesaver!"</p><footer><div class="review-avatar" style="background:#14b8a6">A</div><div><strong>Amanda R.</strong><span>Portland, OR</span></div></footer></div>
+                    <!-- Duplicate for seamless loop -->
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"I made $180 last week just walking dogs in my neighborhood. The app makes it so easy to find jobs nearby."</p><footer><div class="review-avatar" style="background:#a855f7">S</div><div><strong>Sarah M.</strong><span>Brooklyn, NY</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Needed help moving a couch and found someone in 10 minutes. Way better than asking random friends."</p><footer><div class="review-avatar" style="background:#34d399">M</div><div><strong>Mike T.</strong><span>Austin, TX</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"As a college student, this is perfect for making money between classes. I help with yard work and groceries."</p><footer><div class="review-avatar" style="background:#60a5fa">J</div><div><strong>Jamie L.</strong><span>Seattle, WA</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Found a neighbor to help assemble furniture. Done in 2 hours, saved me a whole day of frustration!"</p><footer><div class="review-avatar" style="background:#fb923c">R</div><div><strong>Rachel K.</strong><span>Denver, CO</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"I love helping seniors in my building with tech stuff. It's rewarding and I've made great friends."</p><footer><div class="review-avatar" style="background:#ec4899">D</div><div><strong>David P.</strong><span>Chicago, IL</span></div></footer></div>
+                    <div class="review-card"><div class="review-stars">★★★★★</div><p>"Got my car jumped in 15 minutes at 11pm. The person who helped lived just 2 blocks away. Lifesaver!"</p><footer><div class="review-avatar" style="background:#14b8a6">A</div><div><strong>Amanda R.</strong><span>Portland, OR</span></div></footer></div>
+                </div>
+            </div>
+        </section>
+        <style>
+            .testimonials-section { padding: 80px 0; background: #fafafa; overflow: hidden; }
+            .testimonials-header { text-align: center; padding: 0 20px 40px; }
+            .testimonials-header h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 40px; margin: 12px 0 16px; color: #1a1a1a; }
+            .infinite-scroll-wrapper { overflow: hidden; padding: 20px 0; }
+            .infinite-scroll-track { display: flex; gap: 24px; width: max-content; animation: infiniteScroll 30s linear infinite; }
+            .infinite-scroll-wrapper:hover .infinite-scroll-track { animation-play-state: paused; }
+            @keyframes infiniteScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+            .review-card { flex-shrink: 0; width: 340px; background: white; border-radius: 20px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; }
+            .review-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.1); }
+            .review-stars { color: #fbbf24; font-size: 18px; letter-spacing: 2px; margin-bottom: 16px; }
+            .review-card p { font-size: 15px; line-height: 1.7; color: #333; margin-bottom: 20px; }
+            .review-card footer { display: flex; align-items: center; gap: 12px; }
+            .review-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px; }
+            .review-card footer div:last-child { display: flex; flex-direction: column; }
+            .review-card footer strong { font-size: 15px; color: #1a1a1a; }
+            .review-card footer span { font-size: 13px; color: #888; }
+            @media (max-width: 768px) {
+                .testimonials-header h2 { font-size: 30px; }
+                .review-card { width: 280px; padding: 22px; }
+                .infinite-scroll-track { gap: 16px; animation-duration: 25s; }
+            }
+        </style>
+
+        <!-- FAQ Section - CORE LAYER -->
+        <section id="faq" class="faq-section" aria-labelledby="faq-title">
+            <div class="container">
+                <div class="section-header center">
+                    <span class="section-badge">Questions</span>
+                    <h2 id="faq-title">Frequently asked</h2>
+                </div>
+                
+                <div class="faq-grid">
+                    <details class="faq-item">
+                        <summary>Is Communally really free?</summary>
+                        <p>Yes! Communally is 100% free to download and use. We don't take any cut from your earnings. You keep everything you make.</p>
+                    </details>
+                    
+                    <details class="faq-item">
+                        <summary>How do I get paid?</summary>
+                        <p>Payment is handled directly between you and your neighbor. Most people use Venmo, Cash App, or cash. We don't process payments through the app.</p>
+                    </details>
+                    
+                    <details class="faq-item">
+                        <summary>Is it safe to meet strangers?</summary>
+                        <p>Every user is verified with their phone number and email. You can see ratings and reviews from other neighbors before connecting. Always meet in public places for first-time jobs.</p>
+                    </details>
+                    
+                    <details class="faq-item">
+                        <summary>What kind of jobs can I find?</summary>
+                        <p>Common jobs include dog walking, pet sitting, lawn care, moving help, cleaning, errands, tutoring, handyman tasks, and more. If a neighbor needs help, you'll see it.</p>
+                    </details>
+                    
+                    <details class="faq-item">
+                        <summary>Is there an Android version?</summary>
+                        <p>We're currently iOS only, but Android is coming soon! Sign up for our newsletter to be notified when it launches.</p>
+                    </details>
+                    
+                    <details class="faq-item">
+                        <summary>What cities is Communally available in?</summary>
+                        <p>Communally works everywhere in the US. The more neighbors who join in your area, the more opportunities you'll see. Invite your neighbors to grow your local community!</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meet the Founders Section -->
+        <section class="founders-section" id="founders">
+            <div class="container">
+                <!-- Founder's Note -->
+                <div class="founders-note">
+                    <span class="section-badge">A Note From Us</span>
+                    <h2>Why We Built Communally</h2>
+                    <blockquote>
+                        "Growing up in Pleasanton, we noticed something: neighbors didn't really know each other anymore. People needed help with simple tasks, and others wanted to earn money — but there was no easy way to connect. We built Communally to change that. Our goal is simple: bring communities closer together, one connection at a time."
+                    </blockquote>
+                    <p class="note-signature">— Shaurya & Arnav</p>
+                </div>
+
+                <h3 class="founders-title">Meet the Founders</h3>
+                
+                <div class="founders-grid">
+                    <div class="founder-card">
+                        <div class="founder-photo">
+                            <div class="photo-placeholder">
+                                <span>SG</span>
+                            </div>
+                            <div class="founder-badge">Co-Founder</div>
+                        </div>
+                        <div class="founder-info">
+                            <h3>Shaurya Grover</h3>
+                            <p class="founder-tagline">Building bridges between neighbors</p>
+                            <p class="founder-bio">A passionate entrepreneur and student at Amador Valley High School in Pleasanton, California. Shaurya combines his love for technology with a deep commitment to community building. When not coding, you'll find him volunteering locally and exploring new ways to bring people together.</p>
+                            <div class="founder-highlights">
+                                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Amador Valley HS</span>
+                                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Pleasanton, CA</span>
+                            </div>
+                            <div class="founder-social">
+                                <a href="#" aria-label="LinkedIn" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                                <a href="#" aria-label="Twitter" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                                <a href="mailto:shaurya@communallyapp.com" aria-label="Email" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="founder-card">
+                        <div class="founder-photo">
+                            <div class="photo-placeholder">
+                                <span>AM</span>
+                            </div>
+                            <div class="founder-badge">Co-Founder</div>
+                        </div>
+                        <div class="founder-info">
+                            <h3>Arnav Mehta</h3>
+                            <p class="founder-tagline">Turning ideas into impact</p>
+                            <p class="founder-bio">A driven developer and innovator studying at Amador Valley High School in Pleasanton, California. Arnav is passionate about using technology to solve real-world problems. His vision for Communally stems from witnessing the untapped potential in local communities waiting to be connected.</p>
+                            <div class="founder-highlights">
+                                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> Amador Valley HS</span>
+                                <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Pleasanton, CA</span>
+                            </div>
+                            <div class="founder-social">
+                                <a href="#" aria-label="LinkedIn" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+                                <a href="#" aria-label="Twitter" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                                <a href="mailto:arnav@communallyapp.com" aria-label="Email" class="social-link"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="founders-cta">
+                    <p>Want to learn more about our journey or get in touch?</p>
+                    <div class="founders-cta-buttons">
+                        <a href="contact.html" class="btn-primary">Contact Us</a>
+                        <a href="#download" class="btn-outline">Download the App</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <style>
+            .founders-section { padding: 100px 20px; background: linear-gradient(180deg, #f8fafc 0%, #fff 50%, #f8fafc 100%); }
+            .founders-note { max-width: 800px; margin: 0 auto 80px; text-align: center; }
+            .founders-note h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 42px; margin: 16px 0 30px; color: #1a1a1a; }
+            .founders-note blockquote { font-size: 20px; line-height: 1.8; color: #444; font-style: italic; padding: 30px 40px; background: white; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); border-left: 4px solid #34C759; margin: 0 0 20px; }
+            .note-signature { font-size: 18px; font-weight: 600; color: #34C759; }
+            .founders-title { font-family: 'Instrument Serif', Georgia, serif; font-size: 36px; text-align: center; margin-bottom: 50px; color: #1a1a1a; }
+            .founders-grid { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 60px; }
+            .founder-card { background: white; border-radius: 24px; padding: 0; box-shadow: 0 15px 50px rgba(0,0,0,0.08); transition: transform 0.3s, box-shadow 0.3s; overflow: hidden; max-width: 420px; flex: 1; min-width: 320px; }
+            .founder-card:hover { transform: translateY(-8px); box-shadow: 0 25px 70px rgba(0,0,0,0.12); }
+            .founder-photo { position: relative; background: linear-gradient(135deg, #34C759 0%, #22c55e 50%, #16a34a 100%); padding: 50px 40px 60px; text-align: center; }
+            .photo-placeholder { width: 120px; height: 120px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 4px solid rgba(255,255,255,0.3); }
+            .photo-placeholder span { font-size: 40px; font-weight: 700; color: #34C759; }
+            .founder-badge { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+            .founder-info { padding: 40px 35px 35px; }
+            .founder-info h3 { font-family: 'Instrument Serif', Georgia, serif; font-size: 28px; margin-bottom: 6px; color: #1a1a1a; }
+            .founder-tagline { font-size: 15px; color: #34C759; font-weight: 500; margin-bottom: 16px; }
+            .founder-bio { font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 20px; }
+            .founder-highlights { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+            .founder-highlights span { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666; background: #f5f5f5; padding: 6px 12px; border-radius: 20px; }
+            .founder-highlights svg { color: #34C759; }
+            .founder-social { display: flex; gap: 12px; }
+            .social-link { width: 42px; height: 42px; border-radius: 50%; background: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #555; transition: all 0.3s; }
+            .social-link:hover { background: #34C759; color: white; transform: translateY(-3px); }
+            .founders-cta { text-align: center; padding-top: 20px; }
+            .founders-cta p { font-size: 18px; color: #555; margin-bottom: 24px; }
+            .founders-cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+            .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #1a1a1a; color: white; padding: 16px 32px; border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s; }
+            .btn-primary:hover { background: #333; transform: translateY(-2px); }
+            .btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #1a1a1a; padding: 16px 32px; border-radius: 50px; font-weight: 600; text-decoration: none; border: 2px solid #ddd; transition: all 0.3s; }
+            .btn-outline:hover { border-color: #34C759; color: #34C759; }
+            @media (max-width: 768px) {
+                .founders-note h2 { font-size: 32px; }
+                .founders-note blockquote { font-size: 17px; padding: 24px; }
+                .founders-title { font-size: 28px; }
+                .founder-card { min-width: 100%; }
+                .founder-info { padding: 35px 25px 30px; }
+            }
+        </style>
+
+        <!-- CTA Section - CORE LAYER + AMBIENT LAYER -->
+        <section id="download" class="cta-section" aria-labelledby="cta-title">
+            <div class="container">
+                <!-- 
+                AMBIENT LAYER: Constellation background
+                - Stars that form community-like patterns
+                - Subtly animate to show "connections"
+                -->
+                <div class="constellation-bg" aria-hidden="true" id="constellationBg"></div>
+                
+                <div class="cta-card">
+                    <h2 id="cta-title">Ready to join your neighborhood?</h2>
+                    <!-- NARRATIVE LAYER: Invitation, not transaction -->
+                    <p>Every community starts with a single connection.</p>
+                    <div class="cta-buttons">
+                        <a href="https://apps.apple.com/app/communally" class="btn btn-primary btn-large" target="_blank" rel="noopener">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                            </svg>
+                            Download on iOS
+                        </a>
+                        <a href="index.html" class="btn btn-outline btn-large btn-web">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            Continue on Web
+                        </a>
+                    </div>
+                    <p class="cta-note">Free forever. No credit card needed.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Email Signup - CORE LAYER -->
+        <section class="email-section" aria-labelledby="email-title">
+            <div class="container">
+                <div class="email-card">
+                    <h2 id="email-title">Stay connected</h2>
+                    <p>Get notified when Android launches, plus stories from the neighborhood.</p>
+                    <form class="email-form" id="emailForm">
+                        <label for="email-input" class="visually-hidden">Email address</label>
+                        <input type="email" id="email-input" placeholder="your@email.com" required aria-required="true">
+                        <button type="submit" class="btn btn-primary">Join the Wait</button>
+                    </form>
+                    <p class="email-note">No spam. Just neighbors.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer - CORE LAYER -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="Communally" width="28" height="28" style="border-radius: 6px;">
+                        <span>Communally</span>
+                    </div>
+                    <!-- NARRATIVE LAYER: Mission statement -->
+                    <p>Building neighborhoods where everyone belongs.</p>
+                </div>
+                
+                <nav class="footer-nav" aria-label="Footer navigation">
+                    <h4>Product</h4>
+                    <a href="#journey">How It Works</a>
+                    <a href="#faq">FAQ</a>
+                    <a href="https://apps.apple.com/app/communally" target="_blank" rel="noopener">Download</a>
+                </nav>
+                
+                <nav class="footer-nav" aria-label="Company links">
+                    <h4>Company</h4>
+                    <a href="contact.html">Contact</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </nav>
+                
+                <div class="footer-social">
+                    <h4>Follow Us</h4>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/communallyapp/" target="_blank" rel="noopener" aria-label="Follow Communally on Instagram">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                        <a href="https://twitter.com/communallyapp" target="_blank" rel="noopener" aria-label="Follow Communally on Twitter">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Communally. Made with care for neighbors everywhere.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 
+    AMBIENT LAYER: Subtle sound toggle (optional)
+    - Allows users to enable ambient sounds
+    - Off by default, respects user preference
+    -->
+    <button class="sound-toggle" id="soundToggle" aria-label="Toggle ambient sounds" aria-pressed="false" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path class="sound-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+    </button>
+
+    <!-- Enhanced Styles for Trust, Media, Dark Mode -->
+    <style>
+        /* Trust Badges Section */
+        .trust-badges-section { padding: 40px 20px; background: #fff; border-bottom: 1px solid #eee; }
+        .trust-content { max-width: 1000px; margin: 0 auto; text-align: center; }
+        .trust-badges { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-bottom: 20px; }
+        .trust-badge { display: flex; align-items: center; gap: 10px; color: #555; font-size: 14px; font-weight: 500; }
+        .trust-badge svg { color: #34C759; }
+        .trust-text { font-size: 14px; color: #888; }
+        .trust-text a { color: #34C759; text-decoration: none; }
+        .trust-text a:hover { text-decoration: underline; }
+
+        /* Media Logos Section */
+        .media-logos-section { padding: 50px 20px; background: #fafafa; }
+        .media-logos-section .container { max-width: 1000px; margin: 0 auto; text-align: center; }
+        .media-label { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 24px; }
+        .media-logos { display: flex; justify-content: center; align-items: center; gap: 50px; flex-wrap: wrap; }
+        .media-logo { font-size: 20px; font-weight: 700; color: #bbb; letter-spacing: 1px; transition: color 0.3s; }
+        .media-logo:hover { color: #888; }
+
+        /* Social Proof Stars */
+        .proof-stars { color: #fbbf24; font-size: 16px; letter-spacing: 2px; margin-bottom: 4px; }
+
+        /* Mobile Touch Targets - Minimum 48x48px */
+        .btn, .nav-cta, button, a.btn-primary, a.btn-outline, .play-button, .experimental-toggle, .mobile-menu-btn { min-width: 48px; min-height: 48px; }
+        .nav-links a { padding: 12px 16px; }
+        .faq-item summary { min-height: 48px; padding: 16px 20px; }
+        @media (max-width: 768px) {
+            .trust-badges { gap: 24px; }
+            .media-logos { gap: 30px; }
+            .media-logo { font-size: 16px; }
+        }
+    </style>
+
+    <script src="script.js"></script>
+</body>
+</html>

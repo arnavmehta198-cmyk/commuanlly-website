@@ -314,6 +314,11 @@
     // ==========================================================================
     
     const AmbientLayer = {
+        canvas: null,
+        ctx: null,
+        particles: [],
+        animationId: null,
+        
         init() {
             if (prefersReducedMotion()) return;
             
@@ -326,7 +331,7 @@
             }
             
             if (CreativeConfig.features.ambientCanvas) {
-                this.initMapBackground();
+                this.initAmbientCanvas();
             }
             
             if (CreativeConfig.features.livingStats) {
@@ -379,509 +384,96 @@
         },
 
         /**
-         * Interactive Map Background with City Tour
-         * Uses Leaflet + OpenStreetMap for beautiful, free maps
-         * Tours through US cities showing fake community members
+         * Initialize ambient particle canvas
+         * Renders subtle particles that respond to mouse
          */
-        initMapBackground() {
-            const container = document.getElementById('mapBackground');
-            const mapContainer = document.getElementById('mapContainer');
-            const userCardsContainer = document.getElementById('mapUserCards');
-            const cityLabel = document.getElementById('cityLabel');
+        initAmbientCanvas() {
+            this.canvas = document.getElementById('ambientCanvas');
+            if (!this.canvas) return;
             
-            if (!mapContainer || !container) {
-                console.log('Map containers not found');
-                return;
-            }
+            this.ctx = this.canvas.getContext('2d');
+            this.resizeCanvas();
+            this.createParticles();
+            this.animate();
             
-            // Check if Leaflet is available
-            if (typeof L === 'undefined') {
-                console.log('Leaflet not loaded, skipping map background');
-                return;
-            }
+            window.addEventListener('resize', debounce(() => {
+                this.resizeCanvas();
+                this.createParticles();
+            }, 250));
             
-            console.log('Initializing Leaflet map with Apple-style 3D tilt...');
-            
-            // Huge pool of profile photos - maximum diversity
-            const allProfilePhotos = [];
-            // Generate 99 women and 99 men photos
-            for (let i = 1; i <= 99; i++) {
-                allProfilePhotos.push(`https://randomuser.me/api/portraits/women/${i}.jpg`);
-                allProfilePhotos.push(`https://randomuser.me/api/portraits/men/${i}.jpg`);
-            }
-            
-            // Get photos for current city (different subset for each city)
-            let cityPhotoOffset = 0;
-            const getPhotosForCity = (cityIndex) => {
-                // Each city gets a completely different starting point
-                const offset = (cityIndex * 24) % allProfilePhotos.length;
-                cityPhotoOffset = offset;
-                usedPhotoIndexes.clear();
-            };
-            
-            const cities = [
-                { name: 'San Francisco', state: 'California', coords: [37.7749, -122.4294], zoom: 15 }, // Western Addition - far from water
-                { name: 'New York', state: 'New York', coords: [40.7549, -73.9840], zoom: 15 }, // Midtown Manhattan center
-                { name: 'Chicago', state: 'Illinois', coords: [41.8819, -87.6378], zoom: 15 }, // Downtown inland
-                { name: 'Austin', state: 'Texas', coords: [30.2672, -97.7431], zoom: 15 },
-                { name: 'Denver', state: 'Colorado', coords: [39.7392, -104.9903], zoom: 15 },
-                { name: 'Miami', state: 'Florida', coords: [25.7717, -80.2318], zoom: 15 }, // Further inland
-                { name: 'Seattle', state: 'Washington', coords: [47.6162, -122.3321], zoom: 15 }, // Capitol Hill - inland
-                { name: 'Boston', state: 'Massachusetts', coords: [42.3451, -71.0789], zoom: 15 } // Back Bay - inland
-            ];
-            
-            // Inject styles for map and cards
-            const style = document.createElement('style');
-            style.textContent = `
-                #mapContainer {
-                    width: 100%;
-                    height: 100%;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                }
-                /* Leaflet controls hidden for clean look */
-                .leaflet-control-zoom,
-                .leaflet-control-attribution {
-                    display: none !important;
-                }
-                .leaflet-container {
-                    background: #f8f9fa;
-                    font-family: -apple-system, system-ui, sans-serif;
-                }
-                /* Ensure crisp rendering with 3D transform */
-                #mapContainer {
-                    -webkit-font-smoothing: antialiased;
-                    -moz-osx-font-smoothing: grayscale;
-                }
-                /* Profile marker styles */
-                .profile-marker {
-                    width: 46px;
-                    height: 46px;
-                    border-radius: 50%;
-                    border: 3px solid #34C759;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                    overflow: hidden;
-                    background: #fff;
-                    opacity: 0;
-                    transform: translateY(30px) scale(0.3);
-                    will-change: opacity, transform;
-                }
-                .profile-marker.visible {
-                    animation: popUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-                }
-                .profile-marker.leaving {
-                    animation: sinkDown 0.4s ease-in forwards;
-                }
-                @keyframes popUp {
-                    0% {
-                        opacity: 0;
-                        transform: translateY(50px) scale(0.2);
-                    }
-                    40% {
-                        opacity: 1;
-                        transform: translateY(-20px) scale(1.25);
-                    }
-                    60% {
-                        transform: translateY(8px) scale(0.9);
-                    }
-                    75% {
-                        transform: translateY(-8px) scale(1.1);
-                    }
-                    85% {
-                        transform: translateY(3px) scale(0.98);
-                    }
-                    100% {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
-                    }
-                }
-                @keyframes sinkDown {
-                    0% {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
-                    }
-                    20% {
-                        opacity: 1;
-                        transform: translateY(-8px) scale(1.1);
-                    }
-                    100% {
-                        opacity: 0;
-                        transform: translateY(60px) scale(0.1);
-                    }
-                }
-                .profile-marker img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-                .leaflet-marker-icon {
-                    background: none !important;
-                    border: none !important;
-                }
-                .city-label {
-                    position: absolute;
-                    bottom: 30px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    background: rgba(255, 255, 255, 0.95);
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                    padding: 12px 24px;
-                    border-radius: 50px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-                    z-index: 1000;
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    opacity: 0;
-                    transition: opacity 0.5s ease;
-                }
-                .city-label.visible {
-                    opacity: 1;
-                }
-                .city-label .city-name {
-                    font-family: -apple-system, system-ui, sans-serif;
-                    font-size: 16px;
-                    font-weight: 600;
-                    color: #1D1D1F;
-                }
-                .city-label .city-users {
-                    font-family: -apple-system, system-ui, sans-serif;
-                    font-size: 13px;
-                    color: #86868B;
-                    padding-left: 8px;
-                    border-left: 1px solid #E5E5E7;
-                }
-                .map-user-cards { 
-                    pointer-events: none;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    z-index: 999;
-                }
-                .map-background.faded {
-                    opacity: 0.3;
-                }
-                .map-background {
-                    transition: opacity 0.5s ease;
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // Initialize Leaflet map with Apple-style tiles
-            let map;
-            try {
-                map = L.map(mapContainer, {
-                    zoomControl: false,
-                    attributionControl: false,
-                    dragging: false,
-                    scrollWheelZoom: false,
-                    doubleClickZoom: false,
-                    touchZoom: false,
-                    keyboard: false,
-                    fadeAnimation: true,
-                    zoomAnimation: true
-                }).setView(cities[0].coords, cities[0].zoom);
-                
-                // Apple Maps-like light tiles (CartoDB Positron)
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                    subdomains: 'abcd',
-                    maxZoom: 19,
-                    updateWhenIdle: false,
-                    updateWhenZooming: false
-                }).addTo(map);
-                
-                console.log('Leaflet map initialized with Apple-style 3D tilt!');
-            } catch (e) {
-                console.error('Error initializing map:', e);
-                return;
-            }
-            
-            let currentCityIndex = 0;
-            let isTransitioning = false;
-            let panInterval = null;
-            let userCycleInterval = null;
-            let activeMarkers = []; // Leaflet markers on the map
-            let usedPhotoIndexes = new Set();
-            
-            // Get random offset - smaller range to stay on land
-            const getRandomOffset = () => ({
-                lat: (Math.random() - 0.5) * 0.025,
-                lng: (Math.random() - 0.5) * 0.030
+            // Mouse interaction
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
             });
             
-            // Get a random photo not currently shown (different for each city)
-            const getRandomPhoto = () => {
-                let availableIndexes = [];
-                // Use 24 photos starting from the city offset for more variety
-                for (let i = 0; i < 24; i++) {
-                    const actualIdx = (cityPhotoOffset + i) % allProfilePhotos.length;
-                    if (!usedPhotoIndexes.has(actualIdx)) {
-                        availableIndexes.push(actualIdx);
-                    }
-                }
-                if (availableIndexes.length === 0) {
-                    usedPhotoIndexes.clear();
-                    for (let i = 0; i < 24; i++) {
-                        availableIndexes.push((cityPhotoOffset + i) % allProfilePhotos.length);
-                    }
-                }
-                const idx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
-                usedPhotoIndexes.add(idx);
-                return allProfilePhotos[idx];
-            };
+            this.mouseX = () => mouseX;
+            this.mouseY = () => mouseY;
+        },
+
+        resizeCanvas() {
+            if (!this.canvas) return;
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        },
+
+        createParticles() {
+            this.particles = [];
+            const count = Math.min(50, Math.floor((window.innerWidth * window.innerHeight) / 30000));
             
-            // Create a profile marker on the map
-            const createProfileMarker = (city) => {
-                const offset = getRandomOffset();
-                const lat = city.coords[0] + offset.lat;
-                const lng = city.coords[1] + offset.lng;
-                const photo = getRandomPhoto();
-                
-                const icon = L.divIcon({
-                    className: 'profile-marker-container',
-                    html: `<div class="profile-marker"><img src="${photo}" alt="User"></div>`,
-                    iconSize: [50, 50],
-                    iconAnchor: [25, 25]
+            for (let i = 0; i < count; i++) {
+                this.particles.push({
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    radius: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.1
                 });
-                
-                const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
-                
-                // Trigger smooth fade-in after a tiny delay
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
-                        const el = marker.getElement();
-                        if (el) {
-                            const profileEl = el.querySelector('.profile-marker');
-                            if (profileEl) profileEl.classList.add('visible');
-                        }
-                    });
-                });
-                
-                return marker;
-            };
-            
-            // Remove a marker with smooth animation
-            const removeMarkerAnimated = (marker) => {
-                if (!marker) return;
-                const el = marker.getElement();
-                if (el) {
-                    const profileEl = el.querySelector('.profile-marker');
-                    if (profileEl) {
-                        profileEl.classList.remove('visible');
-                        profileEl.classList.add('leaving');
-                        setTimeout(() => {
-                            try { map.removeLayer(marker); } catch(e) {}
-                        }, 350);
-                    } else {
-                        try { map.removeLayer(marker); } catch(e) {}
-                    }
-                } else {
-                    try { map.removeLayer(marker); } catch(e) {}
-                }
-            };
-            
-            // Continuous smooth pan - map and markers move together as one
-            const startCityPan = (city) => {
-                if (panInterval) {
-                    clearInterval(panInterval);
-                    panInterval = null;
-                }
-                
-                // Continuous smooth pan using Leaflet's panBy with duration
-                const doPan = () => {
-                    if (isTransitioning) return;
-                    
-                    // Pan by pixels - even faster movement
-                    map.panBy([25, 18], {
-                        animate: true,
-                        duration: 0.35,
-                        easeLinearity: 1
-                    });
-                };
-                
-                // Start continuous panning - faster interval
-                doPan();
-                panInterval = setInterval(doPan, 350);
-            };
-            
-            // Stop the pan animation
-            const stopCityPan = () => {
-                if (panInterval) {
-                    clearInterval(panInterval);
-                    panInterval = null;
-                }
-            };
-            
-            // Cycle one marker - smoothly remove and add new one
-            const cycleOneMarker = (city) => {
-                if (isTransitioning || activeMarkers.length === 0) return;
-                
-                // Pick a random marker to replace
-                const idx = Math.floor(Math.random() * activeMarkers.length);
-                const markerToRemove = activeMarkers[idx];
-                
-                // Smooth remove with animation
-                removeMarkerAnimated(markerToRemove);
-                
-                // Add new marker after fade out completes
-                setTimeout(() => {
-                    if (!isTransitioning) {
-                        const newMarker = createProfileMarker(city);
-                        activeMarkers[idx] = newMarker;
-                    }
-                }, 400);
-            };
-            
-            // Start cycling markers at faster intervals
-            const startMarkerCycling = (city) => {
-                if (userCycleInterval) clearTimeout(userCycleInterval);
-                
-                const cycle = () => {
-                    if (!isTransitioning && activeMarkers.length > 0) {
-                        cycleOneMarker(city);
-                    }
-                    // Faster cycling (1 - 2 seconds)
-                    const nextInterval = 1000 + Math.random() * 1000;
-                    userCycleInterval = setTimeout(cycle, nextInterval);
-                };
-                
-                userCycleInterval = setTimeout(cycle, 1200);
-            };
-            
-            // Stop cycling
-            const stopMarkerCycling = () => {
-                if (userCycleInterval) {
-                    clearTimeout(userCycleInterval);
-                    userCycleInterval = null;
-                }
-            };
-            
-            // Show markers for a city
-            const showCityMembers = (city) => {
-                // Stop current cycling
-                stopMarkerCycling();
-                
-                // Remove existing markers with animation
-                activeMarkers.forEach(marker => {
-                    removeMarkerAnimated(marker);
-                });
-                
-                // Reset and get new photos for this city
-                activeMarkers = [];
-                getPhotosForCity(currentCityIndex);
-                
-                // Create 8 markers spread across the city
-                setTimeout(() => {
-                    const numMarkers = 8;
-                    for (let i = 0; i < numMarkers; i++) {
-                        setTimeout(() => {
-                            const marker = createProfileMarker(city);
-                            activeMarkers.push(marker);
-                        }, i * 200); // Stagger each marker
-                    }
-                    
-                    // Start cycling after all markers appear
-                    setTimeout(() => startMarkerCycling(city), numMarkers * 200 + 400);
-                }, 300);
-                
-                // Update city label
-                if (cityLabel) {
-                    const cityNameEl = cityLabel.querySelector('.city-name');
-                    const cityUsersEl = cityLabel.querySelector('.city-users');
-                    
-                    cityLabel.classList.remove('visible');
-                    
-                    setTimeout(() => {
-                        if (cityNameEl) cityNameEl.textContent = `${city.name}, ${city.state}`;
-                        if (cityUsersEl) cityUsersEl.textContent = `${Math.floor(Math.random() * 500 + 200)} people nearby`;
-                        cityLabel.classList.add('visible');
-                    }, 500);
-                }
-            };
-            
-            // Function to transition to next city - slow and smooth
-            const goToNextCity = () => {
-                if (isTransitioning) return;
-                isTransitioning = true;
-                
-                // Stop panning and marker cycling
-                stopCityPan();
-                stopMarkerCycling();
-                
-                // Remove current markers
-                activeMarkers.forEach(marker => {
-                    removeMarkerAnimated(marker);
-                });
-                activeMarkers = [];
-                
-                currentCityIndex = (currentCityIndex + 1) % cities.length;
-                const nextCity = cities[currentCityIndex];
-                
-                console.log(`Flying to ${nextCity.name}, ${nextCity.state}...`);
-                
-                // Slow, smooth flight to next city
-                map.flyTo(nextCity.coords, nextCity.zoom, {
-                    duration: 4,
-                    easeLinearity: 0.02
-                });
-                
-                // After flight completes, start smooth panning and show new markers
-                setTimeout(() => {
-                    isTransitioning = false;
-                    map.setView(nextCity.coords, nextCity.zoom, { animate: false });
-                    setTimeout(() => {
-                        startCityPan(nextCity);
-                        showCityMembers(nextCity);
-                    }, 200);
-                }, 4000);
-            };
-            
-            // Initial display - start at exact city center
-            console.log(`Starting in ${cities[0].name}, ${cities[0].state}`);
-            
-            // Ensure map is at exact city center first
-            map.setView(cities[0].coords, cities[0].zoom, { animate: false });
-            
-            // Start smooth panning from city center
-            startCityPan(cities[0]);
-            
-            // Show city label
-            if (cityLabel) {
-                const cityNameEl = cityLabel.querySelector('.city-name');
-                const cityUsersEl = cityLabel.querySelector('.city-users');
-                if (cityNameEl) cityNameEl.textContent = `${cities[0].name}, ${cities[0].state}`;
-                if (cityUsersEl) cityUsersEl.textContent = `${Math.floor(Math.random() * 500 + 200)} people nearby`;
-                setTimeout(() => cityLabel.classList.add('visible'), 500);
             }
+        },
+
+        animate() {
+            if (!this.ctx) return;
             
-            // Show users while map is moving
-            showCityMembers(cities[0]);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             
-            // Start the city tour - fly to new city every 12 seconds
-            setInterval(goToNextCity, 12000);
+            // Get primary color from CSS
+            const primaryColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--color-primary').trim() || '#22c55e';
             
-            console.log('Apple-style 3D tour started!');
-            
-            // Scroll fade effect
-            let ticking = false;
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    requestAnimationFrame(() => {
-                        container.classList.toggle('faded', window.pageYOffset > 400);
-                        ticking = false;
-                    });
-                    ticking = true;
+            this.particles.forEach(p => {
+                // Subtle mouse attraction
+                const dx = this.mouseX() - p.x;
+                const dy = this.mouseY() - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < 200) {
+                    p.vx += dx * 0.00003;
+                    p.vy += dy * 0.00003;
                 }
-            }, { passive: true });
-            
-            // Handle window resize
-            window.addEventListener('resize', () => {
-                map.invalidateSize();
+                
+                // Update position
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                // Wrap around edges
+                if (p.x < 0) p.x = this.canvas.width;
+                if (p.x > this.canvas.width) p.x = 0;
+                if (p.y < 0) p.y = this.canvas.height;
+                if (p.y > this.canvas.height) p.y = 0;
+                
+                // Draw particle
+                this.ctx.beginPath();
+                this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                this.ctx.fillStyle = primaryColor;
+                this.ctx.globalAlpha = p.opacity;
+                this.ctx.fill();
             });
+            
+            this.ctx.globalAlpha = 1;
+            this.animationId = requestAnimationFrame(() => this.animate());
         },
 
         /**
@@ -1157,7 +749,7 @@
         },
 
         /**
-         * 3D Phone showcase with mouse parallax + floating cards
+         * 3D Phone showcase with mouse parallax
          */
         initPhoneShowcase() {
             if (prefersReducedMotion()) return;
@@ -1165,8 +757,6 @@
             const showcase = document.querySelector('.hero-phone-showcase');
             const phoneFront = document.querySelector('.phone-front');
             const phoneBack = document.querySelector('.phone-back');
-            const floatingCards = document.querySelectorAll('.floating-card');
-            const floatingShapes = document.querySelectorAll('.floating-shape');
             
             if (!showcase || !phoneFront || !phoneBack) return;
             
@@ -1179,7 +769,6 @@
                 currentX += (mouseX - currentX) * 0.05;
                 currentY += (mouseY - currentY) * 0.05;
                 
-                // Animate phones
                 const frontRotateY = 8 - currentX * 12;
                 const frontRotateX = -4 + currentY * 8;
                 phoneFront.style.transform = `rotateY(${frontRotateY}deg) rotateX(${frontRotateX}deg) rotateZ(-2deg) translateZ(30px)`;
@@ -1187,37 +776,6 @@
                 const backRotateY = -12 + currentX * 10;
                 const backRotateX = 5 - currentY * 6;
                 phoneBack.style.transform = `rotateY(${backRotateY}deg) rotateX(${backRotateX}deg) rotateZ(4deg)`;
-                
-                // Animate floating cards with parallax
-                floatingCards.forEach((card, index) => {
-                    const speed = parseFloat(card.dataset.speed) || 1;
-                    const offsetX = currentX * 30 * speed;
-                    const offsetY = currentY * 20 * speed;
-                    const rotateX = currentY * 5 * speed;
-                    const rotateY = -currentX * 5 * speed;
-                    
-                    // Add unique offset based on index for variety
-                    const phase = (index * 0.5);
-                    card.style.transform = `
-                        translateX(${offsetX}px) 
-                        translateY(${offsetY}px) 
-                        translateZ(${10 + index * 5}px)
-                        rotateX(${rotateX}deg) 
-                        rotateY(${rotateY}deg)
-                    `;
-                });
-                
-                // Animate floating shapes
-                floatingShapes.forEach((shape, index) => {
-                    const speed = parseFloat(shape.dataset.speed) || 1;
-                    const offsetX = currentX * 50 * speed;
-                    const offsetY = currentY * 40 * speed;
-                    shape.style.transform = `
-                        translateX(${offsetX}px) 
-                        translateY(${offsetY}px)
-                        rotate(${currentX * 20}deg)
-                    `;
-                });
                 
                 if (isHovering) {
                     animationId = requestAnimationFrame(animate);
@@ -1244,7 +802,6 @@
                     currentX += (0 - currentX) * 0.1;
                     currentY += (0 - currentY) * 0.1;
                     
-                    // Reset phones
                     const frontRotateY = 8 - currentX * 12;
                     const frontRotateX = -4 + currentY * 8;
                     phoneFront.style.transform = `rotateY(${frontRotateY}deg) rotateX(${frontRotateX}deg) rotateZ(-2deg) translateZ(30px)`;
@@ -1252,32 +809,6 @@
                     const backRotateY = -12 + currentX * 10;
                     const backRotateX = 5 - currentY * 6;
                     phoneBack.style.transform = `rotateY(${backRotateY}deg) rotateX(${backRotateX}deg) rotateZ(4deg)`;
-                    
-                    // Reset floating cards
-                    floatingCards.forEach((card) => {
-                        const speed = parseFloat(card.dataset.speed) || 1;
-                        const offsetX = currentX * 30 * speed;
-                        const offsetY = currentY * 20 * speed;
-                        card.style.transform = `
-                            translateX(${offsetX}px) 
-                            translateY(${offsetY}px) 
-                            translateZ(0px)
-                            rotateX(0deg) 
-                            rotateY(0deg)
-                        `;
-                    });
-                    
-                    // Reset shapes
-                    floatingShapes.forEach((shape) => {
-                        const speed = parseFloat(shape.dataset.speed) || 1;
-                        const offsetX = currentX * 50 * speed;
-                        const offsetY = currentY * 40 * speed;
-                        shape.style.transform = `
-                            translateX(${offsetX}px) 
-                            translateY(${offsetY}px)
-                            rotate(${currentX * 20}deg)
-                        `;
-                    });
                     
                     if (Math.abs(currentX) > 0.01 || Math.abs(currentY) > 0.01) {
                         requestAnimationFrame(returnToOrigin);
