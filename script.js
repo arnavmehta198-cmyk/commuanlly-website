@@ -379,205 +379,494 @@
         },
 
         /**
-         * Apple Maps Background
-         * Geographically accurate San Francisco map
-         * Locked hex values - no deviation
+         * Interactive Map Background with City Tour
+         * Uses Leaflet + OpenStreetMap for beautiful, free maps
+         * Tours through US cities showing fake community members
          */
         initMapBackground() {
             const container = document.getElementById('mapBackground');
             const mapContainer = document.getElementById('mapContainer');
             const userCardsContainer = document.getElementById('mapUserCards');
+            const cityLabel = document.getElementById('cityLabel');
             
-            if (!mapContainer || !container) return;
+            if (!mapContainer || !container) {
+                console.log('Map containers not found');
+                return;
+            }
             
-            // LOCKED HEX VALUES - Apple Maps Light Mode
-            const C = {
-                land: '#F5F7F2',
-                water: '#D8E7EA',
-                park: '#E4EFE6',
-                roadMinor: '#E1E3E6',
-                roadMajor: '#C9CCD1',
-                label: '#9AA0A6'
+            // Check if Leaflet is available
+            if (typeof L === 'undefined') {
+                console.log('Leaflet not loaded, skipping map background');
+                return;
+            }
+            
+            console.log('Initializing Leaflet map with Apple-style 3D tilt...');
+            
+            // Huge pool of profile photos - maximum diversity
+            const allProfilePhotos = [];
+            // Generate 99 women and 99 men photos
+            for (let i = 1; i <= 99; i++) {
+                allProfilePhotos.push(`https://randomuser.me/api/portraits/women/${i}.jpg`);
+                allProfilePhotos.push(`https://randomuser.me/api/portraits/men/${i}.jpg`);
+            }
+            
+            // Get photos for current city (different subset for each city)
+            let cityPhotoOffset = 0;
+            const getPhotosForCity = (cityIndex) => {
+                // Each city gets a completely different starting point
+                const offset = (cityIndex * 24) % allProfilePhotos.length;
+                cityPhotoOffset = offset;
+                usedPhotoIndexes.clear();
             };
             
-            // San Francisco - geographically accurate SVG
-            // Based on actual SF geography: Bay to the east, Ocean to the west, 
-            // Golden Gate Park, Market Street, The Embarcadero, etc.
-            const sfMap = `
-            <svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-                <!-- Land base -->
-                <rect width="100%" height="100%" fill="${C.land}"/>
-                
-                <!-- San Francisco Bay (east) - accurate coastline -->
-                <path d="M1100 0 L1600 0 L1600 1000 L1100 1000 L1150 900 L1120 800 L1180 700 L1140 600 L1200 500 L1160 400 L1220 300 L1180 200 L1250 100 L1100 0" fill="${C.water}"/>
-                
-                <!-- Pacific Ocean (west) - partial -->
-                <path d="M0 600 L0 1000 L200 1000 L180 900 L220 800 L160 700 L200 600 L0 600" fill="${C.water}"/>
-                
-                <!-- Golden Gate Park - accurate rectangle, western SF -->
-                <rect x="80" y="340" width="380" height="80" fill="${C.park}"/>
-                
-                <!-- Presidio - northern park area -->
-                <path d="M0 0 L300 0 L280 80 L200 120 L100 100 L0 140 Z" fill="${C.park}"/>
-                
-                <!-- Dolores Park -->
-                <rect x="620" y="520" width="40" height="60" fill="${C.park}"/>
-                
-                <!-- Buena Vista Park -->
-                <ellipse cx="520" cy="380" rx="25" ry="20" fill="${C.park}"/>
-                
-                <!-- MARKET STREET - main diagonal, SF's primary artery -->
-                <line x1="1140" y1="380" x2="300" y2="700" stroke="${C.roadMajor}" stroke-width="1.2" stroke-linecap="round"/>
-                
-                <!-- THE EMBARCADERO - waterfront road -->
-                <path d="M1100 100 Q1120 200 1100 300 Q1140 400 1100 500 Q1130 600 1100 700" fill="none" stroke="${C.roadMajor}" stroke-width="1" stroke-linecap="round"/>
-                
-                <!-- Van Ness Avenue - major N/S -->
-                <line x1="480" y1="0" x2="480" y2="800" stroke="${C.roadMajor}" stroke-width="1" stroke-linecap="round"/>
-                
-                <!-- 19th Avenue - western N/S -->
-                <line x1="180" y1="200" x2="180" y2="1000" stroke="${C.roadMajor}" stroke-width="0.8" stroke-linecap="round"/>
-                
-                <!-- Geary Boulevard - major E/W -->
-                <line x1="0" y1="280" x2="900" y2="280" stroke="${C.roadMajor}" stroke-width="0.8" stroke-linecap="round"/>
-                
-                <!-- Mission Street -->
-                <line x1="1080" y1="420" x2="400" y2="720" stroke="${C.roadMinor}" stroke-width="0.6" stroke-linecap="round"/>
-                
-                <!-- Folsom Street -->
-                <line x1="1060" y1="480" x2="500" y2="720" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                
-                <!-- Grid streets - Financial District area -->
-                <line x1="800" y1="200" x2="1100" y2="200" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                <line x1="800" y1="260" x2="1100" y2="260" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                <line x1="800" y1="320" x2="1100" y2="320" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                <line x1="850" y1="150" x2="850" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                <line x1="920" y1="150" x2="920" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                <line x1="990" y1="150" x2="990" y2="400" stroke="${C.roadMinor}" stroke-width="0.5" stroke-linecap="round"/>
-                
-                <!-- Richmond/Sunset grid - sparse -->
-                <line x1="80" y1="480" x2="460" y2="480" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
-                <line x1="80" y1="560" x2="460" y2="560" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
-                <line x1="80" y1="640" x2="460" y2="640" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
-                <line x1="280" y1="420" x2="280" y2="800" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
-                <line x1="380" y1="420" x2="380" y2="800" stroke="${C.roadMinor}" stroke-width="0.4" stroke-linecap="round"/>
-                
-                <!-- City label - small, quiet -->
-                <text x="700" y="450" fill="${C.label}" font-family="-apple-system, system-ui, sans-serif" font-size="13" font-weight="400" letter-spacing="0.03em">San Francisco</text>
-            </svg>`;
-            
-            // Members
-            const members = [
-                { name: 'Alex Kumar', initial: 'A' },
-                { name: 'Jordan Lee', initial: 'J' },
-                { name: 'Sam Rivera', initial: 'S' }
+            const cities = [
+                { name: 'San Francisco', state: 'California', coords: [37.7749, -122.4294], zoom: 15 }, // Western Addition - far from water
+                { name: 'New York', state: 'New York', coords: [40.7549, -73.9840], zoom: 15 }, // Midtown Manhattan center
+                { name: 'Chicago', state: 'Illinois', coords: [41.8819, -87.6378], zoom: 15 }, // Downtown inland
+                { name: 'Austin', state: 'Texas', coords: [30.2672, -97.7431], zoom: 15 },
+                { name: 'Denver', state: 'Colorado', coords: [39.7392, -104.9903], zoom: 15 },
+                { name: 'Miami', state: 'Florida', coords: [25.7717, -80.2318], zoom: 15 }, // Further inland
+                { name: 'Seattle', state: 'Washington', coords: [47.6162, -122.3321], zoom: 15 }, // Capitol Hill - inland
+                { name: 'Boston', state: 'Massachusetts', coords: [42.3451, -71.0789], zoom: 15 } // Back Bay - inland
             ];
             
-            // Card positions - corners
-            const positions = [
-                { left: '5%', top: '18%' },
-                { right: '5%', top: '15%' },
-                { left: '5%', bottom: '20%' }
-            ];
-            
-            // Inject minimal styles
+            // Inject styles for map and cards
             const style = document.createElement('style');
             style.textContent = `
                 #mapContainer {
-                    background: ${C.land};
-                }
-                .map-svg-wrap {
-                    position: absolute;
-                    top: -5%;
-                    left: -5%;
-                    width: 110%;
-                    height: 110%;
-                }
-                .map-svg-wrap svg {
                     width: 100%;
                     height: 100%;
-                }
-                .member-card {
                     position: absolute;
-                    background: rgba(255, 255, 255, 0.82);
-                    backdrop-filter: blur(20px) saturate(180%);
-                    -webkit-backdrop-filter: blur(20px) saturate(180%);
-                    border-radius: 12px;
-                    padding: 12px 14px;
-                    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
-                    border: 0.5px solid rgba(0,0,0,0.03);
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    opacity: 0;
-                    transform: translateY(6px);
-                    transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1), transform 0.5s cubic-bezier(0.22,1,0.36,1);
+                    top: 0;
+                    left: 0;
                 }
-                .member-card.visible {
-                    opacity: 1;
-                    transform: translateY(0);
+                /* Leaflet controls hidden for clean look */
+                .leaflet-control-zoom,
+                .leaflet-control-attribution {
+                    display: none !important;
                 }
-                .member-avatar {
-                    width: 32px;
-                    height: 32px;
-                    background: #007AFF;
+                .leaflet-container {
+                    background: #f8f9fa;
+                    font-family: -apple-system, system-ui, sans-serif;
+                }
+                /* Ensure crisp rendering with 3D transform */
+                #mapContainer {
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+                /* Profile marker styles */
+                .profile-marker {
+                    width: 46px;
+                    height: 46px;
                     border-radius: 50%;
+                    border: 3px solid #34C759;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    overflow: hidden;
+                    background: #fff;
+                    opacity: 0;
+                    transform: translateY(30px) scale(0.3);
+                    will-change: opacity, transform;
+                }
+                .profile-marker.visible {
+                    animation: popUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+                }
+                .profile-marker.leaving {
+                    animation: sinkDown 0.4s ease-in forwards;
+                }
+                @keyframes popUp {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(50px) scale(0.2);
+                    }
+                    40% {
+                        opacity: 1;
+                        transform: translateY(-20px) scale(1.25);
+                    }
+                    60% {
+                        transform: translateY(8px) scale(0.9);
+                    }
+                    75% {
+                        transform: translateY(-8px) scale(1.1);
+                    }
+                    85% {
+                        transform: translateY(3px) scale(0.98);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                }
+                @keyframes sinkDown {
+                    0% {
+                        opacity: 1;
+                        transform: translateY(0) scale(1);
+                    }
+                    20% {
+                        opacity: 1;
+                        transform: translateY(-8px) scale(1.1);
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: translateY(60px) scale(0.1);
+                    }
+                }
+                .profile-marker img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .leaflet-marker-icon {
+                    background: none !important;
+                    border: none !important;
+                }
+                .city-label {
+                    position: absolute;
+                    bottom: 30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(255, 255, 255, 0.95);
+                    backdrop-filter: blur(20px);
+                    -webkit-backdrop-filter: blur(20px);
+                    padding: 12px 24px;
+                    border-radius: 50px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                    z-index: 1000;
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    color: #fff;
-                    font-family: -apple-system, system-ui, sans-serif;
-                    font-size: 14px;
-                    font-weight: 500;
+                    gap: 8px;
+                    opacity: 0;
+                    transition: opacity 0.5s ease;
                 }
-                .member-info {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1px;
+                .city-label.visible {
+                    opacity: 1;
                 }
-                .member-name {
+                .city-label .city-name {
                     font-family: -apple-system, system-ui, sans-serif;
-                    font-size: 13px;
+                    font-size: 16px;
                     font-weight: 600;
                     color: #1D1D1F;
                 }
-                .member-role {
+                .city-label .city-users {
                     font-family: -apple-system, system-ui, sans-serif;
-                    font-size: 11px;
-                    font-weight: 400;
+                    font-size: 13px;
                     color: #86868B;
+                    padding-left: 8px;
+                    border-left: 1px solid #E5E5E7;
                 }
-                .city-label { display: none !important; }
-                .map-user-cards { pointer-events: none; }
+                .map-user-cards { 
+                    pointer-events: none;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 999;
+                }
+                .map-background.faded {
+                    opacity: 0.3;
+                }
+                .map-background {
+                    transition: opacity 0.5s ease;
+                }
             `;
             document.head.appendChild(style);
             
-            // Render map
-            mapContainer.innerHTML = `<div class="map-svg-wrap">${sfMap}</div>`;
-            
-            // Render member cards
-            if (userCardsContainer) {
-                userCardsContainer.innerHTML = '';
-                members.forEach((m, i) => {
-                    const pos = positions[i];
-                    const card = document.createElement('div');
-                    card.className = 'member-card';
-                    let s = '';
-                    Object.keys(pos).forEach(k => s += `${k}:${pos[k]};`);
-                    card.style.cssText = s;
-                    card.innerHTML = `
-                        <div class="member-avatar">${m.initial}</div>
-                        <div class="member-info">
-                            <div class="member-name">${m.name}</div>
-                            <div class="member-role">Community member</div>
-                        </div>
-                    `;
-                    userCardsContainer.appendChild(card);
-                    setTimeout(() => card.classList.add('visible'), 600 + i * 150);
-                });
+            // Initialize Leaflet map with Apple-style tiles
+            let map;
+            try {
+                map = L.map(mapContainer, {
+                    zoomControl: false,
+                    attributionControl: false,
+                    dragging: false,
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    touchZoom: false,
+                    keyboard: false,
+                    fadeAnimation: true,
+                    zoomAnimation: true
+                }).setView(cities[0].coords, cities[0].zoom);
+                
+                // Apple Maps-like light tiles (CartoDB Positron)
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    subdomains: 'abcd',
+                    maxZoom: 19,
+                    updateWhenIdle: false,
+                    updateWhenZooming: false
+                }).addTo(map);
+                
+                console.log('Leaflet map initialized with Apple-style 3D tilt!');
+            } catch (e) {
+                console.error('Error initializing map:', e);
+                return;
             }
             
-            // Scroll fade only
+            let currentCityIndex = 0;
+            let isTransitioning = false;
+            let panInterval = null;
+            let userCycleInterval = null;
+            let activeMarkers = []; // Leaflet markers on the map
+            let usedPhotoIndexes = new Set();
+            
+            // Get random offset - smaller range to stay on land
+            const getRandomOffset = () => ({
+                lat: (Math.random() - 0.5) * 0.025,
+                lng: (Math.random() - 0.5) * 0.030
+            });
+            
+            // Get a random photo not currently shown (different for each city)
+            const getRandomPhoto = () => {
+                let availableIndexes = [];
+                // Use 24 photos starting from the city offset for more variety
+                for (let i = 0; i < 24; i++) {
+                    const actualIdx = (cityPhotoOffset + i) % allProfilePhotos.length;
+                    if (!usedPhotoIndexes.has(actualIdx)) {
+                        availableIndexes.push(actualIdx);
+                    }
+                }
+                if (availableIndexes.length === 0) {
+                    usedPhotoIndexes.clear();
+                    for (let i = 0; i < 24; i++) {
+                        availableIndexes.push((cityPhotoOffset + i) % allProfilePhotos.length);
+                    }
+                }
+                const idx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+                usedPhotoIndexes.add(idx);
+                return allProfilePhotos[idx];
+            };
+            
+            // Create a profile marker on the map
+            const createProfileMarker = (city) => {
+                const offset = getRandomOffset();
+                const lat = city.coords[0] + offset.lat;
+                const lng = city.coords[1] + offset.lng;
+                const photo = getRandomPhoto();
+                
+                const icon = L.divIcon({
+                    className: 'profile-marker-container',
+                    html: `<div class="profile-marker"><img src="${photo}" alt="User"></div>`,
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25]
+                });
+                
+                const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
+                
+                // Trigger smooth fade-in after a tiny delay
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        const el = marker.getElement();
+                        if (el) {
+                            const profileEl = el.querySelector('.profile-marker');
+                            if (profileEl) profileEl.classList.add('visible');
+                        }
+                    });
+                });
+                
+                return marker;
+            };
+            
+            // Remove a marker with smooth animation
+            const removeMarkerAnimated = (marker) => {
+                if (!marker) return;
+                const el = marker.getElement();
+                if (el) {
+                    const profileEl = el.querySelector('.profile-marker');
+                    if (profileEl) {
+                        profileEl.classList.remove('visible');
+                        profileEl.classList.add('leaving');
+                        setTimeout(() => {
+                            try { map.removeLayer(marker); } catch(e) {}
+                        }, 350);
+                    } else {
+                        try { map.removeLayer(marker); } catch(e) {}
+                    }
+                } else {
+                    try { map.removeLayer(marker); } catch(e) {}
+                }
+            };
+            
+            // Continuous smooth pan - map and markers move together as one
+            const startCityPan = (city) => {
+                if (panInterval) {
+                    clearInterval(panInterval);
+                    panInterval = null;
+                }
+                
+                // Continuous smooth pan using Leaflet's panBy with duration
+                const doPan = () => {
+                    if (isTransitioning) return;
+                    
+                    // Pan by pixels - even faster movement
+                    map.panBy([25, 18], {
+                        animate: true,
+                        duration: 0.35,
+                        easeLinearity: 1
+                    });
+                };
+                
+                // Start continuous panning - faster interval
+                doPan();
+                panInterval = setInterval(doPan, 350);
+            };
+            
+            // Stop the pan animation
+            const stopCityPan = () => {
+                if (panInterval) {
+                    clearInterval(panInterval);
+                    panInterval = null;
+                }
+            };
+            
+            // Cycle one marker - smoothly remove and add new one
+            const cycleOneMarker = (city) => {
+                if (isTransitioning || activeMarkers.length === 0) return;
+                
+                // Pick a random marker to replace
+                const idx = Math.floor(Math.random() * activeMarkers.length);
+                const markerToRemove = activeMarkers[idx];
+                
+                // Smooth remove with animation
+                removeMarkerAnimated(markerToRemove);
+                
+                // Add new marker after fade out completes
+                setTimeout(() => {
+                    if (!isTransitioning) {
+                        const newMarker = createProfileMarker(city);
+                        activeMarkers[idx] = newMarker;
+                    }
+                }, 400);
+            };
+            
+            // Start cycling markers at faster intervals
+            const startMarkerCycling = (city) => {
+                if (userCycleInterval) clearTimeout(userCycleInterval);
+                
+                const cycle = () => {
+                    if (!isTransitioning && activeMarkers.length > 0) {
+                        cycleOneMarker(city);
+                    }
+                    // Faster cycling (1 - 2 seconds)
+                    const nextInterval = 1000 + Math.random() * 1000;
+                    userCycleInterval = setTimeout(cycle, nextInterval);
+                };
+                
+                userCycleInterval = setTimeout(cycle, 1200);
+            };
+            
+            // Stop cycling
+            const stopMarkerCycling = () => {
+                if (userCycleInterval) {
+                    clearTimeout(userCycleInterval);
+                    userCycleInterval = null;
+                }
+            };
+            
+            // Show markers for a city
+            const showCityMembers = (city) => {
+                // Stop current cycling
+                stopMarkerCycling();
+                
+                // Remove existing markers with animation
+                activeMarkers.forEach(marker => {
+                    removeMarkerAnimated(marker);
+                });
+                
+                // Reset and get new photos for this city
+                activeMarkers = [];
+                getPhotosForCity(currentCityIndex);
+                
+                // Create 8 markers spread across the city
+                setTimeout(() => {
+                    const numMarkers = 8;
+                    for (let i = 0; i < numMarkers; i++) {
+                        setTimeout(() => {
+                            const marker = createProfileMarker(city);
+                            activeMarkers.push(marker);
+                        }, i * 200); // Stagger each marker
+                    }
+                    
+                    // Start cycling after all markers appear
+                    setTimeout(() => startMarkerCycling(city), numMarkers * 200 + 400);
+                }, 300);
+                
+                // Update city label
+                if (cityLabel) {
+                    const cityNameEl = cityLabel.querySelector('.city-name');
+                    const cityUsersEl = cityLabel.querySelector('.city-users');
+                    
+                    cityLabel.classList.remove('visible');
+                    
+                    setTimeout(() => {
+                        if (cityNameEl) cityNameEl.textContent = `${city.name}, ${city.state}`;
+                        if (cityUsersEl) cityUsersEl.textContent = `${Math.floor(Math.random() * 500 + 200)} people nearby`;
+                        cityLabel.classList.add('visible');
+                    }, 500);
+                }
+            };
+            
+            // Function to transition to next city - slow and smooth
+            const goToNextCity = () => {
+                if (isTransitioning) return;
+                isTransitioning = true;
+                
+                // Stop panning and marker cycling
+                stopCityPan();
+                stopMarkerCycling();
+                
+                // Remove current markers
+                activeMarkers.forEach(marker => {
+                    removeMarkerAnimated(marker);
+                });
+                activeMarkers = [];
+                
+                currentCityIndex = (currentCityIndex + 1) % cities.length;
+                const nextCity = cities[currentCityIndex];
+                
+                console.log(`Flying to ${nextCity.name}, ${nextCity.state}...`);
+                
+                // Slow, smooth flight to next city
+                map.flyTo(nextCity.coords, nextCity.zoom, {
+                    duration: 4,
+                    easeLinearity: 0.02
+                });
+                
+                // After flight completes, start smooth panning and show new markers
+                setTimeout(() => {
+                    isTransitioning = false;
+                    map.setView(nextCity.coords, nextCity.zoom, { animate: false });
+                    setTimeout(() => {
+                        startCityPan(nextCity);
+                        showCityMembers(nextCity);
+                    }, 200);
+                }, 4000);
+            };
+            
+            // Initial display - start at exact city center
+            console.log(`Starting in ${cities[0].name}, ${cities[0].state}`);
+            
+            // Ensure map is at exact city center first
+            map.setView(cities[0].coords, cities[0].zoom, { animate: false });
+            
+            // Start smooth panning from city center
+            startCityPan(cities[0]);
+            
+            // Show city label
+            if (cityLabel) {
+                const cityNameEl = cityLabel.querySelector('.city-name');
+                const cityUsersEl = cityLabel.querySelector('.city-users');
+                if (cityNameEl) cityNameEl.textContent = `${cities[0].name}, ${cities[0].state}`;
+                if (cityUsersEl) cityUsersEl.textContent = `${Math.floor(Math.random() * 500 + 200)} people nearby`;
+                setTimeout(() => cityLabel.classList.add('visible'), 500);
+            }
+            
+            // Show users while map is moving
+            showCityMembers(cities[0]);
+            
+            // Start the city tour - fly to new city every 12 seconds
+            setInterval(goToNextCity, 12000);
+            
+            console.log('Apple-style 3D tour started!');
+            
+            // Scroll fade effect
             let ticking = false;
             window.addEventListener('scroll', () => {
                 if (!ticking) {
@@ -588,6 +877,11 @@
                     ticking = true;
                 }
             }, { passive: true });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                map.invalidateSize();
+            });
         },
 
         /**

@@ -326,6 +326,7 @@ button {
    Full-screen Apple Maps-style background with flying city transitions
    ========================================================================== */
 
+/* Apple-style pseudo-3D map background */
 .map-background {
     position: fixed;
     top: 0;
@@ -334,6 +335,26 @@ button {
     height: 100%;
     pointer-events: none;
     z-index: 0;
+    overflow: hidden;
+    /* Perspective container for 3D effect */
+    perspective: 1200px;
+    perspective-origin: 50% 50%;
+}
+
+/* 3D tilt wrapper - applies the transform */
+.map-3d-wrapper {
+    position: absolute;
+    top: -5%;
+    left: -5%;
+    width: 110%;
+    height: 115%;
+    /* Apple-style subtle 3D tilt */
+    transform: rotateX(12deg) rotateZ(-2deg) scale(1.08) translateZ(0);
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+    /* GPU acceleration for 60fps */
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 #mapContainer {
@@ -365,49 +386,88 @@ button {
 /* Additional map styles */
 
 
-/* No overlay - pure Apple Maps appearance */
+/* Soft green calming overlay - more visible */
+.map-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        180deg,
+        rgba(220, 252, 231, 0.6) 0%,
+        rgba(187, 247, 208, 0.4) 20%,
+        rgba(220, 252, 231, 0.25) 40%,
+        rgba(240, 253, 244, 0.15) 60%,
+        rgba(255, 255, 255, 0.1) 80%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Bottom soft green glow */
 .map-background::after {
-    display: none;
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(
+        to top,
+        rgba(187, 247, 208, 0.35) 0%,
+        rgba(220, 252, 231, 0.2) 40%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+    z-index: 3;
 }
 
 .city-label {
     position: absolute;
-    bottom: 40px;
-    left: 40px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: 16px 24px;
-    border-radius: var(--radius-lg);
+    padding: 14px 28px;
+    border-radius: 50px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 4px 24px rgba(0, 0, 0, 0.12),
         0 0 0 1px rgba(255, 255, 255, 0.8) inset;
     opacity: 0;
-    transform: translateY(20px) scale(0.95);
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 10;
+    z-index: 1000;
 }
 
 .city-label.visible {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0);
 }
 
 .city-label .city-name {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--color-text);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
 }
 
 .city-label .city-users {
-    font-size: 0.8rem;
-    color: #007AFF;
+    font-size: 0.85rem;
+    color: #34C759;
     font-weight: 600;
+    padding-left: 12px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
 [data-theme="dark"] .city-label {
@@ -415,28 +475,48 @@ button {
     border-color: rgba(255, 255, 255, 0.1);
 }
 
-[data-theme="dark"] #mapContainer {
-    opacity: 0.7;
-    filter: brightness(0.7) saturate(0.9);
+[data-theme="dark"] .map-3d-wrapper {
+    opacity: 0.5;
+    filter: brightness(0.6) saturate(0.8);
 }
 
-[data-theme="dark"] .map-background::after {
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.2) 0%,
-        rgba(0, 0, 0, 0.4) 30%,
-        rgba(0, 0, 0, 0.5) 60%,
-        rgba(0, 0, 0, 0.7) 100%
+[data-theme="dark"] .map-background::before {
+    background: radial-gradient(
+        ellipse 100% 100% at 50% 50%,
+        rgba(0, 0, 0, 0) 30%,
+        rgba(0, 0, 0, 0.5) 100%
     );
 }
 
 /* Fade when scrolled - keep map visible but reduce other elements */
-.map-background.faded #mapContainer {
-    opacity: 0.3;
+.map-background.faded .map-3d-wrapper {
+    opacity: 0.08;
 }
 
 .map-background.faded .map-user-cards {
     opacity: 0 !important;
+}
+
+.map-background.faded .city-label {
+    opacity: 0 !important;
+}
+
+/* Mobile responsive for map elements */
+@media (max-width: 768px) {
+    .city-label {
+        bottom: 20px;
+        padding: 10px 20px;
+        gap: 8px;
+    }
+    
+    .city-label .city-name {
+        font-size: 0.9rem;
+    }
+    
+    .city-label .city-users {
+        font-size: 0.75rem;
+        padding-left: 8px;
+    }
 }
 
 /* ==========================================================================
@@ -450,7 +530,7 @@ button {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 5;
+    z-index: 999;
 }
 
 .map-user-card {
@@ -895,6 +975,21 @@ button {
 .btn-outline:hover {
     border-color: var(--color-text-secondary);
     background: var(--color-border-light);
+}
+
+.btn-web {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.btn-web:hover {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.btn-web svg {
+    stroke: currentColor;
 }
 
 .btn-large {
